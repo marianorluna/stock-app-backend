@@ -1,0 +1,1256 @@
+[{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab2"
+  },
+  "name": "On Lemon Naranja",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco natural y vegano con jugo de naranja.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab3"
+  },
+  "name": "Cerveza Sin Alcohol",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "IPA sin alcohol ni gluten con perfil lupulado.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab4"
+  },
+  "name": "Cerveza Rubia",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cerveza rubia sin gluten, ligera y refrescante.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab5"
+  },
+  "name": "Clara",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Mezcla de cerveza rubia con limonada de limon y mandarina.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab6"
+  },
+  "name": "Zumo de Uva y Melocoton",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Zumo bio de uva y melocoton.",
+  "isActive": true,
+  "price": 2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab7"
+  },
+  "name": "One Lemon Kola",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco natural sin conservantes con nuez de kola.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab8"
+  },
+  "name": "Zumo de Manzana",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Zumo de manzana 100% bio.",
+  "isActive": true,
+  "price": 2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ab9"
+  },
+  "name": "Wostok Datil y Granada",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco Wostok de datil y granada.",
+  "isActive": true,
+  "price": 3.8,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3aba"
+  },
+  "name": "Agua con gas Vichy Catalan",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Agua mineral con gas Vichy Catalan.",
+  "isActive": true,
+  "price": 2.55,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3abb"
+  },
+  "name": "Wostok Cardamomo",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco Wostok con cardamomo.",
+  "isActive": true,
+  "price": 3.8,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3abc"
+  },
+  "name": "On Lemon Lima",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco natural sabor lima.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3abd"
+  },
+  "name": "On Lemon Matchbata",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco natural On Lemon Matchbata.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3abe"
+  },
+  "name": "Vigo Kombucha Acai",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Kombucha Vigo sabor acai.",
+  "isActive": true,
+  "price": 4.2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3abf"
+  },
+  "name": "Mama Pineapple",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Refresco de pina natural.",
+  "isActive": true,
+  "price": 3.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac0"
+  },
+  "name": "Agua",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Agua embotellada.",
+  "isActive": true,
+  "price": 2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac1"
+  },
+  "name": "Tostada Mediterranea",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Burrata sobre pan de masa madre con pesto rosso y tomates cherry.",
+  "isActive": true,
+  "price": 10,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a8f"
+      },
+      "quantityInGrams": 125
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a90"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a91"
+      },
+      "quantityInGrams": 30
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a92"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa9"
+      },
+      "quantityInGrams": 10
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac2"
+  },
+  "name": "Extra Huevo",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Suplemento de huevo.",
+  "isActive": true,
+  "price": 1.85,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa4"
+      },
+      "quantityInGrams": 60
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac3"
+  },
+  "name": "Clasica de Aguacate",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Pan de masa madre con aguacate fresco y lima.",
+  "isActive": true,
+  "price": 7.9,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a90"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a93"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a94"
+      },
+      "quantityInGrams": 10
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac4"
+  },
+  "name": "Air Pancake",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Pancakes aireados con sopa de fresas, coco y frutos rojos.",
+  "isActive": true,
+  "price": 10,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa4"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a95"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a97"
+      },
+      "quantityInGrams": 70
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a96"
+      },
+      "quantityInGrams": 20
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3ab1"
+      },
+      "quantityInGrams": 15
+    }
+  ],
+  "type": "dessert",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac5"
+  },
+  "name": "Bowl de Yogur y Granola",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Granola de avena con yogur griego, frutos rojos y coco.",
+  "isActive": true,
+  "price": 6.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a99"
+      },
+      "quantityInGrams": 150
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a98"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a97"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a96"
+      },
+      "quantityInGrams": 15
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3ab1"
+      },
+      "quantityInGrams": 10
+    }
+  ],
+  "type": "dessert",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac6"
+  },
+  "name": "Ceviche Veggie Tropical",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Ceviche de mango, papaya, aguacate, tofu y maiz crujiente.",
+  "isActive": true,
+  "price": 12.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9a"
+      },
+      "quantityInGrams": 90
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9b"
+      },
+      "quantityInGrams": 90
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a93"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9c"
+      },
+      "quantityInGrams": 70
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9d"
+      },
+      "quantityInGrams": 30
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9f"
+      },
+      "quantityInGrams": 60
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac7"
+  },
+  "name": "Hummus Granada",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Hummus con coulis de granada, crudites y pan carasau.",
+  "isActive": true,
+  "price": 8,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9e"
+      },
+      "quantityInGrams": 25
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9f"
+      },
+      "quantityInGrams": 90
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa0"
+      },
+      "quantityInGrams": 30
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa9"
+      },
+      "quantityInGrams": 15
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac8"
+  },
+  "name": "Berenjena Asada con Especias Arabes",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Berenjena asada con especias arabes, queso feta y pan carasau.",
+  "isActive": true,
+  "price": 8,
+  "recipe": [],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ac9"
+  },
+  "name": "Bowl de la Huerta",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Arroz con aguacate, verduras frescas y crudites de temporada.",
+  "isActive": true,
+  "price": 10,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa2"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a93"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9f"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aaa"
+      },
+      "quantityInGrams": 20
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3aca"
+  },
+  "name": "Bowl del Mar del Norte",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Arroz con salmon ahumado, mango, papaya y vegetales crujientes.",
+  "isActive": true,
+  "price": 12.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa2"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa3"
+      },
+      "quantityInGrams": 70
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9a"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9b"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9f"
+      },
+      "quantityInGrams": 80
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3acb"
+  },
+  "name": "Benedict de la Casa",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Pan de masa madre, huevo a baja temperatura, aguacate y salmon con holandesa ligera.",
+  "isActive": true,
+  "price": 13.9,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a90"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa4"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa3"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa5"
+      },
+      "quantityInGrams": 40
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a93"
+      },
+      "quantityInGrams": 50
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3acc"
+  },
+  "name": "Tacos de Cochinita Pibil (3 uds)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cochinita pibil en tortilla de maiz con cebolla encurtida y cilantro.",
+  "isActive": true,
+  "price": 12,
+  "recipe": [],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3acd"
+  },
+  "name": "Curry Thai de Coco",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Arroz con pollo al curry verde, vegetales y frutos secos.",
+  "isActive": true,
+  "price": 12.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa2"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa6"
+      },
+      "quantityInGrams": 150
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa7"
+      },
+      "quantityInGrams": 35
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa8"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa9"
+      },
+      "quantityInGrams": 20
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ace"
+  },
+  "name": "Tagliata Burger",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Burger ecologica con rucula, parmesano y balsamico.",
+  "isActive": true,
+  "price": 12.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a90"
+      },
+      "quantityInGrams": 80
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aaa"
+      },
+      "quantityInGrams": 25
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aab"
+      },
+      "quantityInGrams": 25
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aac"
+      },
+      "quantityInGrams": 10
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3acf"
+  },
+  "name": "Huevos Trufados",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Huevos a baja temperatura con holandesa, pate y aceite de trufa.",
+  "isActive": true,
+  "price": 11,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa4"
+      },
+      "quantityInGrams": 120
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aa5"
+      },
+      "quantityInGrams": 40
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aad"
+      },
+      "quantityInGrams": 20
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aae"
+      },
+      "quantityInGrams": 5
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a90"
+      },
+      "quantityInGrams": 60
+    }
+  ],
+  "type": "dish",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad0"
+  },
+  "name": "Puding de Chia Tropical",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Semillas de chia con leche de almendra, mango, papaya y coco.",
+  "isActive": true,
+  "price": 5.5,
+  "recipe": [
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3aaf"
+      },
+      "quantityInGrams": 50
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3ab0"
+      },
+      "quantityInGrams": 150
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9a"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a9b"
+      },
+      "quantityInGrams": 60
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3a96"
+      },
+      "quantityInGrams": 15
+    },
+    {
+      "ingredient": {
+        "$oid": "690fae3fe4cef505449f3ab1"
+      },
+      "quantityInGrams": 15
+    }
+  ],
+  "type": "dessert",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad1"
+  },
+  "name": "Batido Postre",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Batido dulce para acompanarlo con postre.",
+  "isActive": true,
+  "price": 4.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad2"
+  },
+  "name": "Cafe con Leche - Postre",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cafe con leche pensado para postre.",
+  "isActive": true,
+  "price": 4.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad3"
+  },
+  "name": "Cafe - Postre",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cafe espresso para acompanamiento de postre.",
+  "isActive": true,
+  "price": 4,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad4"
+  },
+  "name": "Brutal Blanc 2024 (copa)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Vino blanco Brutal Blanc servido por copa.",
+  "isActive": true,
+  "price": 4.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad5"
+  },
+  "name": "Pares Balta Blanc de Pacs 2024 (copa)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Vino blanco Pares Balta Blanc de Pacs servido por copa.",
+  "isActive": true,
+  "price": 4.2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad6"
+  },
+  "name": "Brutal 2022 (copa)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Vino tinto Brutal 2022 servido por copa.",
+  "isActive": true,
+  "price": 4.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad7"
+  },
+  "name": "Mas Petit 2021 Pares Balta (copa)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Vino tinto Mas Petit 2021 Pares Balta servido por copa.",
+  "isActive": true,
+  "price": 4.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad8"
+  },
+  "name": "Pares Balta Brut (copa)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cava ecologico Pares Balta Brut servido por copa.",
+  "isActive": true,
+  "price": 5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ad9"
+  },
+  "name": "Brutal Blanc 2024 (botella)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Blend de xarello y macabeo.",
+  "isActive": true,
+  "price": 18,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ada"
+  },
+  "name": "Pares Balta Blanc de Pacs 2024 (botella)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "46% Parellada, 34% Macabeo, 20% Xarello.",
+  "isActive": true,
+  "price": 17,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3adb"
+  },
+  "name": "Brutal 2022 (botella)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Tempranillo, cabernet sauvignon y garnacha.",
+  "isActive": true,
+  "price": 20,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3adc"
+  },
+  "name": "Mas Petit 2021 Pares Balta (botella)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cabernet sauvignon y garnacha.",
+  "isActive": true,
+  "price": 19,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3add"
+  },
+  "name": "Pares Balta Brut (botella)",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Macabeo, xarello y parellada.",
+  "isActive": true,
+  "price": 21,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ade"
+  },
+  "name": "Cafe Solo",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cafe espresso solo.",
+  "isActive": true,
+  "price": 1.5,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3adf"
+  },
+  "name": "Cafe con Leche",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cafe con leche.",
+  "isActive": true,
+  "price": 2,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ae0"
+  },
+  "name": "Cortado",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Cafe cortado.",
+  "isActive": true,
+  "price": 1.8,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690fb27ee4cef505449f3ae1"
+  },
+  "name": "Te e Infusiones",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  },
+  "description": "Variedad de tes e infusiones.",
+  "isActive": true,
+  "price": 2.25,
+  "recipe": [],
+  "type": "drink",
+  "updatedAt": {
+    "$date": "2025-11-08T21:13:34.227Z"
+  }
+}]

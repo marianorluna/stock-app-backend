@@ -1,0 +1,731 @@
+[
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a8f"
+    },
+    "name": "Burrata",
+    "__v": 0,
+    "allergens": [
+      "lácteos"
+    ],
+    "conversionFactorToGrams": 125,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 250,
+    "sku": "BUR001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a90"
+    },
+    "name": "Pan de masa madre",
+    "__v": 0,
+    "allergens": [
+      "gluten"
+    ],
+    "conversionFactorToGrams": 80,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 500,
+    "sku": "PAN001",
+    "stockInGrams": 5000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a91"
+    },
+    "name": "Pesto rosso",
+    "__v": 0,
+    "allergens": [
+      "frutos secos"
+    ],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 300,
+    "sku": "PES001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a92"
+    },
+    "name": "Tomates cherry",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bandeja",
+    "reorderPointInGrams": 500,
+    "sku": "TOM001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a93"
+    },
+    "name": "Aguacate",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 500,
+    "sku": "AGU001",
+    "stockInGrams": 4000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a94"
+    },
+    "name": "Lima",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 80,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 200,
+    "sku": "LIM001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a95"
+    },
+    "name": "Fresas",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 300,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bandeja",
+    "reorderPointInGrams": 500,
+    "sku": "FRE001",
+    "stockInGrams": 2500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a96"
+    },
+    "name": "Coco rallado",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bolsa",
+    "reorderPointInGrams": 300,
+    "sku": "COC001",
+    "stockInGrams": 1500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a97"
+    },
+    "name": "Frutos rojos",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bandeja",
+    "reorderPointInGrams": 400,
+    "sku": "FRU001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a98"
+    },
+    "name": "Granola de avena",
+    "__v": 0,
+    "allergens": [
+      "gluten"
+    ],
+    "conversionFactorToGrams": 500,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bolsa",
+    "reorderPointInGrams": 600,
+    "sku": "GRA001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a99"
+    },
+    "name": "Yogur griego",
+    "__v": 0,
+    "allergens": [
+      "lácteos"
+    ],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "vaso",
+    "reorderPointInGrams": 300,
+    "sku": "YOG001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "vaso"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9a"
+    },
+    "name": "Mango",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 300,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 500,
+    "sku": "MAN001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9b"
+    },
+    "name": "Papaya",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 400,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 500,
+    "sku": "PAP001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9c"
+    },
+    "name": "Tofu",
+    "__v": 0,
+    "allergens": [
+      "soja"
+    ],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bloque",
+    "reorderPointInGrams": 300,
+    "sku": "TOF001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9d"
+    },
+    "name": "Maíz crujiente",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bolsa",
+    "reorderPointInGrams": 300,
+    "sku": "MAI001",
+    "stockInGrams": 1500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9e"
+    },
+    "name": "Coulis de granada",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 200,
+    "sku": "COU001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3a9f"
+    },
+    "name": "Crudités de verduras",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 500,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bandeja",
+    "reorderPointInGrams": 600,
+    "sku": "CRU001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa0"
+    },
+    "name": "Pan carasau",
+    "__v": 0,
+    "allergens": [
+      "gluten"
+    ],
+    "conversionFactorToGrams": 100,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 300,
+    "sku": "CAR001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa1"
+    },
+    "name": "Queso feta",
+    "__v": 0,
+    "allergens": [
+      "lácteos"
+    ],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bloque",
+    "reorderPointInGrams": 300,
+    "sku": "FET001",
+    "stockInGrams": 1500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa2"
+    },
+    "name": "Arroz",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 1000,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "kg",
+    "reorderPointInGrams": 1000,
+    "sku": "ARR001",
+    "stockInGrams": 5000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "g"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa3"
+    },
+    "name": "Salmón ahumado",
+    "__v": 0,
+    "allergens": [
+      "pescado"
+    ],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "paquete",
+    "reorderPointInGrams": 300,
+    "sku": "SAL001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa4"
+    },
+    "name": "Huevo",
+    "__v": 0,
+    "allergens": [
+      "huevo"
+    ],
+    "conversionFactorToGrams": 60,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "unidad",
+    "reorderPointInGrams": 600,
+    "sku": "HUE001",
+    "stockInGrams": 3000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa5"
+    },
+    "name": "Salsa holandesa",
+    "__v": 0,
+    "allergens": [
+      "huevo",
+      "lácteos"
+    ],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 300,
+    "sku": "HOL001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa6"
+    },
+    "name": "Pollo",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "pechuga",
+    "reorderPointInGrams": 500,
+    "sku": "POL001",
+    "stockInGrams": 4000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "g"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa7"
+    },
+    "name": "Curry verde",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 200,
+    "sku": "CUR001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa8"
+    },
+    "name": "Leche de coco",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 400,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "lata",
+    "reorderPointInGrams": 500,
+    "sku": "LEC001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "lata"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aa9"
+    },
+    "name": "Frutos secos",
+    "__v": 0,
+    "allergens": [
+      "frutos secos"
+    ],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bolsa",
+    "reorderPointInGrams": 300,
+    "sku": "FRS001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aaa"
+    },
+    "name": "Rúcula",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bandeja",
+    "reorderPointInGrams": 200,
+    "sku": "RUC001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aab"
+    },
+    "name": "Parmesano",
+    "__v": 0,
+    "allergens": [
+      "lácteos"
+    ],
+    "conversionFactorToGrams": 200,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bloque",
+    "reorderPointInGrams": 300,
+    "sku": "PAR001",
+    "stockInGrams": 1500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aac"
+    },
+    "name": "Vinagre balsámico",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 500,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "botella",
+    "reorderPointInGrams": 300,
+    "sku": "VIN001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "botella"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aad"
+    },
+    "name": "Paté de trufa",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 150,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 200,
+    "sku": "PAT001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aae"
+    },
+    "name": "Aceite de trufa",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 500,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "botella",
+    "reorderPointInGrams": 300,
+    "sku": "ACE001",
+    "stockInGrams": 1000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "botella"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3aaf"
+    },
+    "name": "Semillas de chía",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 250,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "bolsa",
+    "reorderPointInGrams": 300,
+    "sku": "CHI001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "unidad"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3ab0"
+    },
+    "name": "Leche de almendra",
+    "__v": 0,
+    "allergens": [
+      "frutos secos"
+    ],
+    "conversionFactorToGrams": 1000,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "botella",
+    "reorderPointInGrams": 500,
+    "sku": "LEA001",
+    "stockInGrams": 2000,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "botella"
+  },
+  {
+    "_id": {
+      "$oid": "690fae3fe4cef505449f3ab1"
+    },
+    "name": "Miel",
+    "__v": 0,
+    "allergens": [],
+    "conversionFactorToGrams": 500,
+    "createdAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "purchaseUnit": "frasco",
+    "reorderPointInGrams": 300,
+    "sku": "MIE001",
+    "stockInGrams": 1500,
+    "updatedAt": {
+      "$date": "2025-11-08T20:55:27.071Z"
+    },
+    "productUnit": "frasco"
+  }
+]

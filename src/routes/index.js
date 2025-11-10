@@ -1,0 +1,21 @@
+import { Router } from 'express';
+import authRoutes from './authRoutes.js';
+import ingredientRoutes from './ingredientRoutes.js';
+import dishRoutes from './dishRoutes.js';
+import manualRoutes from './manualRoutes.js';
+import dashboardRoutes from './dashboardRoutes.js';
+import webhookRoutes from './webhookRoutes.js';
+import supplierRoutes from './supplierRoutes.js';
+
+const apiRouter = Router();
+
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/ingredients', ingredientRoutes);
+apiRouter.use('/dishes', dishRoutes);
+apiRouter.use('/manual', manualRoutes);
+apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/webhook', webhookRoutes);
+apiRouter.use('/suppliers', supplierRoutes);
+
+export default apiRouter;
+
