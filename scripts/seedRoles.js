@@ -1,3 +1,10 @@
+/**
+ * Script para poblar la base de datos con roles y permisos.
+ * Uso: node scripts/seedRoles.js
+ * Orden recomendado de ejecución
+ * seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ */
+
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Role from '../src/models/Role.js';

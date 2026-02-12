@@ -1,79 +1,93 @@
 import asyncHandler from 'express-async-handler';
 import Purchase from '../models/Purchase.js';
+import Supplier from '../models/Supplier.js';
 
-//obtiene la lista de proveedores agregados desde las compras
+//obtiene la lista de proveedores: todos los Supplier + stats desde Purchase (supplier = SKU)
 export const listSuppliers = asyncHandler(async (_req, res) => {
-  const suppliers = await Purchase.aggregate([
-    {
-      $match: {
-        supplier: { $exists: true, $ne: '' }
-      }
-    },
-    {
-      $group: {
-        _id: '$supplier',
-        lastPurchase: { $max: '$timestamp' },
-        totalPurchases: { $sum: 1 }
-      }
-    },
-    {
-      $sort: { _id: 1 }
-    }
+  const [supplierDocs, fromPurchases] = await Promise.all([
+    Supplier.find().lean(),
+    Purchase.aggregate([
+      { $match: { supplier: { $exists: true, $ne: '' } } },
+      { $group: { _id: '$supplier', lastPurchase: { $max: '$timestamp' }, totalPurchases: { $sum: 1 } } }
+    ])
   ]);
 
-  res.json(
-    suppliers.map((supplier) => ({
-      name: supplier._id,
-      lastPurchase: supplier.lastPurchase ?? null,
-      totalPurchases: supplier.totalPurchases ?? 0
-    }))
-  );
+  const purchaseMap = new Map(fromPurchases.map((p) => [p._id, p]));
+
+  const result = supplierDocs.map((s) => {
+    const stats = purchaseMap.get(s.sku) ?? {};
+    return {
+      sku: s.sku,
+      name: s.name,
+      lastPurchase: stats.lastPurchase ?? null,
+      totalPurchases: stats.totalPurchases ?? 0
+    };
+  }).sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+
+  res.json(result);
 });
 
-const decodeSupplierName = (value) => decodeURIComponent(value).trim();
+const decodeSupplierSku = (value) => decodeURIComponent(value).trim();
 
-//actualiza el nombre de un proveedor en todas sus compras
+//actualiza el proveedor (nombre en modelo Supplier); las compras siguen por SKU
 export const updateSupplier = asyncHandler(async (req, res) => {
-  const supplierName = decodeSupplierName(req.params.supplierName);
-  const { newName } = req.body;
+  const supplierSku = decodeSupplierSku(req.params.supplierSku);
+  const { newName, contact, email } = req.body;
 
-  if (!newName || typeof newName !== 'string' || !newName.trim()) {
+  const update = {};
+  if (newName != null && typeof newName === 'string' && newName.trim()) update.name = newName.trim();
+  if (contact != null) update.contact = contact;
+  if (email != null) update.email = email;
+
+  if (Object.keys(update).length === 0) {
     res.status(400);
-    throw new Error('Nombre de proveedor inválido');
+    throw new Error('No hay campos válidos para actualizar');
   }
 
-  const normalizedName = newName.trim();
-  const { modifiedCount } = await Purchase.updateMany(
-    { supplier: supplierName },
-    { $set: { supplier: normalizedName } }
+  const supplier = await Supplier.findOneAndUpdate(
+    { sku: supplierSku },
+    { $set: update },
+    { new: true }
   );
 
-  res.json({ updated: modifiedCount });
+  if (!supplier) {
+    res.status(404);
+    throw new Error('Proveedor no encontrado');
+  }
+
+  res.json({ updated: 1 });
 });
 
-//elimina el proveedor de todas sus compras
+//elimina el proveedor de todas sus compras (unset) y opcionalmente del modelo Supplier
 export const deleteSupplier = asyncHandler(async (req, res) => {
-  const supplierName = decodeSupplierName(req.params.supplierName);
+  const supplierSku = decodeSupplierSku(req.params.supplierSku);
   const { modifiedCount } = await Purchase.updateMany(
-    { supplier: supplierName },
+    { supplier: supplierSku },
     { $unset: { supplier: '' } }
   );
 
+  await Supplier.deleteOne({ sku: supplierSku });
+
   res.json({ updated: modifiedCount });
 });
 
-//duplica todas las compras de un proveedor con un nuevo nombre
+//duplica compras de un proveedor asignándolas a otro (por SKU)
 export const duplicateSupplier = asyncHandler(async (req, res) => {
-  const supplierName = decodeSupplierName(req.params.supplierName);
-  const { newName } = req.body;
+  const supplierSku = decodeSupplierSku(req.params.supplierSku);
+  const { newSku } = req.body;
 
-  if (!newName || typeof newName !== 'string' || !newName.trim()) {
+  if (!newSku || typeof newSku !== 'string' || !newSku.trim()) {
     res.status(400);
-    throw new Error('Nombre de proveedor inválido');
+    throw new Error('newSku es requerido');
   }
 
-  const normalizedName = newName.trim();
-  const purchases = await Purchase.find({ supplier: supplierName }).lean();
+  const targetSupplier = await Supplier.findOne({ sku: newSku.trim() });
+  if (!targetSupplier) {
+    res.status(404);
+    throw new Error('Proveedor destino no encontrado');
+  }
+
+  const purchases = await Purchase.find({ supplier: supplierSku }).lean();
 
   if (!purchases.length) {
     res.status(404);
@@ -81,7 +95,7 @@ export const duplicateSupplier = asyncHandler(async (req, res) => {
   }
 
   const duplicatedPurchases = purchases.map((purchase) => ({
-    supplier: normalizedName,
+    supplier: targetSupplier.sku,
     invoiceNumber: purchase.invoiceNumber ? `${purchase.invoiceNumber}-copy` : undefined,
     timestamp: new Date(),
     items: purchase.items,

@@ -1,3 +1,10 @@
+/**
+ * Script para poblar la base de datos con compras, ventas y mermas.
+ * Uso: node scripts/seedEvents.js
+ * Orden recomendado de ejecución:
+ * seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ */
+
 import dotenv from 'dotenv';
 import connectDatabase from '../src/config/database.js';
 import Dish from '../src/models/Dish.js';
@@ -5,6 +12,7 @@ import Ingredient from '../src/models/Ingredient.js';
 import Sale from '../src/models/Sale.js';
 import Purchase from '../src/models/Purchase.js';
 import Wastage from '../src/models/Wastage.js';
+import Supplier from '../src/models/Supplier.js';
 import stockService from '../src/services/stockService.js';
 
 dotenv.config();
@@ -36,13 +44,18 @@ const toConversion = (ingredient) =>
     ? ingredient.conversionFactorToGrams
     : 1;
 
-const generatePurchases = (ingredients, count) => {
+const pickRandomSupplier = (suppliers) => {
+  const index = randomBetween(0, suppliers.length - 1);
+  return suppliers[index].sku;
+};
+
+const generatePurchases = (ingredients, suppliers, count) => {
   const purchases = [];
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(2, Math.min(4, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
     purchases.push({
-      supplier: `Proveedor ${i + 1}`,
+      supplier: pickRandomSupplier(suppliers),
       invoiceNumber: `INV-${String(i + 1).padStart(3, '0')}`,
       timestamp: new Date(Date.now() - randomBetween(0, 10) * 24 * 60 * 60 * 1000),
       items: selected.map((ingredient) => {
@@ -111,6 +124,7 @@ const seed = async () => {
 
   const dishes = await Dish.find({ isActive: true }).lean();
   const ingredients = await Ingredient.find().lean();
+  const suppliers = await Supplier.find().lean();
 
   if (!dishes.length) {
     throw new Error('No dishes found. Seed dishes before running this script.');
@@ -118,9 +132,12 @@ const seed = async () => {
   if (!ingredients.length) {
     throw new Error('No ingredients found. Seed ingredients before running this script.');
   }
+  if (!suppliers.length) {
+    throw new Error('No suppliers found. Run seed:suppliers before this script.');
+  }
 
   const salesPayload = generateSales(dishes, 10);
-  const purchasesPayload = generatePurchases(ingredients, 5);
+  const purchasesPayload = generatePurchases(ingredients, suppliers, 5);
   const wastagePayload = generateWastage(ingredients, 15);
 
   console.log('Seeding purchases...');

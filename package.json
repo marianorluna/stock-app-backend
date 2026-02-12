@@ -11,8 +11,10 @@
   "seed:roles": "node scripts/seedRoles.js",
   "seed:ingredients": "node scripts/seedIngredients.js",
   "seed:menu": "node scripts/seedMenu.js",
+  "seed:suppliers": "node scripts/seedSuppliers.js",
   "seed:events": "node scripts/seedEvents.js",
-  "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:menu && npm run seed:events"
+  "seed:clear": "node scripts/clearData.js",
+  "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:menu && npm run seed:suppliers && npm run seed:events"
   },
   "engines": {
     "node": ">=18.18.0"

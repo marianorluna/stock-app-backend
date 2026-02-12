@@ -12,9 +12,9 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/', hasPermission('suppliers', 'read'), listSuppliers);
-router.put('/:supplierName', hasPermission('suppliers', 'update'), updateSupplier);
-router.delete('/:supplierName', hasPermission('suppliers', 'delete'), deleteSupplier);
-router.post('/:supplierName/duplicate', hasPermission('suppliers', 'create'), duplicateSupplier);
+router.put('/:supplierSku', hasPermission('suppliers', 'update'), updateSupplier);
+router.delete('/:supplierSku', hasPermission('suppliers', 'delete'), deleteSupplier);
+router.post('/:supplierSku/duplicate', hasPermission('suppliers', 'create'), duplicateSupplier);
 
 export default router;
 
