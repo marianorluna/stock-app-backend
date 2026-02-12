@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Ingredient from '../models/Ingredient.js';
 
+//obtiene el snapshot del inventario con categorías y productos con stock bajo
 export const getStockSnapshot = asyncHandler(async (req, res) => {
   const ingredients = await Ingredient.find().sort({ name: 1 });
   const inventory = ingredients.map(ingredient => {

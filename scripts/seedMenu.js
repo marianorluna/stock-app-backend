@@ -394,9 +394,17 @@ const dishes = [
 ];
 
 const seed = async () => {
-    const mongoUri = process.env.MONGODB_URI;
+    const NODE_ENV = process.env.NODE_ENV ?? 'development';
+    const getDatabaseUri = () => {
+        if (NODE_ENV === 'production') {
+            return process.env.MONGODB_URI_ATLAS ?? process.env.MONGODB_URI;
+        }
+        return process.env.MONGODB_URI;
+    };
+
+    const mongoUri = getDatabaseUri();
     if (!mongoUri) {
-        throw new Error('MONGODB_URI is not defined in environment variables');
+        throw new Error('MongoDB URI is not defined in environment variables');
     }
 
     await connectDatabase(mongoUri);

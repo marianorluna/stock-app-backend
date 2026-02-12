@@ -7,6 +7,7 @@ import WastagePreset from '../models/WastagePreset.js';
 import eventBus, { EVENT_TYPES } from '../core/eventBus.js';
 import stockService from '../services/stockService.js';
 
+//construye un filtro de fechas para consultas de registros manuales
 const buildDateFilter = (query) => {
   const { from, to } = query;
   if (!from && !to) return {};
@@ -37,6 +38,7 @@ const buildDateFilter = (query) => {
   return filter;
 };
 
+//registra una venta manual y actualiza el inventario
 export const recordManualSale = asyncHandler(async (req, res) => {
   const sale = await Sale.create({ ...req.body, source: 'manual' });
   await stockService.applySaleToStock(sale);
@@ -44,6 +46,7 @@ export const recordManualSale = asyncHandler(async (req, res) => {
   res.status(201).json(sale);
 });
 
+//registra una compra manual y actualiza el inventario
 export const recordManualPurchase = asyncHandler(async (req, res) => {
   const purchase = await Purchase.create(req.body);
   await stockService.applyPurchaseToStock(purchase);
@@ -51,6 +54,7 @@ export const recordManualPurchase = asyncHandler(async (req, res) => {
   res.status(201).json(purchase);
 });
 
+//registra una merma manual y actualiza el inventario
 export const recordManualWastage = asyncHandler(async (req, res) => {
   const reportedBy =
     req.user?.sub && mongoose.Types.ObjectId.isValid(req.user.sub) ? req.user.sub : undefined;
@@ -64,6 +68,7 @@ export const recordManualWastage = asyncHandler(async (req, res) => {
   res.status(201).json(wastage);
 });
 
+//elimina un registro de merma y revierte el cambio en el inventario
 export const deleteManualWastage = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const wastage = await Wastage.findByIdAndDelete(id);

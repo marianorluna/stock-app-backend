@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 
-const roles = ['owner', 'staff'];
-
+//modelo de usuario actualizado para usar Firebase Auth
 const userSchema = new mongoose.Schema(
   {
+    firebaseUid: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true
+    },
     email: {
       type: String,
       required: true,
@@ -12,18 +16,21 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true
     },
-    passwordHash: {
+    name: {
       type: String,
       required: true
     },
     role: {
-      type: String,
-      enum: roles,
-      default: 'owner'
-    },
-    name: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role',
       required: true
+    },
+    isActive: {
+      type: Boolean,
+      default: true
+    },
+    lastLogin: {
+      type: Date
     }
   },
   {
@@ -31,17 +38,10 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.methods.setPassword = async function setPassword(password) {
-  const saltRounds = 10;
-  this.passwordHash = await bcrypt.hash(password, saltRounds);
-};
-
-userSchema.methods.comparePassword = function comparePassword(password) {
-  return bcrypt.compare(password, this.passwordHash);
-};
+//índice compuesto para búsquedas rápidas
+userSchema.index({ firebaseUid: 1, isActive: 1 });
 
 const User = mongoose.model('User', userSchema);
 
 export default User;
-export { roles as USER_ROLES };
 

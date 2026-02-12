@@ -5,7 +5,7 @@ import {
   updateIngredient,
   deleteIngredient
 } from '../controllers/ingredientController.js';
-import { authenticate, authorize } from '../middleware/authMiddleware.js';
+import { authenticate, hasPermission } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -13,13 +13,13 @@ router.use(authenticate);
 
 router
   .route('/')
-  .get(listIngredients)
-  .post(authorize('owner'), createIngredient);
+  .get(hasPermission('ingredients', 'read'), listIngredients)
+  .post(hasPermission('ingredients', 'create'), createIngredient);
 
 router
   .route('/:id')
-  .put(authorize('owner'), updateIngredient)
-  .delete(authorize('owner'), deleteIngredient);
+  .put(hasPermission('ingredients', 'update'), updateIngredient)
+  .delete(hasPermission('ingredients', 'delete'), deleteIngredient);
 
 export default router;
 

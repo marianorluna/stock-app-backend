@@ -2,6 +2,7 @@ import Ingredient from '../models/Ingredient.js';
 import Dish from '../models/Dish.js';
 import logger from '../config/logger.js';
 
+//aplica una venta al inventario restando los ingredientes según las recetas
 const applySaleToStock = async (sale) => {
   const dishIds = sale.lines.map(line => line.dish);
   const dishes = await Dish.find({ _id: { $in: dishIds } }).populate('recipe.ingredient');
@@ -24,6 +25,7 @@ const applySaleToStock = async (sale) => {
   await commitStockUpdates(updates, { context: 'sale', referenceId: sale._id });
 };
 
+//aplica una compra al inventario sumando los ingredientes comprados
 const applyPurchaseToStock = async (purchase) => {
   const updates = purchase.items.map(item => ({
     ingredientId: item.ingredient,
@@ -32,6 +34,7 @@ const applyPurchaseToStock = async (purchase) => {
   await commitStockUpdates(updates, { context: 'purchase', referenceId: purchase._id });
 };
 
+//aplica una merma al inventario restando los ingredientes desperdiciados
 const applyWastageToStock = async (wastage) => {
   const updates = wastage.items.map(item => ({
     ingredientId: item.ingredient,
@@ -40,6 +43,7 @@ const applyWastageToStock = async (wastage) => {
   await commitStockUpdates(updates, { context: 'wastage', referenceId: wastage._id });
 };
 
+//revierte una merma del inventario sumando los ingredientes previamente restados
 const revertWastageFromStock = async (wastage) => {
   const updates = wastage.items.map(item => ({
     ingredientId: item.ingredient,
@@ -48,6 +52,7 @@ const revertWastageFromStock = async (wastage) => {
   await commitStockUpdates(updates, { context: 'wastage-revert', referenceId: wastage._id });
 };
 
+//ejecuta actualizaciones masivas de stock en la base de datos
 const commitStockUpdates = async (updates, metadata) => {
   if (!updates.length) return;
 

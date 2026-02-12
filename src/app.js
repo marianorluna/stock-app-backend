@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import apiRouter from './routes/index.js';
 import errorMiddleware from './middleware/errorMiddleware.js';
 
+//crea y configura la aplicación express con middlewares y rutas
 const createApp = () => {
   const app = express();
 

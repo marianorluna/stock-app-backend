@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { listDishes, createDish, updateDish, deleteDish } from '../controllers/dishController.js';
-import { authenticate, authorize } from '../middleware/authMiddleware.js';
+import { authenticate, hasPermission } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
@@ -8,13 +8,13 @@ router.use(authenticate);
 
 router
   .route('/')
-  .get(listDishes)
-  .post(authorize('owner'), createDish);
+  .get(hasPermission('recipes', 'read'), listDishes)
+  .post(hasPermission('recipes', 'create'), createDish);
 
 router
   .route('/:id')
-  .put(authorize('owner'), updateDish)
-  .delete(authorize('owner'), deleteDish);
+  .put(hasPermission('recipes', 'update'), updateDish)
+  .delete(hasPermission('recipes', 'delete'), deleteDish);
 
 export default router;
 

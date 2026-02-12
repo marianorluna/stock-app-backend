@@ -1,13 +1,18 @@
 {
-  "name": "@stockcontrol/backend",
+  "name": "@stockearly/backend",
   "version": "0.1.0",
-  "description": "StockControl backend service implementing event-driven inventory management APIs.",
+  "description": "Stockearly backend service implementing event-driven inventory management APIs.",
   "type": "module",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "lint": "eslint \"src/**/*.{js,jsx}\""
+  "dev": "nodemon src/server.js",
+  "start": "node src/server.js",
+  "lint": "eslint \"src/**/*.{js,jsx}\"",
+  "seed:roles": "node scripts/seedRoles.js",
+  "seed:ingredients": "node scripts/seedIngredients.js",
+  "seed:menu": "node scripts/seedMenu.js",
+  "seed:events": "node scripts/seedEvents.js",
+  "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:menu && npm run seed:events"
   },
   "engines": {
     "node": ">=18.18.0"
@@ -15,10 +20,11 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "helmet": "^7.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
+    "firebase-admin": "^13.6.0",
+    "helmet": "^7.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.1",
@@ -35,4 +41,3 @@
     "nodemon": "^3.1.4"
   }
 }
-

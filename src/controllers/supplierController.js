@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Purchase from '../models/Purchase.js';
 
+//obtiene la lista de proveedores agregados desde las compras
 export const listSuppliers = asyncHandler(async (_req, res) => {
   const suppliers = await Purchase.aggregate([
     {
@@ -31,6 +32,7 @@ export const listSuppliers = asyncHandler(async (_req, res) => {
 
 const decodeSupplierName = (value) => decodeURIComponent(value).trim();
 
+//actualiza el nombre de un proveedor en todas sus compras
 export const updateSupplier = asyncHandler(async (req, res) => {
   const supplierName = decodeSupplierName(req.params.supplierName);
   const { newName } = req.body;
@@ -49,6 +51,7 @@ export const updateSupplier = asyncHandler(async (req, res) => {
   res.json({ updated: modifiedCount });
 });
 
+//elimina el proveedor de todas sus compras
 export const deleteSupplier = asyncHandler(async (req, res) => {
   const supplierName = decodeSupplierName(req.params.supplierName);
   const { modifiedCount } = await Purchase.updateMany(
@@ -59,6 +62,7 @@ export const deleteSupplier = asyncHandler(async (req, res) => {
   res.json({ updated: modifiedCount });
 });
 
+//duplica todas las compras de un proveedor con un nuevo nombre
 export const duplicateSupplier = asyncHandler(async (req, res) => {
   const supplierName = decodeSupplierName(req.params.supplierName);
   const { newName } = req.body;

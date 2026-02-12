@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import logger from './logger.js';
 
+//conecta a la base de datos mongodb usando la uri proporcionada
 const connectDatabase = async (uri) => {
   try {
     mongoose.set('strictQuery', true);

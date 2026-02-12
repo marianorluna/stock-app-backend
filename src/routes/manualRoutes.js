@@ -11,7 +11,7 @@ import {
   deleteWastagePreset,
   deleteManualWastage
 } from '../controllers/manualEntryController.js';
-import { authenticate } from '../middleware/authMiddleware.js';
+import { authenticate, hasPermission } from '../middleware/authMiddleware.js';
 import { validateBody } from '../utils/validation.js';
 import {
   manualSaleSchema,
@@ -26,27 +26,27 @@ router.use(authenticate);
 
 router
   .route('/sales')
-  .get(listManualSales)
-  .post(validateBody(manualSaleSchema), recordManualSale);
+  .get(hasPermission('manual', 'read'), listManualSales)
+  .post(hasPermission('manual', 'create'), validateBody(manualSaleSchema), recordManualSale);
 
 router
   .route('/purchases')
-  .get(listManualPurchases)
-  .post(validateBody(manualPurchaseSchema), recordManualPurchase);
+  .get(hasPermission('manual', 'read'), listManualPurchases)
+  .post(hasPermission('manual', 'create'), validateBody(manualPurchaseSchema), recordManualPurchase);
 
 router
   .route('/wastage')
-  .get(listManualWastage)
-  .post(validateBody(manualWastageSchema), recordManualWastage);
+  .get(hasPermission('manual', 'read'), listManualWastage)
+  .post(hasPermission('manual', 'create'), validateBody(manualWastageSchema), recordManualWastage);
 
-router.route('/wastage/:id').delete(deleteManualWastage);
+router.route('/wastage/:id').delete(hasPermission('manual', 'delete'), deleteManualWastage);
 
 router
   .route('/wastage/presets')
-  .get(listWastagePresets)
-  .post(validateBody(manualWastagePresetSchema), createWastagePreset);
+  .get(hasPermission('manual', 'read'), listWastagePresets)
+  .post(hasPermission('manual', 'create'), validateBody(manualWastagePresetSchema), createWastagePreset);
 
-router.route('/wastage/presets/:id').delete(deleteWastagePreset);
+router.route('/wastage/presets/:id').delete(hasPermission('manual', 'delete'), deleteWastagePreset);
 
 export default router;
 

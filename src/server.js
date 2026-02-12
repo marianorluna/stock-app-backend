@@ -4,6 +4,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import createApp from './app.js';
 import connectDatabase from './config/database.js';
 import logger from './config/logger.js';
+import { initializeFirebase } from './config/firebase.js';
 import eventBus, { EVENT_TYPES } from './core/eventBus.js';
 import './subscribers/inventorySubscriber.js';
 
@@ -20,6 +21,7 @@ const getDatabaseUri = () => {
 };
 const MONGODB_URI = getDatabaseUri();
 
+//inicializa la conexión a la base de datos, crea el servidor http y configura websocket
 const bootstrap = async () => {
   if (!MONGODB_URI) {
     logger.error('Database URI is not configured', { NODE_ENV });
@@ -27,6 +29,9 @@ const bootstrap = async () => {
   }
 
   await connectDatabase(MONGODB_URI);
+
+  //inicializar Firebase Admin SDK
+  initializeFirebase();
 
   const app = createApp();
   const server = http.createServer(app);

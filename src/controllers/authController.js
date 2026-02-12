@@ -1,52 +1,111 @@
-import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
+import { verifyIdToken } from '../config/firebase.js';
 import User from '../models/User.js';
+import Role from '../models/Role.js';
+import Permission from '../models/Permission.js'; //importar Permission para que Mongoose lo registre
 
-const signToken = (user) => {
-  return jwt.sign(
-    {
-      sub: user._id,
-      role: user.role,
-      email: user.email
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: '12h' }
-  );
-};
+//sincroniza usuario de Firebase con la base de datos local
+export const syncUser = asyncHandler(async (req, res) => {
+  const { idToken } = req.body;
 
-export const register = asyncHandler(async (req, res) => {
-  const { email, password, name, role } = req.body;
-
-  const existing = await User.findOne({ email });
-  if (existing) {
-    res.status(409);
-    throw new Error('Email already registered');
+  if (!idToken) {
+    res.status(400);
+    throw new Error('Token is required');
   }
 
-  const user = new User({ email, name, role });
-  await user.setPassword(password);
-  await user.save();
+  try {
+    const decodedToken = await verifyIdToken(idToken);
 
-  const token = signToken(user);
-  res.status(201).json({ token, user: { id: user._id, email: user.email, role: user.role, name: user.name } });
+    let user = await User.findOne({ firebaseUid: decodedToken.uid })
+      .populate({
+        path: 'role',
+        populate: {
+          path: 'permissions',
+          model: 'Permission'
+        }
+      });
+
+    if (!user) {
+      //crear usuario si no existe (asignar rol guest por defecto)
+      const guestRole = await Role.findOne({ name: 'guest' });
+      if (!guestRole) {
+        res.status(500);
+        throw new Error('Default role not found. Please run: npm run seed:roles');
+      }
+
+      //obtener el nombre del token o usar el email como fallback
+      const userName = decodedToken.name ||
+        (decodedToken.email ? decodedToken.email.split('@')[0] : 'Usuario');
+
+      user = new User({
+        firebaseUid: decodedToken.uid,
+        email: decodedToken.email,
+        name: userName,
+        role: guestRole._id,
+        lastLogin: new Date()
+      });
+      await user.save();
+      await user.populate({
+        path: 'role',
+        populate: {
+          path: 'permissions',
+          model: 'Permission'
+        }
+      });
+    } else {
+      user.lastLogin = new Date();
+      await user.save();
+    }
+
+    //convertir permisos a objetos planos para facilitar la comparación
+    const permissions = user.role.permissions.map(perm => ({
+      name: perm.name,
+      resource: perm.resource,
+      action: perm.action
+    }));
+
+    res.json({
+      user: {
+        id: user._id,
+        firebaseUid: user.firebaseUid,
+        email: user.email,
+        name: user.name,
+        role: user.role.name,
+        permissions: permissions
+      }
+    });
+  } catch (error) {
+    //mejorar el mensaje de error para debugging
+    const errorMessage = error.message || 'Invalid token';
+    console.error('Sync user error:', {
+      message: errorMessage,
+      code: error.code,
+      stack: error.stack
+    });
+    res.status(401);
+    throw new Error(`Authentication failed: ${errorMessage}`);
+  }
 });
 
-export const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+//obtiene el perfil del usuario actual
+export const getProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id)
+    .populate({
+      path: 'role',
+      populate: {
+        path: 'permissions',
+        model: 'Permission'
+      }
+    })
+    .select('-__v');
 
-  const user = await User.findOne({ email });
-  if (!user) {
-    res.status(401);
-    throw new Error('Invalid credentials');
-  }
-
-  const isMatch = await user.comparePassword(password);
-  if (!isMatch) {
-    res.status(401);
-    throw new Error('Invalid credentials');
-  }
-
-  const token = signToken(user);
-  res.json({ token, user: { id: user._id, email: user.email, role: user.role, name: user.name } });
+  res.json({
+    user: {
+      id: user._id,
+      email: user.email,
+      name: user.name,
+      role: user.role.name,
+      permissions: user.role.permissions
+    }
+  });
 });
-

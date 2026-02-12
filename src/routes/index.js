@@ -4,6 +4,7 @@ import ingredientRoutes from './ingredientRoutes.js';
 import dishRoutes from './dishRoutes.js';
 import manualRoutes from './manualRoutes.js';
 import dashboardRoutes from './dashboardRoutes.js';
+import inventoryRoutes from './inventoryRoutes.js';
 import webhookRoutes from './webhookRoutes.js';
 import supplierRoutes from './supplierRoutes.js';
 
@@ -14,6 +15,7 @@ apiRouter.use('/ingredients', ingredientRoutes);
 apiRouter.use('/dishes', dishRoutes);
 apiRouter.use('/manual', manualRoutes);
 apiRouter.use('/dashboard', dashboardRoutes);
+apiRouter.use('/inventory', inventoryRoutes);
 apiRouter.use('/webhook', webhookRoutes);
 apiRouter.use('/suppliers', supplierRoutes);
 

@@ -1,6 +1,6 @@
-# StockControl Backend
+# Stockearly Backend
 
-Backend service for the StockControl MVP. It implements an event-driven architecture for ingesting sales, purchases, and wastage events, mutating inventory in real time, and broadcasting changes to connected clients via WebSockets.
+Backend service for the Stockearly MVP. It implements an event-driven architecture for ingesting sales, purchases, and wastage events, mutating inventory in real time, and broadcasting changes to connected clients via WebSockets.
 
 ## Stack
 

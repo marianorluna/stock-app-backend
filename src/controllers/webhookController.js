@@ -3,11 +3,13 @@ import Sale from '../models/Sale.js';
 import eventBus, { EVENT_TYPES } from '../core/eventBus.js';
 import stockService from '../services/stockService.js';
 
+//verifica la firma del webhook del tpv (pendiente de implementar)
 const verifySignature = (req) => {
   // TODO: Implement signature verification when TPV webhook details are available.
   return true;
 };
 
+//procesa webhook del tpv, registra la venta y actualiza el inventario
 export const handlePosWebhook = asyncHandler(async (req, res) => {
   if (!verifySignature(req)) {
     res.status(401);

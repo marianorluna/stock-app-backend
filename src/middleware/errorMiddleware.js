@@ -1,5 +1,6 @@
 import logger from '../config/logger.js';
 
+//middleware que maneja errores no capturados y los formatea para la respuesta
 const errorMiddleware = (err, req, res, next) => {
   logger.error('Unhandled error', { err });
 

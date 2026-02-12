@@ -7,6 +7,7 @@ export const EVENT_TYPES = Object.freeze({
   WASTAGE_RECORDED: 'WASTAGE_RECORDED'
 });
 
+//bus de eventos personalizado que extiende eventemitter con logging
 class EventBus extends EventEmitter {
   emit(eventName, payload) {
     logger.debug(`Emitting event ${eventName}`, { payload });
