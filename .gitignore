@@ -6,5 +6,7 @@ test.env
 .idea
 .vscode
 env.example
-
-serviceAccountKeyFirebase.json
+keys/
+temp/
+output/
+scripts/pdfs/

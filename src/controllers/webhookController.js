@@ -47,4 +47,3 @@ export const handlePosWebhook = asyncHandler(async (req, res) => {
 
   res.status(202).json({ received: true });
 });
-

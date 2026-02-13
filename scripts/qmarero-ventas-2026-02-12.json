@@ -1,0 +1,10 @@
+{
+  "fecha": "2026-02-12",
+  "generadoEn": "2026-02-12T23:38:17.121Z",
+  "error": {
+    "mensaje": "API error: Signature has expired",
+    "tipo": "Error"
+  },
+  "totalTickets": 0,
+  "tickets": []
+}
