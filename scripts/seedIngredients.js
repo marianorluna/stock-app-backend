@@ -1,6 +1,6 @@
 /**
  * Script para poblar la base de datos con ingredientes.
- * Lee desde stockcontrol.ingredients.json
+ * Lee desde stockearly.ingredients.updated.json
  * Uso: node scripts/seedIngredients.js
  * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
  */
@@ -16,19 +16,6 @@ dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const deriveProductUnit = (category, purchaseUnit) => {
-  const normalizedPurchaseUnit = purchaseUnit?.trim().toLowerCase() ?? '';
-  if (normalizedPurchaseUnit.includes('kg') || normalizedPurchaseUnit.includes('g')) return 'g';
-  if (normalizedPurchaseUnit.includes('ml') || normalizedPurchaseUnit.endsWith('l') || normalizedPurchaseUnit.includes('litro')) return 'ml';
-  if (normalizedPurchaseUnit.includes('unidad') || normalizedPurchaseUnit.includes('unidades')) return 'unidad';
-  if (normalizedPurchaseUnit.includes('botella')) return 'botella';
-  if (normalizedPurchaseUnit.includes('lata')) return 'lata';
-  if (normalizedPurchaseUnit.includes('vaso')) return 'vaso';
-  if (normalizedPurchaseUnit.includes('bloque') || normalizedPurchaseUnit.includes('pechuga') || normalizedPurchaseUnit.includes('caja') || normalizedPurchaseUnit.includes('bandeja') || normalizedPurchaseUnit.includes('bolsa') || normalizedPurchaseUnit.includes('paquete')) return 'unidad';
-  if (normalizedPurchaseUnit.length === 0) return 'g';
-  return purchaseUnit.trim();
-};
-
 const seed = async () => {
   const mongoUri = process.env.NODE_ENV === 'production'
     ? (process.env.MONGODB_URI_ATLAS ?? process.env.MONGODB_URI)
@@ -39,23 +26,22 @@ const seed = async () => {
   }
 
   const rawData = JSON.parse(
-    readFileSync(join(__dirname, 'stockcontrol.ingredients.json'), 'utf-8')
+    readFileSync(join(__dirname, 'stockearly.ingredients.updated.json'), 'utf-8')
   );
 
   const ingredients = rawData.map((item) => {
-    const category = item.category ?? 'ingredient';
-    const purchaseUnit = item.purchaseUnit?.trim() ?? 'unidad';
-    const productUnit = deriveProductUnit(category, purchaseUnit);
     return {
       sku: item.sku,
       name: item.name,
-      stock: item.stockInGrams ?? item.stock ?? 0,
-      reorderPoint: item.reorderPointInGrams ?? item.reorderPoint ?? 0,
-      purchaseUnit,
-      productUnit,
-      conversionFactorToGrams: item.conversionFactorToGrams ?? 1,
-      category,
-      allergens: item.allergens ?? []
+      stock: item.stock ?? 0,
+      stockUnit: item.stockUnit ?? 'g',
+      purchaseUnit: item.purchaseUnit?.trim() ?? 'unidad',
+      conversionFactor: item.conversionFactor ?? 1,
+      conversionUnit: item.conversionUnit ?? 'g',
+      reorderPoint: item.reorderPoint ?? 0,
+      category: item.category ?? 'otros',
+      allergens: item.allergens ?? [],
+      codeArticlePurchase: item.codeArticlePurchase ?? ''
     };
   });
 

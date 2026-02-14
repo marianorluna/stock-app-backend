@@ -1,62 +1,5 @@
 import mongoose from 'mongoose';
 
-const resolveProductUnit = (category, purchaseUnit) => {
-  const normalizedPurchaseUnit = purchaseUnit?.trim().toLowerCase() ?? '';
-
-  if (normalizedPurchaseUnit.includes('kg') || normalizedPurchaseUnit.includes('g')) {
-    return 'g';
-  }
-
-  if (
-    normalizedPurchaseUnit.includes('ml') ||
-    normalizedPurchaseUnit.includes('l ') ||
-    normalizedPurchaseUnit.endsWith('l') ||
-    normalizedPurchaseUnit.includes('litro')
-  ) {
-    return 'ml';
-  }
-
-  if (normalizedPurchaseUnit.includes('unidad') || normalizedPurchaseUnit.includes('unidades')) {
-    return 'unidad';
-  }
-
-  if (normalizedPurchaseUnit.includes('botella')) {
-    return 'botella';
-  }
-  if (normalizedPurchaseUnit.includes('lata')) {
-    return 'lata';
-  }
-  if (normalizedPurchaseUnit.includes('vaso')) {
-    return 'vaso';
-  }
-  if (
-    normalizedPurchaseUnit.includes('bloque') ||
-    normalizedPurchaseUnit.includes('pechuga') ||
-    normalizedPurchaseUnit.includes('caja') ||
-    normalizedPurchaseUnit.includes('bandeja') ||
-    normalizedPurchaseUnit.includes('bolsa') ||
-    normalizedPurchaseUnit.includes('paquete')
-  ) {
-    return 'unidad';
-  }
-
-  if (normalizedPurchaseUnit.length === 0) {
-    if ((category ?? 'ingredient') === 'ingredient') {
-      return 'g';
-    }
-    return 'unidad';
-  }
-
-  return purchaseUnit.trim();
-};
-
-const ensureProductUnitField = (category, purchaseUnit, productUnit) => {
-  if (productUnit && productUnit.trim().length > 0) {
-    return productUnit.trim();
-  }
-  return resolveProductUnit(category, purchaseUnit);
-};
-
 const ingredientSchema = new mongoose.Schema(
   {
     name: {
@@ -76,25 +19,29 @@ const ingredientSchema = new mongoose.Schema(
       required: true,
       default: 0
     },
+    stockUnit: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ['u', 'g', 'ml'],
+      default: 'g'
+    },
     purchaseUnit: {
       type: String,
       required: true,
       trim: true
     },
-    productUnit: {
-      type: String,
-      required: true,
-      trim: true,
-      default() {
-        const category = this && this.category ? this.category : 'ingredient';
-        const purchaseUnit = this && this.purchaseUnit ? this.purchaseUnit : undefined;
-        return resolveProductUnit(category, purchaseUnit);
-      }
-    },
-    conversionFactorToGrams: {
+    conversionFactor: {
       type: Number,
       required: true,
       default: 1
+    },
+    conversionUnit: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ['u', 'g', 'ml'],
+      default: 'g'
     },
     reorderPoint: {
       type: Number,
@@ -103,12 +50,17 @@ const ingredientSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['ingredient', 'beverage', 'coffee'],
-      default: 'ingredient'
+      enum: ['bebida', 'cafe', 'condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'],
+      required: true
     },
     allergens: {
       type: [String],
       default: []
+    },
+    codeArticlePurchase: {
+      type: String,
+      trim: true,
+      default: ''
     }
   },
   {
@@ -116,8 +68,32 @@ const ingredientSchema = new mongoose.Schema(
   }
 );
 
+// Virtual para compatibilidad con código existente que usa productUnit
+ingredientSchema.virtual('productUnit').get(function productUnit() {
+  return this.stockUnit;
+});
+
+// Virtual para compatibilidad con código existente que usa conversionFactorToGrams
+// El conversionFactorToGrams representa cuántas unidades de stockUnit equivalen a 1 unidad de purchaseUnit en gramos
+// Para simplificar, usamos conversionFactor directamente cuando conversionUnit es 'g'
+// Para otros casos, asumimos que conversionFactor ya representa la conversión correcta
+ingredientSchema.virtual('conversionFactorToGrams').get(function conversionFactorToGrams() {
+  // Si conversionUnit es 'g', el factor ya está en gramos
+  if (this.conversionUnit === 'g') {
+    return this.conversionFactor;
+  }
+  
+  // Si conversionUnit es 'u' o 'ml', el factor representa unidades/ml por unidad de compra
+  // Para mantener compatibilidad, devolvemos el factor directamente
+  // El código que lo use deberá considerar la unidad correcta
+  return this.conversionFactor;
+});
+
 ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
-  if (this.category === 'ingredient') {
+  // Para categorías que tradicionalmente usaban 'ingredient', mostrar en gramos
+  const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'].includes(this.category);
+  
+  if (isBulkCategory && this.stockUnit === 'g') {
     return {
       amount: this.stock,
       unit: 'g',
@@ -128,30 +104,31 @@ ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
 
   return {
     amount: this.stock,
-    unit: this.productUnit ?? 'unidad',
+    unit: this.stockUnit ?? 'u',
     reorderPoint: this.reorderPoint,
-    conversionFactorToGrams: 1
+    conversionFactorToGrams: this.conversionFactorToGrams
   };
 });
 
-ingredientSchema.pre('validate', function ensureProductUnit(next) {
-  if (!this.productUnit || this.productUnit.trim().length === 0) {
-    const category = this && this.category ? this.category : 'ingredient';
-    const purchaseUnit = this && this.purchaseUnit ? this.purchaseUnit : undefined;
-    this.productUnit = resolveProductUnit(category, purchaseUnit);
+// Transform para mantener compatibilidad con código existente
+const transformForCompatibility = (doc, ret) => {
+  // Agregar campos virtuales para compatibilidad
+  ret.productUnit = ret.stockUnit || ret.productUnit;
+  
+  // Calcular conversionFactorToGrams si no está disponible como virtual
+  if (!ret.conversionFactorToGrams && ret.conversionFactor !== undefined) {
+    if (ret.conversionUnit === 'g') {
+      ret.conversionFactorToGrams = ret.conversionFactor;
+    } else {
+      ret.conversionFactorToGrams = ret.conversionFactor;
+    }
   }
-  next();
-});
-
-const transformWithProductUnit = (_, ret) => {
-  const category = ret?.category ?? 'ingredient';
-  const purchaseUnit = ret?.purchaseUnit;
-  ret.productUnit = ensureProductUnitField(category, purchaseUnit, ret.productUnit);
+  
   return ret;
 };
 
-ingredientSchema.set('toJSON', { virtuals: true, transform: transformWithProductUnit });
-ingredientSchema.set('toObject', { virtuals: true, transform: transformWithProductUnit });
+ingredientSchema.set('toJSON', { virtuals: true, transform: transformForCompatibility });
+ingredientSchema.set('toObject', { virtuals: true, transform: transformForCompatibility });
 
 const Ingredient = mongoose.model('Ingredient', ingredientSchema);
 

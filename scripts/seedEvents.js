@@ -51,6 +51,9 @@ const pickRandomSupplier = (suppliers) => {
 
 const generatePurchases = (ingredients, suppliers, count) => {
   const purchases = [];
+  // Categorías que tradicionalmente usan gramos (bulk)
+  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
+  
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(2, Math.min(4, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
@@ -59,7 +62,7 @@ const generatePurchases = (ingredients, suppliers, count) => {
       invoiceNumber: `INV-${String(i + 1).padStart(3, '0')}`,
       timestamp: new Date(Date.now() - randomBetween(0, 10) * 24 * 60 * 60 * 1000),
       items: selected.map((ingredient) => {
-        const isBulk = ingredient.category === 'ingredient';
+        const isBulk = bulkCategories.includes(ingredient.category);
         const conversion = toConversion(ingredient);
         const quantityInGrams = isBulk
           ? randomBetween(500, 3000)
@@ -81,13 +84,16 @@ const generatePurchases = (ingredients, suppliers, count) => {
 
 const generateWastage = (ingredients, count) => {
   const wastage = [];
+  // Categorías que tradicionalmente usan gramos (bulk)
+  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
+  
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(1, Math.min(3, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
     wastage.push({
       timestamp: new Date(Date.now() - randomBetween(0, 5) * 24 * 60 * 60 * 1000),
       items: selected.map((ingredient) => {
-        const isBulk = ingredient.category === 'ingredient';
+        const isBulk = bulkCategories.includes(ingredient.category);
         const conversion = toConversion(ingredient);
         const quantityInGrams = isBulk
           ? randomBetween(100, 600)

@@ -10,15 +10,15 @@ Formato: **[Tipo][Elemento][Número][Código]** = 10 caracteres
 
 | Elemento | Significado | Ejemplos |
 |----------|-------------|----------|
-| LV | Lácteo | Burrata, Yogur, Queso feta |
-| GR | Grain/Cereales | Pan, Arroz, Granola |
-| CO | Condimento | Pesto, Curry, Salsas |
-| VG | Vegetable | Tomates, Rúcula, Crudités |
-| FR | Fruit | Aguacate, Mango, Fresas |
-| PR | Proteína | Tofu, Huevo, Pollo, Salmón |
+| LV | Lacteos | Burrata, Yogur, Queso feta |
+| GR | Cereales | Pan, Arroz, Granola |
+| CO | Condimentos | Pesto, Curry, Salsas |
+| VG | Vegetales | Tomates, Rúcula, Crudités |
+| FR | Frutas | Aguacate, Mango, Fresas |
+| PR | Proteinas | Tofu, Huevo, Pollo, Salmón |
 | OT | Otros | Frutos secos, Miel, Leche almendra |
-| BE | Bebida | Refrescos, Zumos, Vinos |
-| CF | Café | Café solo, con leche |
+| BE | Bebidas | Refrescos, Zumos, Vinos |
+| CF | Cafe | Café solo, con leche |
 
 ## Platos (D)
 

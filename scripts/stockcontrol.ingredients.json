@@ -1,69 +1,678 @@
 [
-  {"sku": "ILV0010BUR", "name": "Burrata", "stockInGrams": 1000, "purchaseUnit": "unidad", "conversionFactorToGrams": 125, "reorderPointInGrams": 250, "allergens": ["lácteos"]},
-  {"sku": "IGR0010PAD", "name": "Pan de masa madre", "stockInGrams": 5000, "purchaseUnit": "unidad", "conversionFactorToGrams": 80, "reorderPointInGrams": 500, "allergens": ["gluten"]},
-  {"sku": "ICO0010PES", "name": "Pesto rosso", "stockInGrams": 2000, "purchaseUnit": "frasco", "conversionFactorToGrams": 150, "reorderPointInGrams": 300, "allergens": ["frutos secos"]},
-  {"sku": "IVG0010TOM", "name": "Tomates cherry", "stockInGrams": 3000, "purchaseUnit": "bandeja", "conversionFactorToGrams": 250, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IFR0010AGU", "name": "Aguacate", "stockInGrams": 4000, "purchaseUnit": "unidad", "conversionFactorToGrams": 200, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IFR0020LIM", "name": "Lima", "stockInGrams": 1000, "purchaseUnit": "unidad", "conversionFactorToGrams": 80, "reorderPointInGrams": 200, "allergens": []},
-  {"sku": "IFR0030FRE", "name": "Fresas", "stockInGrams": 2500, "purchaseUnit": "bandeja", "conversionFactorToGrams": 300, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IFR0040COC", "name": "Coco rallado", "stockInGrams": 1500, "purchaseUnit": "bolsa", "conversionFactorToGrams": 200, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "IFR0050FRU", "name": "Frutos rojos", "stockInGrams": 2000, "purchaseUnit": "bandeja", "conversionFactorToGrams": 250, "reorderPointInGrams": 400, "allergens": []},
-  {"sku": "IGR0020GRA", "name": "Granola de avena", "stockInGrams": 3000, "purchaseUnit": "bolsa", "conversionFactorToGrams": 500, "reorderPointInGrams": 600, "allergens": ["gluten"]},
-  {"sku": "ILV0020YOG", "name": "Yogur griego", "stockInGrams": 2000, "purchaseUnit": "vaso", "conversionFactorToGrams": 150, "reorderPointInGrams": 300, "allergens": ["lácteos"]},
-  {"sku": "IFR0060MAN", "name": "Mango", "stockInGrams": 3000, "purchaseUnit": "unidad", "conversionFactorToGrams": 300, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IFR0070PAP", "name": "Papaya", "stockInGrams": 3000, "purchaseUnit": "unidad", "conversionFactorToGrams": 400, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IPR0010TOF", "name": "Tofu", "stockInGrams": 2000, "purchaseUnit": "bloque", "conversionFactorToGrams": 250, "reorderPointInGrams": 300, "allergens": ["soja"]},
-  {"sku": "IGR0030MAI", "name": "Maíz crujiente", "stockInGrams": 1500, "purchaseUnit": "bolsa", "conversionFactorToGrams": 200, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "ICO0020COU", "name": "Coulis de granada", "stockInGrams": 1000, "purchaseUnit": "frasco", "conversionFactorToGrams": 150, "reorderPointInGrams": 200, "allergens": []},
-  {"sku": "IVG0020CRU", "name": "Crudités de verduras", "stockInGrams": 3000, "purchaseUnit": "bandeja", "conversionFactorToGrams": 500, "reorderPointInGrams": 600, "allergens": []},
-  {"sku": "IGR0040CAR", "name": "Pan carasau", "stockInGrams": 2000, "purchaseUnit": "unidad", "conversionFactorToGrams": 100, "reorderPointInGrams": 300, "allergens": ["gluten"]},
-  {"sku": "ILV0030FET", "name": "Queso feta", "stockInGrams": 1500, "purchaseUnit": "bloque", "conversionFactorToGrams": 200, "reorderPointInGrams": 300, "allergens": ["lácteos"]},
-  {"sku": "IGR0050ARR", "name": "Arroz", "stockInGrams": 5000, "purchaseUnit": "kg", "conversionFactorToGrams": 1000, "reorderPointInGrams": 1000, "allergens": []},
-  {"sku": "IPR0020SAL", "name": "Salmón ahumado", "stockInGrams": 2000, "purchaseUnit": "paquete", "conversionFactorToGrams": 150, "reorderPointInGrams": 300, "allergens": ["pescado"]},
-  {"sku": "IPR0030HUE", "name": "Huevo", "stockInGrams": 3000, "purchaseUnit": "unidad", "conversionFactorToGrams": 60, "reorderPointInGrams": 600, "allergens": ["huevo"]},
-  {"sku": "ICO0030HOL", "name": "Salsa holandesa", "stockInGrams": 1000, "purchaseUnit": "frasco", "conversionFactorToGrams": 200, "reorderPointInGrams": 300, "allergens": ["huevo", "lácteos"]},
-  {"sku": "IPR0040POL", "name": "Pollo", "stockInGrams": 4000, "purchaseUnit": "pechuga", "conversionFactorToGrams": 250, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "ICO0040CUR", "name": "Curry verde", "stockInGrams": 1000, "purchaseUnit": "frasco", "conversionFactorToGrams": 150, "reorderPointInGrams": 200, "allergens": []},
-  {"sku": "ILV0040LEC", "name": "Leche de coco", "stockInGrams": 2000, "purchaseUnit": "lata", "conversionFactorToGrams": 400, "reorderPointInGrams": 500, "allergens": []},
-  {"sku": "IOT0010FRS", "name": "Frutos secos", "stockInGrams": 2000, "purchaseUnit": "bolsa", "conversionFactorToGrams": 250, "reorderPointInGrams": 300, "allergens": ["frutos secos"]},
-  {"sku": "IVG0030RUC", "name": "Rúcula", "stockInGrams": 1000, "purchaseUnit": "bandeja", "conversionFactorToGrams": 150, "reorderPointInGrams": 200, "allergens": []},
-  {"sku": "ILV0050PAR", "name": "Parmesano", "stockInGrams": 1500, "purchaseUnit": "bloque", "conversionFactorToGrams": 200, "reorderPointInGrams": 300, "allergens": ["lácteos"]},
-  {"sku": "ICO0050VIN", "name": "Vinagre balsámico", "stockInGrams": 1000, "purchaseUnit": "botella", "conversionFactorToGrams": 500, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "ICO0060PAT", "name": "Paté de trufa", "stockInGrams": 1000, "purchaseUnit": "frasco", "conversionFactorToGrams": 150, "reorderPointInGrams": 200, "allergens": []},
-  {"sku": "ICO0070ACE", "name": "Aceite de trufa", "stockInGrams": 1000, "purchaseUnit": "botella", "conversionFactorToGrams": 500, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "IGR0060CHI", "name": "Semillas de chía", "stockInGrams": 2000, "purchaseUnit": "bolsa", "conversionFactorToGrams": 250, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "IOT0020LEA", "name": "Leche de almendra", "stockInGrams": 2000, "purchaseUnit": "botella", "conversionFactorToGrams": 1000, "reorderPointInGrams": 500, "allergens": ["frutos secos"]},
-  {"sku": "IOT0030MIE", "name": "Miel", "stockInGrams": 1500, "purchaseUnit": "frasco", "conversionFactorToGrams": 500, "reorderPointInGrams": 300, "allergens": []},
-  {"sku": "IBE0010ORN", "name": "On Lemon Naranja", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0020CSA", "name": "Cerveza Sin Alcohol", "stockInGrams": 96, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": ["gluten"], "category": "beverage"},
-  {"sku": "IBE0030CRU", "name": "Cerveza Rubia", "stockInGrams": 96, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": ["gluten"], "category": "beverage"},
-  {"sku": "IBE0040CLA", "name": "Clara", "stockInGrams": 96, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": ["gluten"], "category": "beverage"},
-  {"sku": "IBE0050ZUM", "name": "Zumo de Uva y Melocoton", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0060KOL", "name": "One Lemon Kola", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0070ZMA", "name": "Zumo de Manzana", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0080WDG", "name": "Wostok Dátil y Granada", "stockInGrams": 96, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0090VIC", "name": "Agua con gas Vichy Catalan", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0100WCA", "name": "Wostok Cardamomo", "stockInGrams": 96, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0110OLI", "name": "On Lemon Lima", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0120OMA", "name": "On Lemon Matchbata", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0130KOM", "name": "Vigo Kombucha Açaí", "stockInGrams": 80, "purchaseUnit": "caja (12u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0140MPI", "name": "Mama Pineapple", "stockInGrams": 120, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 24, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0150AGU", "name": "Agua", "stockInGrams": 200, "purchaseUnit": "caja (24u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 36, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0160BAP", "name": "Batido Postre", "stockInGrams": 80, "purchaseUnit": "caja (12u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "ICF0010CCL", "name": "Café con leche", "stockInGrams": 300, "purchaseUnit": "bolsa", "conversionFactorToGrams": 1, "reorderPointInGrams": 80, "allergens": ["lácteos"], "category": "coffee"},
-  {"sku": "ICF0020CSO", "name": "Café solo", "stockInGrams": 300, "purchaseUnit": "bolsa", "conversionFactorToGrams": 1, "reorderPointInGrams": 80, "allergens": [], "category": "coffee"},
-  {"sku": "ICF0030COR", "name": "Cortado", "stockInGrams": 300, "purchaseUnit": "bolsa", "conversionFactorToGrams": 1, "reorderPointInGrams": 80, "allergens": ["lácteos"], "category": "coffee"},
-  {"sku": "IBE0170TEI", "name": "Té e Infusiones", "stockInGrams": 200, "purchaseUnit": "caja (50u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 40, "allergens": [], "category": "beverage"},
-  {"sku": "ICF0040CCP", "name": "Cafe con Leche - Postre", "stockInGrams": 200, "purchaseUnit": "bolsa", "conversionFactorToGrams": 1, "reorderPointInGrams": 60, "allergens": ["lácteos"], "category": "coffee"},
-  {"sku": "ICF0050CPO", "name": "Cafe - Postre", "stockInGrams": 200, "purchaseUnit": "bolsa", "conversionFactorToGrams": 1, "reorderPointInGrams": 60, "allergens": [], "category": "coffee"},
-  {"sku": "IBE0180BBL", "name": "Brutal Blanc 2024 (copa)", "stockInGrams": 60, "purchaseUnit": "botella (750ml)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0190PBP", "name": "Pares Balta Blanc de Pacs 2024 (copa)", "stockInGrams": 60, "purchaseUnit": "botella (750ml)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0200B22", "name": "Brutal 2022 (copa)", "stockInGrams": 60, "purchaseUnit": "botella (750ml)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0210MPP", "name": "Mas Petit 2021 Pares Balta (copa)", "stockInGrams": 60, "purchaseUnit": "botella (750ml)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0220PBR", "name": "Pares Balta Brut (copa)", "stockInGrams": 60, "purchaseUnit": "botella (750ml)", "conversionFactorToGrams": 1, "reorderPointInGrams": 12, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0230BBT", "name": "Brutal Blanc 2024 (botella)", "stockInGrams": 24, "purchaseUnit": "caja (6u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 6, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0240PBB", "name": "Pares Balta Blanc de Pacs 2024 (botella)", "stockInGrams": 24, "purchaseUnit": "caja (6u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 6, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0250B2B", "name": "Brutal 2022 (botella)", "stockInGrams": 24, "purchaseUnit": "caja (6u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 6, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0260MPB", "name": "Mas Petit 2021 Pares Balta (botella)", "stockInGrams": 24, "purchaseUnit": "caja (6u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 6, "allergens": [], "category": "beverage"},
-  {"sku": "IBE0270PBT", "name": "Pares Balta Brut (botella)", "stockInGrams": 24, "purchaseUnit": "caja (6u)", "conversionFactorToGrams": 1, "reorderPointInGrams": 6, "allergens": [], "category": "beverage"}
+  {
+    "sku": "ILV0010BUR",
+    "name": "Burrata",
+    "stockInGrams": 1000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 125,
+    "reorderPointInGrams": 250,
+    "allergens": [
+      "dairy"
+    ]
+  },
+  {
+    "sku": "IGR0010PAD",
+    "name": "Pan de masa madre",
+    "stockInGrams": 5000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 80,
+    "reorderPointInGrams": 500,
+    "allergens": [
+      "gluten"
+    ]
+  },
+  {
+    "sku": "ICO0010PES",
+    "name": "Pesto rosso",
+    "stockInGrams": 2000,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "frutos secos"
+    ]
+  },
+  {
+    "sku": "IVG0010TOM",
+    "name": "Tomates cherry",
+    "stockInGrams": 3000,
+    "purchaseUnit": "bandeja",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0010AGU",
+    "name": "Aguacate",
+    "stockInGrams": 4000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0020LIM",
+    "name": "Lima",
+    "stockInGrams": 1000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 80,
+    "reorderPointInGrams": 200,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0030FRE",
+    "name": "Fresas",
+    "stockInGrams": 2500,
+    "purchaseUnit": "bandeja",
+    "conversionFactorToGrams": 300,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0040COC",
+    "name": "Coco rallado",
+    "stockInGrams": 1500,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0050FRU",
+    "name": "Frutos rojos",
+    "stockInGrams": 2000,
+    "purchaseUnit": "bandeja",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 400,
+    "allergens": []
+  },
+  {
+    "sku": "IGR0020GRA",
+    "name": "Granola de avena",
+    "stockInGrams": 3000,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 500,
+    "reorderPointInGrams": 600,
+    "allergens": [
+      "gluten"
+    ]
+  },
+  {
+    "sku": "ILV0020YOG",
+    "name": "Yogur griego",
+    "stockInGrams": 2000,
+    "purchaseUnit": "vaso",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "dairy"
+    ]
+  },
+  {
+    "sku": "IFR0060MAN",
+    "name": "Mango",
+    "stockInGrams": 3000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 300,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IFR0070PAP",
+    "name": "Papaya",
+    "stockInGrams": 3000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 400,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IPR0010TOF",
+    "name": "Tofu",
+    "stockInGrams": 2000,
+    "purchaseUnit": "bloque",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "soja"
+    ]
+  },
+  {
+    "sku": "IGR0030MAI",
+    "name": "Maíz crujiente",
+    "stockInGrams": 1500,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "ICO0020COU",
+    "name": "Coulis de granada",
+    "stockInGrams": 1000,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 200,
+    "allergens": []
+  },
+  {
+    "sku": "IVG0020CRU",
+    "name": "Crudités de verduras",
+    "stockInGrams": 3000,
+    "purchaseUnit": "bandeja",
+    "conversionFactorToGrams": 500,
+    "reorderPointInGrams": 600,
+    "allergens": []
+  },
+  {
+    "sku": "IGR0040CAR",
+    "name": "Pan carasau",
+    "stockInGrams": 2000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 100,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "gluten"
+    ]
+  },
+  {
+    "sku": "ILV0030FET",
+    "name": "Queso feta",
+    "stockInGrams": 1500,
+    "purchaseUnit": "bloque",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "dairy"
+    ]
+  },
+  {
+    "sku": "IGR0050ARR",
+    "name": "Arroz",
+    "stockInGrams": 5000,
+    "purchaseUnit": "kg",
+    "conversionFactorToGrams": 1000,
+    "reorderPointInGrams": 1000,
+    "allergens": []
+  },
+  {
+    "sku": "IPR0020SAL",
+    "name": "Salmón ahumado",
+    "stockInGrams": 2000,
+    "purchaseUnit": "paquete",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "pescado"
+    ]
+  },
+  {
+    "sku": "IPR0030HUE",
+    "name": "Huevo",
+    "stockInGrams": 3000,
+    "purchaseUnit": "unidad",
+    "conversionFactorToGrams": 60,
+    "reorderPointInGrams": 600,
+    "allergens": [
+      "huevo"
+    ]
+  },
+  {
+    "sku": "ICO0030HOL",
+    "name": "Salsa holandesa",
+    "stockInGrams": 1000,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "huevo",
+      "dairy"
+    ]
+  },
+  {
+    "sku": "IPR0040POL",
+    "name": "Pollo",
+    "stockInGrams": 4000,
+    "purchaseUnit": "pechuga",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "ICO0040CUR",
+    "name": "Curry verde",
+    "stockInGrams": 1000,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 200,
+    "allergens": []
+  },
+  {
+    "sku": "ILV0040LEC",
+    "name": "Leche de coco",
+    "stockInGrams": 2000,
+    "purchaseUnit": "lata",
+    "conversionFactorToGrams": 400,
+    "reorderPointInGrams": 500,
+    "allergens": []
+  },
+  {
+    "sku": "IOT0010FRS",
+    "name": "Frutos secos",
+    "stockInGrams": 2000,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "frutos secos"
+    ]
+  },
+  {
+    "sku": "IVG0030RUC",
+    "name": "Rúcula",
+    "stockInGrams": 1000,
+    "purchaseUnit": "bandeja",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 200,
+    "allergens": []
+  },
+  {
+    "sku": "ILV0050PAR",
+    "name": "Parmesano",
+    "stockInGrams": 1500,
+    "purchaseUnit": "bloque",
+    "conversionFactorToGrams": 200,
+    "reorderPointInGrams": 300,
+    "allergens": [
+      "dairy"
+    ]
+  },
+  {
+    "sku": "ICO0050VIN",
+    "name": "Vinagre balsámico",
+    "stockInGrams": 1000,
+    "purchaseUnit": "botella",
+    "conversionFactorToGrams": 500,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "ICO0060PAT",
+    "name": "Paté de trufa",
+    "stockInGrams": 1000,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 150,
+    "reorderPointInGrams": 200,
+    "allergens": []
+  },
+  {
+    "sku": "ICO0070ACE",
+    "name": "Aceite de trufa",
+    "stockInGrams": 1000,
+    "purchaseUnit": "botella",
+    "conversionFactorToGrams": 500,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "IGR0060CHI",
+    "name": "Semillas de chía",
+    "stockInGrams": 2000,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 250,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "IOT0020LEA",
+    "name": "Leche de almendra",
+    "stockInGrams": 2000,
+    "purchaseUnit": "botella",
+    "conversionFactorToGrams": 1000,
+    "reorderPointInGrams": 500,
+    "allergens": [
+      "frutos secos"
+    ]
+  },
+  {
+    "sku": "IOT0030MIE",
+    "name": "Miel",
+    "stockInGrams": 1500,
+    "purchaseUnit": "frasco",
+    "conversionFactorToGrams": 500,
+    "reorderPointInGrams": 300,
+    "allergens": []
+  },
+  {
+    "sku": "IBE0010ORN",
+    "name": "On Lemon Naranja",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0020CSA",
+    "name": "Cerveza Sin Alcohol",
+    "stockInGrams": 96,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [
+      "gluten"
+    ],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0030CRU",
+    "name": "Cerveza Rubia",
+    "stockInGrams": 96,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [
+      "gluten"
+    ],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0040CLA",
+    "name": "Clara",
+    "stockInGrams": 96,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [
+      "gluten"
+    ],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0050ZUM",
+    "name": "Zumo de Uva y Melocoton",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0060KOL",
+    "name": "One Lemon Kola",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0070ZMA",
+    "name": "Zumo de Manzana",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0080WDG",
+    "name": "Wostok Dátil y Granada",
+    "stockInGrams": 96,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0090VIC",
+    "name": "Agua con gas Vichy Catalan",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0100WCA",
+    "name": "Wostok Cardamomo",
+    "stockInGrams": 96,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0110OLI",
+    "name": "On Lemon Lima",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0120OMA",
+    "name": "On Lemon Matchbata",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0130KOM",
+    "name": "Vigo Kombucha Açaí",
+    "stockInGrams": 80,
+    "purchaseUnit": "caja (12u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0140MPI",
+    "name": "Mama Pineapple",
+    "stockInGrams": 120,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 24,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0150AGU",
+    "name": "Agua",
+    "stockInGrams": 200,
+    "purchaseUnit": "caja (24u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 36,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0160BAP",
+    "name": "Batido Postre",
+    "stockInGrams": 80,
+    "purchaseUnit": "caja (12u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "ICF0010CCL",
+    "name": "Café con leche",
+    "stockInGrams": 300,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 80,
+    "allergens": [
+      "dairy"
+    ],
+    "category": "coffee"
+  },
+  {
+    "sku": "ICF0020CSO",
+    "name": "Café solo",
+    "stockInGrams": 300,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 80,
+    "allergens": [],
+    "category": "coffee"
+  },
+  {
+    "sku": "ICF0030COR",
+    "name": "Cortado",
+    "stockInGrams": 300,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 80,
+    "allergens": [
+      "dairy"
+    ],
+    "category": "coffee"
+  },
+  {
+    "sku": "IBE0170TEI",
+    "name": "Té e Infusiones",
+    "stockInGrams": 200,
+    "purchaseUnit": "caja (50u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 40,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "ICF0040CCP",
+    "name": "Cafe con Leche - Postre",
+    "stockInGrams": 200,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 60,
+    "allergens": [
+      "dairy"
+    ],
+    "category": "coffee"
+  },
+  {
+    "sku": "ICF0050CPO",
+    "name": "Cafe - Postre",
+    "stockInGrams": 200,
+    "purchaseUnit": "bolsa",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 60,
+    "allergens": [],
+    "category": "coffee"
+  },
+  {
+    "sku": "IBE0180BBL",
+    "name": "Brutal Blanc 2024 (copa)",
+    "stockInGrams": 60,
+    "purchaseUnit": "botella (750ml)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0190PBP",
+    "name": "Pares Balta Blanc de Pacs 2024 (copa)",
+    "stockInGrams": 60,
+    "purchaseUnit": "botella (750ml)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0200B22",
+    "name": "Brutal 2022 (copa)",
+    "stockInGrams": 60,
+    "purchaseUnit": "botella (750ml)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0210MPP",
+    "name": "Mas Petit 2021 Pares Balta (copa)",
+    "stockInGrams": 60,
+    "purchaseUnit": "botella (750ml)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0220PBR",
+    "name": "Pares Balta Brut (copa)",
+    "stockInGrams": 60,
+    "purchaseUnit": "botella (750ml)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 12,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0230BBT",
+    "name": "Brutal Blanc 2024 (botella)",
+    "stockInGrams": 24,
+    "purchaseUnit": "caja (6u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 6,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0240PBB",
+    "name": "Pares Balta Blanc de Pacs 2024 (botella)",
+    "stockInGrams": 24,
+    "purchaseUnit": "caja (6u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 6,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0250B2B",
+    "name": "Brutal 2022 (botella)",
+    "stockInGrams": 24,
+    "purchaseUnit": "caja (6u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 6,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0260MPB",
+    "name": "Mas Petit 2021 Pares Balta (botella)",
+    "stockInGrams": 24,
+    "purchaseUnit": "caja (6u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 6,
+    "allergens": [],
+    "category": "beverage"
+  },
+  {
+    "sku": "IBE0270PBT",
+    "name": "Pares Balta Brut (botella)",
+    "stockInGrams": 24,
+    "purchaseUnit": "caja (6u)",
+    "conversionFactorToGrams": 1,
+    "reorderPointInGrams": 6,
+    "allergens": [],
+    "category": "beverage"
+  }
 ]

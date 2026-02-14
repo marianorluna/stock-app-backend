@@ -84,7 +84,7 @@ export const deleteManualWastage = asyncHandler(async (req, res) => {
 export const listWastagePresets = asyncHandler(async (req, res) => {
   const presets = await WastagePreset.find()
     .sort({ name: 1 })
-    .populate('ingredient', 'name category purchaseUnit productUnit conversionFactorToGrams stock')
+    .populate('ingredient', 'name category purchaseUnit stockUnit productUnit conversionFactor conversionFactorToGrams stock')
     .lean();
 
   res.json(presets);
@@ -101,7 +101,7 @@ export const createWastagePreset = asyncHandler(async (req, res) => {
 
   const populatedPreset = await preset.populate(
     'ingredient',
-    'name category purchaseUnit productUnit conversionFactorToGrams stock'
+    'name category purchaseUnit stockUnit productUnit conversionFactor conversionFactorToGrams stock'
   );
 
   res.status(201).json(populatedPreset);
@@ -145,7 +145,7 @@ export const listManualPurchases = asyncHandler(async (req, res) => {
 
   const purchases = await Purchase.find(filter)
     .sort({ timestamp: -1 })
-    .populate('items.ingredient', 'name purchaseUnit productUnit')
+    .populate('items.ingredient', 'name purchaseUnit stockUnit productUnit conversionFactor conversionFactorToGrams')
     .lean();
 
   res.json(purchases);
@@ -162,7 +162,7 @@ export const listManualWastage = asyncHandler(async (req, res) => {
 
   const wastage = await Wastage.find(filter)
     .sort({ timestamp: -1 })
-    .populate('items.ingredient', 'name purchaseUnit productUnit')
+    .populate('items.ingredient', 'name purchaseUnit stockUnit productUnit conversionFactor conversionFactorToGrams')
     .lean();
 
   res.json(wastage);
