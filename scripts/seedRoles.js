@@ -75,7 +75,6 @@ const roles = [
         name: 'operator',
         description: 'Empleado que registra mermas y ciertos módulos',
         permissions: [
-            'inventory:read',
             'ingredients:read',
             'recipes:read',
             'suppliers:read',
@@ -86,7 +85,6 @@ const roles = [
         name: 'guest',
         description: 'Visitante de solo lectura',
         permissions: [
-            'inventory:read',
             'ingredients:read',
             'recipes:read',
             'suppliers:read'

@@ -31,13 +31,29 @@ const seed = async () => {
 
   await connectDatabase(mongoUri);
 
-  const operations = suppliers.map((supplier) => ({
-    updateOne: {
-      filter: { $or: [{ sku: supplier.sku }, { name: supplier.name }] },
-      update: { $set: supplier },
-      upsert: true
-    }
-  }));
+  const operations = suppliers.map((supplier) => {
+    // Preparar los datos del proveedor, normalizando campos según el modelo
+    const supplierData = {
+      sku: supplier.sku,
+      name: supplier.name,
+      ...(supplier.nif && { nif: supplier.nif.trim() }),
+      ...(supplier.address && { address: supplier.address.trim() }),
+      ...(supplier.city && { city: supplier.city.trim() }),
+      ...(supplier.zip && { zip: supplier.zip.trim() }),
+      ...(supplier.country && { country: supplier.country.trim() }),
+      ...(supplier.tel && { tel: supplier.tel.trim() }),
+      ...(supplier.contact && { contact: supplier.contact.trim() }),
+      ...(supplier.email && { email: supplier.email.trim().toLowerCase() })
+    };
+
+    return {
+      updateOne: {
+        filter: { $or: [{ sku: supplierData.sku }, { name: supplierData.name }] },
+        update: { $set: supplierData },
+        upsert: true
+      }
+    };
+  });
 
   const result = await Supplier.bulkWrite(operations);
   console.log('Supplier seed completed', { inserted: result.upsertedCount ?? 0, modified: result.modifiedCount ?? 0 });

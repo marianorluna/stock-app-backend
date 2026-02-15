@@ -19,6 +19,14 @@ export const listSuppliers = asyncHandler(async (_req, res) => {
     return {
       sku: s.sku,
       name: s.name,
+      nif: s.nif || '',
+      address: s.address || '',
+      city: s.city || '',
+      zip: s.zip || '',
+      country: s.country || '',
+      tel: s.tel || '',
+      contact: s.contact || '',
+      email: s.email || '',
       lastPurchase: stats.lastPurchase ?? null,
       totalPurchases: stats.totalPurchases ?? 0
     };
@@ -29,15 +37,21 @@ export const listSuppliers = asyncHandler(async (_req, res) => {
 
 const decodeSupplierSku = (value) => decodeURIComponent(value).trim();
 
-//actualiza el proveedor (nombre en modelo Supplier); las compras siguen por SKU
+//actualiza el proveedor (todos los campos del modelo Supplier); las compras siguen por SKU
 export const updateSupplier = asyncHandler(async (req, res) => {
   const supplierSku = decodeSupplierSku(req.params.supplierSku);
-  const { newName, contact, email } = req.body;
+  const { name, nif, address, city, zip, country, tel, contact, email } = req.body;
 
   const update = {};
-  if (newName != null && typeof newName === 'string' && newName.trim()) update.name = newName.trim();
-  if (contact != null) update.contact = contact;
-  if (email != null) update.email = email;
+  if (name != null && typeof name === 'string' && name.trim()) update.name = name.trim();
+  if (nif != null) update.nif = typeof nif === 'string' ? nif.trim() : nif;
+  if (address != null) update.address = typeof address === 'string' ? address.trim() : address;
+  if (city != null) update.city = typeof city === 'string' ? city.trim() : city;
+  if (zip != null) update.zip = typeof zip === 'string' ? zip.trim() : zip;
+  if (country != null) update.country = typeof country === 'string' ? country.trim() : country;
+  if (tel != null) update.tel = typeof tel === 'string' ? tel.trim() : tel;
+  if (contact != null) update.contact = typeof contact === 'string' ? contact.trim() : contact;
+  if (email != null) update.email = typeof email === 'string' ? email.trim().toLowerCase() : email;
 
   if (Object.keys(update).length === 0) {
     res.status(400);

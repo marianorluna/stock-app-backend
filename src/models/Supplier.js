@@ -13,6 +13,30 @@ const supplierSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    nif: {
+      type: String,
+      trim: true
+    },
+    address: {
+      type: String,
+      trim: true
+    },
+    city: {
+      type: String,
+      trim: true
+    },
+    zip: {
+      type: String,
+      trim: true
+    },
+    country: {
+      type: String,
+      trim: true
+    },
+    tel: {
+      type: String,
+      trim: true
+    },
     contact: {
       type: String,
       trim: true
