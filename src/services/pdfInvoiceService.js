@@ -47,7 +47,7 @@ export async function processNewPdfInvoices(bucketName = null) {
 
                     // Leer el JSON procesado
                     const invoiceData = JSON.parse(fs.readFileSync(result.jsonPath, 'utf-8'));
-                    
+
                     // Establecer modo preview
                     invoiceData._previewMode = true;
 
@@ -153,10 +153,10 @@ export async function processSinglePdfInvoice(fileName, bucketName = null) {
         if (result.skipped) {
             // Ya fue procesada anteriormente
             logger.info(`⏭️  Factura ${fileName} ya fue procesada anteriormente`);
-            
+
             // Leer el JSON existente
             const invoiceData = result.data || JSON.parse(fs.readFileSync(result.jsonPath, 'utf-8'));
-            
+
             // Buscar el registro en ProcessedInvoice
             const processedInvoice = await ProcessedInvoice.findOne({
                 fileName: fileName,
@@ -176,7 +176,7 @@ export async function processSinglePdfInvoice(fileName, bucketName = null) {
 
         // Leer el JSON procesado
         const invoiceData = JSON.parse(fs.readFileSync(result.jsonPath, 'utf-8'));
-        
+
         // Establecer modo preview
         invoiceData._previewMode = true;
 
