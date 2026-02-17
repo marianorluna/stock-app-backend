@@ -55,6 +55,25 @@ export const syncUser = asyncHandler(async (req, res) => {
     } else {
       user.lastLogin = new Date();
       await user.save();
+      // Repoblar el rol después de guardar para asegurar que esté disponible
+      await user.populate({
+        path: 'role',
+        populate: {
+          path: 'permissions',
+          model: 'Permission'
+        }
+      });
+    }
+
+    // Validar que el rol existe y tiene permisos
+    if (!user.role) {
+      res.status(500);
+      throw new Error('User role not found. Please contact administrator.');
+    }
+
+    if (!user.role.permissions || !Array.isArray(user.role.permissions)) {
+      res.status(500);
+      throw new Error('User role permissions not configured. Please contact administrator.');
     }
 
     //convertir permisos a objetos planos para facilitar la comparación
@@ -98,6 +117,22 @@ export const getProfile = asyncHandler(async (req, res) => {
       }
     })
     .select('-__v');
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Validar que el rol existe y tiene permisos
+  if (!user.role) {
+    res.status(500);
+    throw new Error('User role not found. Please contact administrator.');
+  }
+
+  if (!user.role.permissions || !Array.isArray(user.role.permissions)) {
+    res.status(500);
+    throw new Error('User role permissions not configured. Please contact administrator.');
+  }
 
   res.json({
     user: {
