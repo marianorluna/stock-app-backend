@@ -33,6 +33,17 @@ const wastageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    deletedAt: {
+      type: Date
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
     metadata: {
       type: Map,
       of: mongoose.Schema.Types.Mixed

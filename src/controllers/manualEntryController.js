@@ -56,12 +56,12 @@ export const recordManualPurchase = asyncHandler(async (req, res) => {
 
 //registra una merma manual y actualiza el inventario
 export const recordManualWastage = asyncHandler(async (req, res) => {
-  const reportedBy =
-    req.user?.sub && mongoose.Types.ObjectId.isValid(req.user.sub) ? req.user.sub : undefined;
+  const createdBy =
+    req.user?.id && mongoose.Types.ObjectId.isValid(req.user.id) ? req.user.id : undefined;
 
   const wastage = await Wastage.create({
     ...req.body,
-    ...(reportedBy ? { reportedBy } : {})
+    ...(createdBy ? { reportedBy: createdBy } : {})
   });
   await stockService.applyWastageToStock(wastage);
   eventBus.emit(EVENT_TYPES.WASTAGE_RECORDED, wastage);
@@ -71,11 +71,23 @@ export const recordManualWastage = asyncHandler(async (req, res) => {
 //elimina un registro de merma y revierte el cambio en el inventario
 export const deleteManualWastage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const wastage = await Wastage.findByIdAndDelete(id);
+  const deletedByUserId =
+    req.user?.id && mongoose.Types.ObjectId.isValid(req.user.id) ? req.user.id : undefined;
+
+  const wastage = await Wastage.findById(id);
   if (!wastage) {
     res.status(404);
     throw new Error('Wastage record not found');
   }
+
+  // Marcar como eliminado (soft delete) y guardar quién eliminó
+  wastage.isDeleted = true;
+  wastage.deletedAt = new Date();
+  if (deletedByUserId) {
+    wastage.deletedBy = deletedByUserId;
+  }
+  await wastage.save();
+
   await stockService.revertWastageFromStock(wastage);
   eventBus.emit(EVENT_TYPES.WASTAGE_RECORDED, { deleted: true, _id: id });
   res.status(204).end();
@@ -160,9 +172,14 @@ export const listManualWastage = asyncHandler(async (req, res) => {
     throw error;
   }
 
+  // Excluir mermas eliminadas (soft delete)
+  filter.isDeleted = { $ne: true };
+
   const wastage = await Wastage.find(filter)
     .sort({ timestamp: -1 })
     .populate('items.ingredient', 'name purchaseUnit stockUnit productUnit conversionFactor conversionFactorToGrams')
+    .populate('reportedBy', 'name email')
+    .populate('deletedBy', 'name email')
     .lean();
 
   res.json(wastage);

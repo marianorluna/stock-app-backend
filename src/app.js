@@ -15,7 +15,7 @@ const createApp = () => {
       origin: process.env.CLIENT_ORIGIN?.split(',') ?? '*'
     })
   );
-  app.use(express.json({ limit: '1mb' }));
+  app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan('dev'));
 

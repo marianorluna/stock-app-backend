@@ -37,6 +37,57 @@ export const listSuppliers = asyncHandler(async (_req, res) => {
 
 const decodeSupplierSku = (value) => decodeURIComponent(value).trim();
 
+//crea un nuevo proveedor
+export const createSupplier = asyncHandler(async (req, res) => {
+  const { sku, name, nif, address, city, zip, country, tel, contact, email } = req.body;
+
+  if (!sku || typeof sku !== 'string' || !sku.trim()) {
+    res.status(400);
+    throw new Error('sku es requerido');
+  }
+
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    res.status(400);
+    throw new Error('name es requerido');
+  }
+
+  const supplierData = {
+    sku: sku.trim(),
+    name: name.trim(),
+    ...(nif && { nif: typeof nif === 'string' ? nif.trim() : nif }),
+    ...(address && { address: typeof address === 'string' ? address.trim() : address }),
+    ...(city && { city: typeof city === 'string' ? city.trim() : city }),
+    ...(zip && { zip: typeof zip === 'string' ? zip.trim() : zip }),
+    ...(country && { country: typeof country === 'string' ? country.trim() : country }),
+    ...(tel && { tel: typeof tel === 'string' ? tel.trim() : tel }),
+    ...(contact && { contact: typeof contact === 'string' ? contact.trim() : contact }),
+    ...(email && { email: typeof email === 'string' ? email.trim().toLowerCase() : email })
+  };
+
+  const existingSupplier = await Supplier.findOne({ sku: supplierData.sku });
+  if (existingSupplier) {
+    res.status(409);
+    throw new Error('Ya existe un proveedor con ese SKU');
+  }
+
+  const supplier = await Supplier.create(supplierData);
+
+  res.status(201).json({
+    sku: supplier.sku,
+    name: supplier.name,
+    nif: supplier.nif || '',
+    address: supplier.address || '',
+    city: supplier.city || '',
+    zip: supplier.zip || '',
+    country: supplier.country || '',
+    tel: supplier.tel || '',
+    contact: supplier.contact || '',
+    email: supplier.email || '',
+    totalPurchases: 0,
+    lastPurchase: null
+  });
+});
+
 //actualiza el proveedor (todos los campos del modelo Supplier); las compras siguen por SKU
 export const updateSupplier = asyncHandler(async (req, res) => {
   const supplierSku = decodeSupplierSku(req.params.supplierSku);

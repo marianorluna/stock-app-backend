@@ -20,6 +20,7 @@ const permissions = [
 
     //Inventory
     { name: 'inventory:read', resource: 'inventory', action: 'read', description: 'Ver inventario' },
+    { name: 'inventory:create', resource: 'inventory', action: 'create', description: 'Crear/actualizar inventario' },
 
     //Ingredients
     { name: 'ingredients:read', resource: 'ingredients', action: 'read', description: 'Ver ingredientes' },
@@ -42,6 +43,7 @@ const permissions = [
     //Manual Entry
     { name: 'manual:read', resource: 'manual', action: 'read', description: 'Ver entradas manuales' },
     { name: 'manual:create', resource: 'manual', action: 'create', description: 'Crear entradas manuales' },
+    { name: 'manual:delete', resource: 'manual', action: 'delete', description: 'Eliminar entradas manuales' },
 
     //Users & Roles
     { name: 'users:read', resource: 'users', action: 'read', description: 'Ver usuarios' },
@@ -63,11 +65,11 @@ const roles = [
         description: 'Dueño con control de acceso y gestión',
         permissions: [
             'dashboard:read',
-            'inventory:read',
+            'inventory:read', 'inventory:create',
             'ingredients:read', 'ingredients:create', 'ingredients:update', 'ingredients:delete',
             'recipes:read', 'recipes:create', 'recipes:update', 'recipes:delete',
             'suppliers:read', 'suppliers:create', 'suppliers:update', 'suppliers:delete',
-            'manual:read', 'manual:create',
+            'manual:read', 'manual:create', 'manual:delete',
             'users:read', 'users:create', 'users:update'
         ]
     },
@@ -78,7 +80,7 @@ const roles = [
             'ingredients:read',
             'recipes:read',
             'suppliers:read',
-            'manual:read', 'manual:create'
+            'manual:read', 'manual:create', 'manual:delete'
         ]
     },
     {

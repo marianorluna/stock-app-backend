@@ -80,7 +80,22 @@ export const authorize = (...allowedRoles) => {
       return next();
     }
 
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
+    // Si el primer argumento es un array, usarlo directamente; si no, usar todos los argumentos
+    const roles = Array.isArray(allowedRoles[0]) ? allowedRoles[0] : allowedRoles;
+
+    if (!req.user) {
+      logger.warn('Authorization failed: No user in request', { allowedRoles: roles });
+      return res.status(401).json({
+        message: 'Unauthorized: User not authenticated'
+      });
+    }
+
+    if (!roles.includes(req.user.role)) {
+      logger.warn('Authorization failed: Insufficient role', {
+        userId: req.user.id,
+        userRole: req.user.role,
+        allowedRoles: roles
+      });
       return res.status(403).json({
         message: 'Forbidden: Insufficient permissions'
       });
