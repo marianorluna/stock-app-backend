@@ -1,50 +1,461 @@
 [
-  {"sku": "DDK0010ORN", "name": "On Lemon Naranja", "description": "Refresco natural y vegano con jugo de naranja.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0160ORN"}]},
-  {"sku": "DDK0020CSA", "name": "Cerveza Sin Alcohol", "description": "IPA sin alcohol ni gluten con perfil lupulado.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0090CSA"}]},
-  {"sku": "DDK0030CRU", "name": "Cerveza Rubia", "description": "Cerveza rubia sin gluten, ligera y refrescante.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0080CRU"}]},
-  {"sku": "DDK0040CLA", "name": "Clara", "description": "Mezcla de cerveza rubia con limonada de limon y mandarina.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0100CLA"}]},
-  {"sku": "DDK0050ZUM", "name": "Zumo de Uva y Melocoton", "description": "Zumo bio de uva y melocoton.", "price": 2.0, "type": "drink", "recipe": [{"sku": "IBE0270ZUM"}]},
-  {"sku": "DDK0060KOL", "name": "One Lemon Kola", "description": "Refresco natural sin conservantes con nuez de kola.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0170KOL"}]},
-  {"sku": "DDK0070ZMA", "name": "Zumo de Manzana", "description": "Zumo de manzana 100% bio.", "price": 2.0, "type": "drink", "recipe": [{"sku": "IBE0260ZMA"}]},
-  {"sku": "DDK0080WDG", "name": "Wostok Datil y Granada", "description": "Refresco Wostok de datil y granada.", "price": 3.8, "type": "drink", "recipe": [{"sku": "IBE0250WDG"}]},
-  {"sku": "DDK0090VIC", "name": "Agua con gas Vichy Catalan", "description": "Agua mineral con gas Vichy Catalan.", "price": 2.55, "type": "drink", "recipe": [{"sku": "IBE0020VIC"}]},
-  {"sku": "DDK0100WCA", "name": "Wostok Cardamomo", "description": "Refresco Wostok con cardamomo.", "price": 3.8, "type": "drink", "recipe": [{"sku": "IBE0240WCA"}]},
-  {"sku": "DDK0110OLI", "name": "On Lemon Lima", "description": "Refresco natural sabor lima.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0140OLI"}]},
-  {"sku": "DDK0120OMA", "name": "On Lemon Matchbata", "description": "Refresco natural On Lemon Matchbata.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0150OMA"}]},
-  {"sku": "DDK0130KOM", "name": "Vigo Kombucha Acai", "description": "Kombucha Vigo sabor acai.", "price": 4.2, "type": "drink", "recipe": [{"sku": "IBE0230KOM"}]},
-  {"sku": "DDK0140MPI", "name": "Mama Pineapple", "description": "Refresco de pina natural.", "price": 3.5, "type": "drink", "recipe": [{"sku": "IBE0110MPI"}]},
-  {"sku": "DDK0150AGU", "name": "Agua", "description": "Agua embotellada.", "price": 2.0, "type": "drink", "recipe": [{"sku": "IBE0010AGU"}]},
-  {"sku": "DCL0010TOM", "name": "Tostada Mediterranea", "description": "Burrata sobre pan de masa madre con pesto rosso y tomates cherry.", "price": 10.0, "type": "dish", "recipe": [{"sku": "ILV0010BUR", "grams": 125}, {"sku": "IGR0050PAD", "grams": 80}, {"sku": "ICO0050PES", "grams": 30}, {"sku": "IVG0180TOM", "grams": 60}, {"sku": "IOT0040FRS", "grams": 10}]},
-  {"sku": "DCL0020EXH", "name": "Extra Huevo", "description": "Suplemento de huevo.", "price": 1.85, "type": "dish", "recipe": [{"sku": "IPR0040HUE", "grams": 60}]},
-  {"sku": "DCL0030CAG", "name": "Clasica de Aguacate", "description": "Pan de masa madre con aguacate fresco y lima.", "price": 7.9, "type": "dish", "recipe": [{"sku": "IGR0050PAD", "grams": 80}, {"sku": "IFR0010AGU", "grams": 120}, {"sku": "IFR0050LIM", "grams": 10}]},
-  {"sku": "DDS0010APC", "name": "Air Pancake", "description": "Pancakes aireados con sopa de fresas, coco y frutos rojos.", "price": 10.0, "type": "dessert", "recipe": [{"sku": "IPR0040HUE", "grams": 60}, {"sku": "IFR0040FRE", "grams": 80}, {"sku": "IFR0080FRU", "grams": 70}, {"sku": "IFR0030COC", "grams": 20}, {"sku": "IOT0050MIE", "grams": 15}]},
-  {"sku": "DDS0020BYG", "name": "Bowl de Yogur y Granola", "description": "Granola de avena con yogur griego, frutos rojos y coco.", "price": 6.5, "type": "dessert", "recipe": [{"sku": "ILV0070YOG", "grams": 150}, {"sku": "IGR0020GRA", "grams": 80}, {"sku": "IFR0080FRU", "grams": 60}, {"sku": "IFR0030COC", "grams": 15}, {"sku": "IOT0050MIE", "grams": 10}]},
-  {"sku": "DCL0040CVE", "name": "Ceviche Veggie Tropical", "description": "Ceviche de mango, papaya, aguacate, tofu y maiz crujiente.", "price": 12.5, "type": "dish", "recipe": [{"sku": "IFR0060MAN", "grams": 90}, {"sku": "IFR0070PAP", "grams": 90}, {"sku": "IFR0010AGU", "grams": 80}, {"sku": "IPR0030TOF", "grams": 70}, {"sku": "IGR0030MAI", "grams": 30}, {"sku": "IVG0090CRU", "grams": 60}]},
-  {"sku": "DCL0050HUG", "name": "Hummus Granada", "description": "Hummus con coulis de granada, crudites y pan carasau.", "price": 8.0, "type": "dish", "recipe": [{"sku": "ICO0020COU", "grams": 25}, {"sku": "IVG0090CRU", "grams": 90}, {"sku": "IGR0040CAR", "grams": 30}, {"sku": "IOT0040FRS", "grams": 15}]},
-  {"sku": "DHT0010BEA", "name": "Berenjena Asada con Especias Arabes", "description": "Berenjena asada con especias arabes, queso feta y pan carasau.", "price": 8.0, "type": "dish", "recipe": []},
-  {"sku": "DSL0010BHU", "name": "Bowl de la Huerta", "description": "Arroz con aguacate, verduras frescas y crudites de temporada.", "price": 10.0, "type": "dish", "recipe": [{"sku": "IGR0010ARR", "grams": 120}, {"sku": "IFR0010AGU", "grams": 80}, {"sku": "IVG0090CRU", "grams": 120}, {"sku": "IVG0170RUC", "grams": 20}]},
-  {"sku": "DSL0020BMN", "name": "Bowl del Mar del Norte", "description": "Arroz con salmon ahumado, mango, papaya y vegetales crujientes.", "price": 12.5, "type": "dish", "recipe": [{"sku": "IGR0010ARR", "grams": 120}, {"sku": "IPR0020SAL", "grams": 70}, {"sku": "IFR0060MAN", "grams": 60}, {"sku": "IFR0070PAP", "grams": 60}, {"sku": "IVG0090CRU", "grams": 80}]},
-  {"sku": "DHT0020BDC", "name": "Benedict de la Casa", "description": "Pan de masa madre, huevo a baja temperatura, aguacate y salmon con holandesa ligera.", "price": 13.9, "type": "dish", "recipe": [{"sku": "IGR0050PAD", "grams": 80}, {"sku": "IPR0040HUE", "grams": 120}, {"sku": "IPR0020SAL", "grams": 60}, {"sku": "ICO0060HOL", "grams": 40}, {"sku": "IFR0010AGU", "grams": 50}]},
-  {"sku": "DHT0030TCP", "name": "Tacos de Cochinita Pibil (3 uds)", "description": "Cochinita pibil en tortilla de maiz con cebolla encurtida y cilantro.", "price": 12.0, "type": "dish", "recipe": []},
-  {"sku": "DHT0040CTC", "name": "Curry Thai de Coco", "description": "Arroz con pollo al curry verde, vegetales y frutos secos.", "price": 12.5, "type": "dish", "recipe": [{"sku": "IGR0010ARR", "grams": 120}, {"sku": "IPR0010POL", "grams": 150}, {"sku": "ICO0030CUR", "grams": 35}, {"sku": "ILV0020LEC", "grams": 120}, {"sku": "IOT0040FRS", "grams": 20}]},
-  {"sku": "DHT0050TAB", "name": "Tagliata Burger", "description": "Burger ecologica con rucula, parmesano y balsamico.", "price": 12.5, "type": "dish", "recipe": [{"sku": "IGR0050PAD", "grams": 80}, {"sku": "IVG0170RUC", "grams": 25}, {"sku": "ILV0050PAR", "grams": 25}, {"sku": "ICO0070VIN", "grams": 10}]},
-  {"sku": "DHT0060HTR", "name": "Huevos Trufados", "description": "Huevos a baja temperatura con holandesa, pate y aceite de trufa.", "price": 11.0, "type": "dish", "recipe": [{"sku": "IPR0040HUE", "grams": 120}, {"sku": "ICO0060HOL", "grams": 40}, {"sku": "ICO0040PAT", "grams": 20}, {"sku": "ICO0010ACE", "grams": 5}, {"sku": "IGR0050PAD", "grams": 60}]},
-  {"sku": "DDS0030PCT", "name": "Puding de Chia Tropical", "description": "Semillas de chia con leche de almendra, mango, papaya y coco.", "price": 5.5, "type": "dessert", "recipe": [{"sku": "IGR0060CHI", "grams": 50}, {"sku": "IOT0020LEA", "grams": 150}, {"sku": "IFR0060MAN", "grams": 60}, {"sku": "IFR0070PAP", "grams": 60}, {"sku": "IFR0030COC", "grams": 15}, {"sku": "IOT0050MIE", "grams": 15}]},
-  {"sku": "DDK0160BAP", "name": "Batido Postre", "description": "Batido dulce para acompanarlo con postre.", "price": 4.5, "type": "drink", "recipe": [{"sku": "IBE0030BAP"}]},
-  {"sku": "DDK0170CCP", "name": "Cafe con Leche - Postre", "description": "Cafe con leche pensado para postre.", "price": 4.5, "type": "drink", "recipe": [{"sku": "ICF0030CCP"}]},
-  {"sku": "DDK0180CPO", "name": "Cafe - Postre", "description": "Cafe espresso para acompanamiento de postre.", "price": 4.0, "type": "drink", "recipe": [{"sku": "ICF0010CPO"}]},
-  {"sku": "DDK0190BBL", "name": "Brutal Blanc 2024 (copa)", "description": "Vino blanco Brutal Blanc servido por copa.", "price": 4.5, "type": "drink", "recipe": [{"sku": "IBE0070BBL"}]},
-  {"sku": "DDK0200PBP", "name": "Pares Balta Blanc de Pacs 2024 (copa)", "description": "Vino blanco Pares Balta Blanc de Pacs servido por copa.", "price": 4.2, "type": "drink", "recipe": [{"sku": "IBE0190PBP"}]},
-  {"sku": "DDK0210B22", "name": "Brutal 2022 (copa)", "description": "Vino tinto Brutal 2022 servido por copa.", "price": 4.5, "type": "drink", "recipe": [{"sku": "IBE0050B22"}]},
-  {"sku": "DDK0220MPP", "name": "Mas Petit 2021 Pares Balta (copa)", "description": "Vino tinto Mas Petit 2021 Pares Balta servido por copa.", "price": 4.5, "type": "drink", "recipe": [{"sku": "IBE0130MPP"}]},
-  {"sku": "DDK0230PBR", "name": "Pares Balta Brut (copa)", "description": "Cava ecologico Pares Balta Brut servido por copa.", "price": 5.0, "type": "drink", "recipe": [{"sku": "IBE0210PBR"}]},
-  {"sku": "DDK0240BBT", "name": "Brutal Blanc 2024 (botella)", "description": "Blend de xarello y macabeo.", "price": 18.0, "type": "drink", "recipe": [{"sku": "IBE0060BBT"}]},
-  {"sku": "DDK0250PBB", "name": "Pares Balta Blanc de Pacs 2024 (botella)", "description": "46% Parellada, 34% Macabeo, 20% Xarello.", "price": 17.0, "type": "drink", "recipe": [{"sku": "IBE0180PBB"}]},
-  {"sku": "DDK0260B2B", "name": "Brutal 2022 (botella)", "description": "Tempranillo, cabernet sauvignon y garnacha.", "price": 20.0, "type": "drink", "recipe": [{"sku": "IBE0040B2B"}]},
-  {"sku": "DDK0270MPB", "name": "Mas Petit 2021 Pares Balta (botella)", "description": "Cabernet sauvignon y garnacha.", "price": 19.0, "type": "drink", "recipe": [{"sku": "IBE0120MPB"}]},
-  {"sku": "DDK0280PBT", "name": "Pares Balta Brut (botella)", "description": "Macabeo, xarello y parellada.", "price": 21.0, "type": "drink", "recipe": [{"sku": "IBE0200PBT"}]},
-  {"sku": "DDK0290CSO", "name": "Cafe Solo", "description": "Cafe espresso solo.", "price": 1.5, "type": "drink", "recipe": [{"sku": "ICF0040CSO"}]},
-  {"sku": "DDK0300CCL", "name": "Cafe con Leche", "description": "Cafe con leche.", "price": 2.0, "type": "drink", "recipe": [{"sku": "ICF0020CCL"}]},
-  {"sku": "DDK0310COR", "name": "Cortado", "description": "Cafe cortado.", "price": 1.8, "type": "drink", "recipe": [{"sku": "ICF0050COR"}]},
-  {"sku": "DDK0320TEI", "name": "Te e Infusiones", "description": "Variedad de tes e infusiones.", "price": 2.25, "type": "drink", "recipe": [{"sku": "IBE0220TEI"}]}
+  {
+    "sku": "DDK0010ORN",
+    "name": "On Lemon Naranja",
+    "description": "Refresco natural y vegano con jugo de naranja.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0160ORN" }]
+  },
+  {
+    "sku": "DDK0020CSA",
+    "name": "Cerveza Sin Alcohol",
+    "description": "IPA sin alcohol ni gluten con perfil lupulado.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0090CSA" }]
+  },
+  {
+    "sku": "DDK0030CRU",
+    "name": "Cerveza Rubia",
+    "description": "Cerveza rubia sin gluten, ligera y refrescante.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0080CRU" }]
+  },
+  {
+    "sku": "DDK0040CLA",
+    "name": "Clara",
+    "description": "Mezcla de cerveza rubia con limonada de limon y mandarina.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0100CLA" }]
+  },
+  {
+    "sku": "DDK0050ZUM",
+    "name": "Zumo de Uva y Melocoton",
+    "description": "Zumo bio de uva y melocoton.",
+    "price": 2.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0270ZUM" }]
+  },
+  {
+    "sku": "DDK0060KOL",
+    "name": "One Lemon Kola",
+    "description": "Refresco natural sin conservantes con nuez de kola.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0170KOL" }]
+  },
+  {
+    "sku": "DDK0070ZMA",
+    "name": "Zumo de Manzana",
+    "description": "Zumo de manzana 100% bio.",
+    "price": 2.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0260ZMA" }]
+  },
+  {
+    "sku": "DDK0080WDG",
+    "name": "Wostok Datil y Granada",
+    "description": "Refresco Wostok de datil y granada.",
+    "price": 3.8,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0250WDG" }]
+  },
+  {
+    "sku": "DDK0090VIC",
+    "name": "Agua con gas Vichy Catalan",
+    "description": "Agua mineral con gas Vichy Catalan.",
+    "price": 2.55,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0020VIC" }]
+  },
+  {
+    "sku": "DDK0100WCA",
+    "name": "Wostok Cardamomo",
+    "description": "Refresco Wostok con cardamomo.",
+    "price": 3.8,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0240WCA" }]
+  },
+  {
+    "sku": "DDK0110OLI",
+    "name": "On Lemon Lima",
+    "description": "Refresco natural sabor lima.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0140OLI" }]
+  },
+  {
+    "sku": "DDK0120OMA",
+    "name": "On Lemon Matchbata",
+    "description": "Refresco natural On Lemon Matchbata.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0150OMA" }]
+  },
+  {
+    "sku": "DDK0130KOM",
+    "name": "Vigo Kombucha Acai",
+    "description": "Kombucha Vigo sabor acai.",
+    "price": 4.2,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0230KOM" }]
+  },
+  {
+    "sku": "DDK0140MPI",
+    "name": "Mama Pineapple",
+    "description": "Refresco de pina natural.",
+    "price": 3.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0110MPI" }]
+  },
+  {
+    "sku": "DDK0150AGU",
+    "name": "Agua",
+    "description": "Agua embotellada.",
+    "price": 2.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0010AGU" }]
+  },
+  {
+    "sku": "DCL0010TOM",
+    "name": "Tostada Mediterranea",
+    "description": "Burrata sobre pan de masa madre con pesto rosso y tomates cherry.",
+    "price": 10.0,
+    "type": "dish",
+    "recipe": [
+      { "sku": "ILV0010BUR", "grams": 125 },
+      { "sku": "IGR0050PAD", "grams": 80 },
+      { "sku": "ICO0050PES", "grams": 30 },
+      { "sku": "IVG0180TOM", "grams": 60 },
+      { "sku": "IOT0040FRS", "grams": 10 }
+    ]
+  },
+  {
+    "sku": "DCL0020EXH",
+    "name": "Extra Huevo",
+    "description": "Suplemento de huevo.",
+    "price": 1.85,
+    "type": "dish",
+    "recipe": [{ "sku": "IPR0040HUE", "grams": 60 }]
+  },
+  {
+    "sku": "DCL0030CAG",
+    "name": "Clasica de Aguacate",
+    "description": "Pan de masa madre con aguacate fresco y lima.",
+    "price": 7.9,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0050PAD", "grams": 80 },
+      { "sku": "IFR0010AGU", "grams": 120 },
+      { "sku": "IFR0050LIM", "grams": 10 }
+    ]
+  },
+  {
+    "sku": "DDS0010APC",
+    "name": "Air Pancake",
+    "description": "Pancakes aireados con sopa de fresas, coco y frutos rojos.",
+    "price": 10.0,
+    "type": "dessert",
+    "recipe": [
+      { "sku": "IPR0040HUE", "grams": 60 },
+      { "sku": "IFR0040FRE", "grams": 80 },
+      { "sku": "IFR0080FRU", "grams": 70 },
+      { "sku": "IFR0030COC", "grams": 20 },
+      { "sku": "IOT0050MIE", "grams": 15 }
+    ]
+  },
+  {
+    "sku": "DDS0020BYG",
+    "name": "Bowl de Yogur y Granola",
+    "description": "Granola de avena con yogur griego, frutos rojos y coco.",
+    "price": 6.5,
+    "type": "dessert",
+    "recipe": [
+      { "sku": "ILV0070YOG", "grams": 150 },
+      { "sku": "IGR0020GRA", "grams": 80 },
+      { "sku": "IFR0080FRU", "grams": 60 },
+      { "sku": "IFR0030COC", "grams": 15 },
+      { "sku": "IOT0050MIE", "grams": 10 }
+    ]
+  },
+  {
+    "sku": "DCL0040CVE",
+    "name": "Ceviche Veggie Tropical",
+    "description": "Ceviche de mango, papaya, aguacate, tofu y maiz crujiente.",
+    "price": 12.5,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IFR0060MAN", "grams": 90 },
+      { "sku": "IFR0070PAP", "grams": 90 },
+      { "sku": "IFR0010AGU", "grams": 80 },
+      { "sku": "IPR0030TOF", "grams": 70 },
+      { "sku": "IGR0030MAI", "grams": 30 },
+      { "sku": "IVG0090CRU", "grams": 60 }
+    ]
+  },
+  {
+    "sku": "DCL0050HUG",
+    "name": "Hummus Granada",
+    "description": "Hummus con coulis de granada, crudites y pan carasau.",
+    "price": 8.0,
+    "type": "dish",
+    "recipe": [
+      { "sku": "ICO0020COU", "grams": 25 },
+      { "sku": "IVG0090CRU", "grams": 90 },
+      { "sku": "IGR0040CAR", "grams": 30 },
+      { "sku": "IOT0040FRS", "grams": 15 }
+    ]
+  },
+  {
+    "sku": "DHT0010BEA",
+    "name": "Berenjena Asada con Especias Arabes",
+    "description": "Berenjena asada con especias arabes, queso feta y pan carasau.",
+    "price": 8.0,
+    "type": "dish",
+    "recipe": []
+  },
+  {
+    "sku": "DSL0010BHU",
+    "name": "Bowl de la Huerta",
+    "description": "Arroz con aguacate, verduras frescas y crudites de temporada.",
+    "price": 10.0,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0010ARR", "grams": 120 },
+      { "sku": "IFR0010AGU", "grams": 80 },
+      { "sku": "IVG0090CRU", "grams": 120 },
+      { "sku": "IVG0170RUC", "grams": 20 }
+    ]
+  },
+  {
+    "sku": "DSL0020BMN",
+    "name": "Bowl del Mar del Norte",
+    "description": "Arroz con salmon ahumado, mango, papaya y vegetales crujientes.",
+    "price": 12.5,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0010ARR", "grams": 120 },
+      { "sku": "IPR0020SAL", "grams": 70 },
+      { "sku": "IFR0060MAN", "grams": 60 },
+      { "sku": "IFR0070PAP", "grams": 60 },
+      { "sku": "IVG0090CRU", "grams": 80 }
+    ]
+  },
+  {
+    "sku": "DHT0020BDC",
+    "name": "Benedict de la Casa",
+    "description": "Pan de masa madre, huevo a baja temperatura, aguacate y salmon con holandesa ligera.",
+    "price": 13.9,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0050PAD", "grams": 80 },
+      { "sku": "IPR0040HUE", "grams": 120 },
+      { "sku": "IPR0020SAL", "grams": 60 },
+      { "sku": "ICO0060HOL", "grams": 40 },
+      { "sku": "IFR0010AGU", "grams": 50 }
+    ]
+  },
+  {
+    "sku": "DHT0030TCP",
+    "name": "Tacos de Cochinita Pibil (3 uds)",
+    "description": "Cochinita pibil en tortilla de maiz con cebolla encurtida y cilantro.",
+    "price": 12.0,
+    "type": "dish",
+    "recipe": []
+  },
+  {
+    "sku": "DHT0040CTC",
+    "name": "Curry Thai de Coco",
+    "description": "Arroz con pollo al curry verde, vegetales y frutos secos.",
+    "price": 12.5,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0010ARR", "grams": 120 },
+      { "sku": "IPR0010POL", "grams": 150 },
+      { "sku": "ICO0030CUR", "grams": 35 },
+      { "sku": "ILV0020LEC", "grams": 120 },
+      { "sku": "IOT0040FRS", "grams": 20 }
+    ]
+  },
+  {
+    "sku": "DHT0050TAB",
+    "name": "Tagliata Burger",
+    "description": "Burger ecologica con rucula, parmesano y balsamico.",
+    "price": 12.5,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IGR0050PAD", "grams": 80 },
+      { "sku": "IVG0170RUC", "grams": 25 },
+      { "sku": "ILV0050PAR", "grams": 25 },
+      { "sku": "ICO0070VIN", "grams": 10 }
+    ]
+  },
+  {
+    "sku": "DHT0060HTR",
+    "name": "Huevos Trufados",
+    "description": "Huevos a baja temperatura con holandesa, pate y aceite de trufa.",
+    "price": 11.0,
+    "type": "dish",
+    "recipe": [
+      { "sku": "IPR0040HUE", "grams": 120 },
+      { "sku": "ICO0060HOL", "grams": 40 },
+      { "sku": "ICO0040PAT", "grams": 20 },
+      { "sku": "ICO0010ACE", "grams": 5 },
+      { "sku": "IGR0050PAD", "grams": 60 }
+    ]
+  },
+  {
+    "sku": "DDS0030PCT",
+    "name": "Puding de Chia Tropical",
+    "description": "Semillas de chia con leche de almendra, mango, papaya y coco.",
+    "price": 5.5,
+    "type": "dessert",
+    "recipe": [
+      { "sku": "IGR0060CHI", "grams": 50 },
+      { "sku": "IOT0020LEA", "grams": 150 },
+      { "sku": "IFR0060MAN", "grams": 60 },
+      { "sku": "IFR0070PAP", "grams": 60 },
+      { "sku": "IFR0030COC", "grams": 15 },
+      { "sku": "IOT0050MIE", "grams": 15 }
+    ]
+  },
+  {
+    "sku": "DDK0160BAP",
+    "name": "Batido Postre",
+    "description": "Batido dulce para acompanarlo con postre.",
+    "price": 4.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0030BAP" }]
+  },
+  {
+    "sku": "DDK0170CCP",
+    "name": "Cafe con Leche - Postre",
+    "description": "Cafe con leche pensado para postre.",
+    "price": 4.5,
+    "type": "drink",
+    "recipe": [{ "sku": "ICF0030CCP" }]
+  },
+  {
+    "sku": "DDK0180CPO",
+    "name": "Cafe - Postre",
+    "description": "Cafe espresso para acompanamiento de postre.",
+    "price": 4.0,
+    "type": "drink",
+    "recipe": [{ "sku": "ICF0010CPO" }]
+  },
+  {
+    "sku": "DDK0190BBL",
+    "name": "Brutal Blanc 2024 (copa)",
+    "description": "Vino blanco Brutal Blanc servido por copa.",
+    "price": 4.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0070BBL" }]
+  },
+  {
+    "sku": "DDK0200PBP",
+    "name": "Pares Balta Blanc de Pacs 2024 (copa)",
+    "description": "Vino blanco Pares Balta Blanc de Pacs servido por copa.",
+    "price": 4.2,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0190PBP" }]
+  },
+  {
+    "sku": "DDK0210B22",
+    "name": "Brutal 2022 (copa)",
+    "description": "Vino tinto Brutal 2022 servido por copa.",
+    "price": 4.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0050B22" }]
+  },
+  {
+    "sku": "DDK0220MPP",
+    "name": "Mas Petit 2021 Pares Balta (copa)",
+    "description": "Vino tinto Mas Petit 2021 Pares Balta servido por copa.",
+    "price": 4.5,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0130MPP" }]
+  },
+  {
+    "sku": "DDK0230PBR",
+    "name": "Pares Balta Brut (copa)",
+    "description": "Cava ecologico Pares Balta Brut servido por copa.",
+    "price": 5.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0210PBR" }]
+  },
+  {
+    "sku": "DDK0240BBT",
+    "name": "Brutal Blanc 2024 (botella)",
+    "description": "Blend de xarello y macabeo.",
+    "price": 18.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0060BBT" }]
+  },
+  {
+    "sku": "DDK0250PBB",
+    "name": "Pares Balta Blanc de Pacs 2024 (botella)",
+    "description": "46% Parellada, 34% Macabeo, 20% Xarello.",
+    "price": 17.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0180PBB" }]
+  },
+  {
+    "sku": "DDK0260B2B",
+    "name": "Brutal 2022 (botella)",
+    "description": "Tempranillo, cabernet sauvignon y garnacha.",
+    "price": 20.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0040B2B" }]
+  },
+  {
+    "sku": "DDK0270MPB",
+    "name": "Mas Petit 2021 Pares Balta (botella)",
+    "description": "Cabernet sauvignon y garnacha.",
+    "price": 19.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0120MPB" }]
+  },
+  {
+    "sku": "DDK0280PBT",
+    "name": "Pares Balta Brut (botella)",
+    "description": "Macabeo, xarello y parellada.",
+    "price": 21.0,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0200PBT" }]
+  },
+  {
+    "sku": "DDK0290CSO",
+    "name": "Cafe Solo",
+    "description": "Cafe espresso solo.",
+    "price": 1.5,
+    "type": "drink",
+    "recipe": [{ "sku": "ICF0040CSO" }]
+  },
+  {
+    "sku": "DDK0300CCL",
+    "name": "Cafe con Leche",
+    "description": "Cafe con leche.",
+    "price": 2.0,
+    "type": "drink",
+    "recipe": [{ "sku": "ICF0020CCL" }]
+  },
+  {
+    "sku": "DDK0310COR",
+    "name": "Cortado",
+    "description": "Cafe cortado.",
+    "price": 1.8,
+    "type": "drink",
+    "recipe": [{ "sku": "ICF0050COR" }]
+  },
+  {
+    "sku": "DDK0320TEI",
+    "name": "Te e Infusiones",
+    "description": "Variedad de tes e infusiones.",
+    "price": 2.25,
+    "type": "drink",
+    "recipe": [{ "sku": "IBE0220TEI" }]
+  }
 ]

@@ -9,6 +9,7 @@
     "start": "node src/server.js",
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "seed:roles": "node scripts/seedRoles.js",
+    "seed:users": "node scripts/seedUsers.js",
     "seed:ingredients": "node scripts/seedIngredients.js",
     "seed:menu": "node scripts/seedMenu.js",
     "seed:suppliers": "node scripts/seedSuppliers.js",
