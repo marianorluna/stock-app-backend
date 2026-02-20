@@ -1,0 +1,356 @@
+[
+  {
+    "productId": "f6e377c3-f3ad-49a3-a02a-1b9ebda9cbac",
+    "productName": "Agua",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "480eddaf-b1da-43d3-9c69-44a1fcec655d",
+    "productName": "Agua con gas Vichy catalan",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "354f8d9a-2e69-4ca5-925e-cf631c13f8be",
+    "productName": "Air pancake",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "ff6e45a9-1fc1-4c7a-a54f-a61433ad7c7b",
+    "productName": "Air pancake 1/2 ración",
+    "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+    "categoryName": "Carta"
+  },
+  {
+    "productId": "a14efe0f-a22b-45bb-b6f8-973e7d880d83",
+    "productName": "Anima nua cor viu",
+    "categoryId": "482f603b-9645-4278-87ca-c872d2b85291",
+    "categoryName": "Copa de vino"
+  },
+  {
+    "productId": "838e808e-be94-4966-ad6e-6b73d75f279b",
+    "productName": "Bebida premium",
+    "categoryId": "4e95270a-d080-43e4-8ca1-2a683a5d2b4b",
+    "categoryName": "Bebida Premium"
+  },
+  {
+    "productId": "83045194-1a84-4119-81ef-d5973c3fd8f9",
+    "productName": "Benedict de la Casa",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "c8f3fd0f-2e59-4484-8478-bad9c7ac9b2b",
+    "productName": "Bowl de la Huerta",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "e00e7b94-213f-443d-8afb-e0f575a317f7",
+    "productName": "Bowl de pollo",
+    "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+    "categoryName": "Carta"
+  },
+  {
+    "productId": "6750d2f9-4bbb-4269-abb2-b471303d0929",
+    "productName": "Bowl de Pollo menú",
+    "categoryId": "92c16a42-7c5c-44da-a3e2-dfe462b2d6bc",
+    "categoryName": "Platos principales"
+  },
+  {
+    "productId": "f134df78-849d-4b2c-9d2f-f5c8946b9adc",
+    "productName": "Bowl del Mar del Norte",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "1fffa8b9-75c2-41f0-b956-d9192fae455a",
+    "productName": "Bowls de yogur y granola",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "bf7baeef-6995-42f2-80bb-1e1646e2dbea",
+    "productName": "Caal ",
+    "categoryId": "ae56ecdd-7224-49e8-bfb4-d910a50820e7",
+    "categoryName": "Botella"
+  },
+  {
+    "productId": "278d4524-30f4-440d-81a1-d8259a7e47eb",
+    "productName": "Café - Cheesecake",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
+    "productId": "92388956-2c03-4563-ab02-48631e65c393",
+    "productName": "Café con leche",
+    "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+    "categoryName": "Café"
+  },
+  {
+    "productId": "c5f176ce-2f08-4918-b968-9023a115783a",
+    "productName": "Cafe con leche - Pudin de chia",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
+    "productId": "48546300-3b59-4d01-b75e-3ec84027d1b3",
+    "productName": "Cafe con leche - Sandwich",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
+    "productId": "1020f8d2-87d3-4574-8092-fa7ebbf5f0ee",
+    "productName": "Cafe con leche - Yogur",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
+    "productId": "c0b3eecb-3cb0-4c4d-9eda-0b47ac5ed7ae",
+    "productName": "Cafe con leche Air Pancake 2Uds",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
+    "productId": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03",
+    "productName": "Café solo",
+    "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+    "categoryName": "Café"
+  },
+  {
+    "productId": "fdbf42df-f651-4322-824c-f637188ca1af",
+    "productName": "Call ",
+    "categoryId": "482f603b-9645-4278-87ca-c872d2b85291",
+    "categoryName": "Copa de vino"
+  },
+  {
+    "productId": "fcd549fe-6efa-4de1-953f-8bbf4387053d",
+    "productName": "Cerveza IPA",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "a7132b39-31c7-4d55-8595-2aa46f96ba43",
+    "productName": "Cerveza Rubia",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "0556b0f3-b104-4eff-aebd-6e1ea6296737",
+    "productName": "Cerveza Sin alcohol",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "dc94d59e-2a81-477f-8cf3-91d4e02c8881",
+    "productName": "Cheesecake vegana",
+    "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+    "categoryName": "Carta"
+  },
+  {
+    "productId": "7442f9df-929f-4210-a1fa-f1260110dc5b",
+    "productName": "Cheesecake vegana Menu",
+    "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+    "categoryName": "Postres"
+  },
+  {
+    "productId": "43ae9b2c-302e-4380-ab14-1befaa979a65",
+    "productName": "Clara",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "c3e61078-586e-4f5f-bee2-d11b85dceb64",
+    "productName": "Clásica de Aguacate",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "7fc6c943-53c6-4b9a-af5c-5951138762b4",
+    "productName": "Cortado",
+    "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+    "categoryName": "Café"
+  },
+  {
+    "productId": "0c91e9f8-de32-4ed1-a516-3a853e83daa9",
+    "productName": "Curry Thai de Coco",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "38406862-6cd8-4001-9023-faa965679121",
+    "productName": "Ensalada bowl",
+    "categoryId": "92c16a42-7c5c-44da-a3e2-dfe462b2d6bc",
+    "categoryName": "Platos principales"
+  },
+  {
+    "productId": "ea732ed3-af19-45b1-beb3-b8b55f37d8e2",
+    "productName": "Extra Huevo",
+    "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+    "categoryName": "Carta"
+  },
+  {
+    "productId": "4f10238e-8b94-422f-9b5c-4a24a5d465cc",
+    "productName": "Galleta de frutos secos y datiles",
+    "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+    "categoryName": "Postres"
+  },
+  {
+    "productId": "cd62af94-7df0-46f0-a0ed-9fa2c04b59ad",
+    "productName": "Guacamole",
+    "categoryId": null,
+    "categoryName": null
+  },
+  {
+    "productId": "176df600-9abf-4bbf-9a39-12ff4cab57f3",
+    "productName": "Huevos trufados",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "1a956dac-7e22-41c7-b9d7-2ed604236bbd",
+    "productName": "Hummus de garbanzos",
+    "categoryId": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+    "categoryName": "Entrantes"
+  },
+  {
+    "productId": "ef2d389d-933b-4d62-9980-58f1cc96e591",
+    "productName": "Hummus Granada",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "f0cde7f3-08ce-4952-a32a-471498929140",
+    "productName": "Medio menu",
+    "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+    "categoryName": "Carta"
+  },
+  {
+    "productId": "c46b2149-0e24-4a79-8689-230a9fd4c41b",
+    "productName": "Nat",
+    "categoryId": "482f603b-9645-4278-87ca-c872d2b85291",
+    "categoryName": "Copa de vino"
+  },
+  {
+    "productId": "6a804797-3db2-4d06-8f5d-03fa95e6bfc9",
+    "productName": "On Lemon Lima",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "980fb6d0-e84e-4be9-b14c-cdd73679a1a2",
+    "productName": "On Lemon Naranja",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "35b62ce5-5f7f-4b4d-a9fb-cbc40d0a86ef",
+    "productName": "One lemon Kola",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "48563b76-22cf-4b31-8ae7-38fac6c840b0",
+    "productName": "Pancake",
+    "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+    "categoryName": "Postres"
+  },
+  {
+    "productId": "1b97eaa0-b020-4f84-a733-99d732499f74",
+    "productName": "Parés Baltà Brut",
+    "categoryId": "482f603b-9645-4278-87ca-c872d2b85291",
+    "categoryName": "Copa de vino"
+  },
+  {
+    "productId": "24065eb8-a3c9-4b9d-a9ff-b6442d9a6e78",
+    "productName": "Pera Y Romero Bio",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "64b04b29-d83d-4a31-b66f-dc2a48cf0437",
+    "productName": "Plato de la semana",
+    "categoryId": "cfa9c9da-2a90-47f9-8715-1fb8728ead19",
+    "categoryName": "Menu del dia"
+  },
+  {
+    "productId": "5672735e-c711-4c2a-aa8e-a1f2a0a94a4d",
+    "productName": "Pollo al curry",
+    "categoryId": null,
+    "categoryName": null
+  },
+  {
+    "productId": "825f03e3-871f-4d67-affd-7a018b138ab0",
+    "productName": "Puding de Chía Tropical",
+    "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+    "categoryName": "Postres"
+  },
+  {
+    "productId": "41ae27a0-139a-43d8-ad00-c3b58e6dca29",
+    "productName": "Sopa de Calabaza ",
+    "categoryId": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+    "categoryName": "Entrantes"
+  },
+  {
+    "productId": "42df3f11-bb80-4662-9dbb-9e05d6955b62",
+    "productName": "Sopa del día",
+    "categoryId": null,
+    "categoryName": null
+  },
+  {
+    "productId": "c7ab06de-0bbe-49d0-89bc-c80db6c9258d",
+    "productName": "Tacos de Cochinita Pibil 3UD",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "1a427672-6a5d-4f7c-9f78-aba38efe9a04",
+    "productName": "Tagliata Burger",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "888c5a54-8997-47b0-86b5-320ae524f9e8",
+    "productName": "The/infusiones",
+    "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+    "categoryName": "Café"
+  },
+  {
+    "productId": "f062e443-9f8b-4184-89d7-085ed0ca986d",
+    "productName": "Tostada mediterranea",
+    "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+    "categoryName": "Platos"
+  },
+  {
+    "productId": "ea7fb249-4b16-4017-998e-eb36761c4bac",
+    "productName": "Vigo Kombucha Açaí",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "2f473287-b904-471f-b8f4-ed244de1871f",
+    "productName": "Wostok Cardamomo",
+    "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "d2f5e403-2b00-459e-aad5-91ff8fd3feab",
+    "productName": "Yogur griego",
+    "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+    "categoryName": "Postres"
+  },
+  {
+    "productId": "c13a0814-6b3d-40c4-82fe-04c4147ce235",
+    "productName": "Zumo de Manzana",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  },
+  {
+    "productId": "60a191eb-9ad4-45af-8b5c-623bb87e3d86",
+    "productName": "Zumo de Uva y melocoton",
+    "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+    "categoryName": "Bebidas"
+  }
+]

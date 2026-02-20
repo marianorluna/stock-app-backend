@@ -1,6 +1,6 @@
 /**
  * Script para crear proveedores en la base de datos.
- * Lee desde stockcontrol.suppliers.json
+ * Lee desde stockearly.suppliers.json
  * Uso: node scripts/seedSuppliers.js
  * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
  */
@@ -9,8 +9,8 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-import connectDatabase from '../src/config/database.js';
-import Supplier from '../src/models/Supplier.js';
+import connectDatabase from '../../src/config/database.js';
+import Supplier from '../../src/models/Supplier.js';
 
 dotenv.config();
 
@@ -26,7 +26,7 @@ const seed = async () => {
   }
 
   const suppliers = JSON.parse(
-    readFileSync(join(__dirname, 'stockcontrol.suppliers.json'), 'utf-8')
+    readFileSync(join(__dirname, 'stockearly.suppliers.json'), 'utf-8')
   );
 
   await connectDatabase(mongoUri);

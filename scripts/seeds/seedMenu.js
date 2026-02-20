@@ -1,6 +1,6 @@
 /**
  * Script para poblar la base de datos con platos y bebidas.
- * Lee desde stockcontrol.dishes.json, vincula ingredientes por SKU.
+ * Lee desde stockearly.dishes.json, vincula ingredientes por SKU.
  * Uso: node scripts/seedMenu.js
  * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
  */
@@ -9,9 +9,9 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-import connectDatabase from '../src/config/database.js';
-import Dish from '../src/models/Dish.js';
-import Ingredient from '../src/models/Ingredient.js';
+import connectDatabase from '../../src/config/database.js';
+import Dish from '../../src/models/Dish.js';
+import Ingredient from '../../src/models/Ingredient.js';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ const seed = async () => {
   }
 
   const rawDishes = JSON.parse(
-    readFileSync(join(__dirname, 'stockcontrol.dishes.json'), 'utf-8')
+    readFileSync(join(__dirname, 'stockearly.dishes.json'), 'utf-8')
   );
 
   await connectDatabase(mongoUri);
@@ -46,11 +46,11 @@ const seed = async () => {
     return recipeItems.map((item) => {
       const sku = item.sku;
       const ingredientDoc = findIngredientBySku(sku);
-      
+
       // Si item.grams está definido, usarlo directamente (ya está en gramos)
       // Si no, calcular basándose en el nuevo formato de ingredientes
       let quantityInGrams;
-      
+
       if (item.grams !== undefined) {
         // Ya está en gramos, usar directamente
         quantityInGrams = item.grams;
@@ -59,7 +59,7 @@ const seed = async () => {
         // El conversionFactor representa cuántas unidades de conversionUnit hay en 1 unidad de purchaseUnit
         // Para convertir a gramos, necesitamos considerar stockUnit y conversionUnit
         let conversionFactorToGrams = 1;
-        
+
         if (ingredientDoc.conversionFactor) {
           if (ingredientDoc.conversionUnit === 'g') {
             // Si conversionUnit es 'g', el factor ya está en gramos
@@ -74,10 +74,10 @@ const seed = async () => {
             conversionFactorToGrams = ingredientDoc.conversionFactor;
           }
         }
-        
+
         quantityInGrams = conversionFactorToGrams;
       }
-      
+
       return {
         ingredient: ingredientDoc._id,
         quantityInGrams

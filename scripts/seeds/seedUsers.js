@@ -6,9 +6,9 @@
  */
 
 import dotenv from 'dotenv';
-import connectDatabase from '../src/config/database.js';
-import User from '../src/models/User.js';
-import Role from '../src/models/Role.js';
+import connectDatabase from '../../src/config/database.js';
+import User from '../../src/models/User.js';
+import Role from '../../src/models/Role.js';
 
 dotenv.config();
 

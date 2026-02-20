@@ -1,0 +1,206 @@
+{
+  "fecha": "2026-02-15 a 2026-02-20",
+  "fechaInicio": "2026-02-15",
+  "fechaFin": "2026-02-20",
+  "generadoEn": "2026-02-20T22:00:27.922Z",
+  "totalProductosUnicos": 28,
+  "totalCantidad": 103,
+  "items": [
+    {
+      "productId": "f6e377c3-f3ad-49a3-a02a-1b9ebda9cbac",
+      "productName": "Agua",
+      "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+      "categoryName": "Bebidas",
+      "quantity": 5
+    },
+    {
+      "productId": "354f8d9a-2e69-4ca5-925e-cf631c13f8be",
+      "productName": "Air pancake",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "ff6e45a9-1fc1-4c7a-a54f-a61433ad7c7b",
+      "productName": "Air pancake 1/2 ración",
+      "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+      "categoryName": "Carta",
+      "quantity": 2
+    },
+    {
+      "productId": "838e808e-be94-4966-ad6e-6b73d75f279b",
+      "productName": "Bebida premium",
+      "categoryId": "4e95270a-d080-43e4-8ca1-2a683a5d2b4b",
+      "categoryName": "Bebida Premium",
+      "quantity": 2
+    },
+    {
+      "productId": "e00e7b94-213f-443d-8afb-e0f575a317f7",
+      "productName": "Bowl de pollo",
+      "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+      "categoryName": "Carta",
+      "quantity": 3
+    },
+    {
+      "productId": "6750d2f9-4bbb-4269-abb2-b471303d0929",
+      "productName": "Bowl de Pollo menú",
+      "categoryId": "92c16a42-7c5c-44da-a3e2-dfe462b2d6bc",
+      "categoryName": "Platos principales",
+      "quantity": 14
+    },
+    {
+      "productId": "f134df78-849d-4b2c-9d2f-f5c8946b9adc",
+      "productName": "Bowl del Mar del Norte",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "1fffa8b9-75c2-41f0-b956-d9192fae455a",
+      "productName": "Bowls de yogur y granola",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "92388956-2c03-4563-ab02-48631e65c393",
+      "productName": "Café con leche",
+      "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+      "categoryName": "Café",
+      "quantity": 4
+    },
+    {
+      "productId": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03",
+      "productName": "Café solo",
+      "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+      "categoryName": "Café",
+      "quantity": 8
+    },
+    {
+      "productId": "a7132b39-31c7-4d55-8595-2aa46f96ba43",
+      "productName": "Cerveza Rubia",
+      "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+      "categoryName": "Bebidas",
+      "quantity": 1
+    },
+    {
+      "productId": "dc94d59e-2a81-477f-8cf3-91d4e02c8881",
+      "productName": "Cheesecake vegana",
+      "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+      "categoryName": "Carta",
+      "quantity": 1
+    },
+    {
+      "productId": "7442f9df-929f-4210-a1fa-f1260110dc5b",
+      "productName": "Cheesecake vegana Menu",
+      "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+      "categoryName": "Postres",
+      "quantity": 5
+    },
+    {
+      "productId": "c3e61078-586e-4f5f-bee2-d11b85dceb64",
+      "productName": "Clásica de Aguacate",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "7fc6c943-53c6-4b9a-af5c-5951138762b4",
+      "productName": "Cortado",
+      "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+      "categoryName": "Café",
+      "quantity": 6
+    },
+    {
+      "productId": "0c91e9f8-de32-4ed1-a516-3a853e83daa9",
+      "productName": "Curry Thai de Coco",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "38406862-6cd8-4001-9023-faa965679121",
+      "productName": "Ensalada bowl",
+      "categoryId": "92c16a42-7c5c-44da-a3e2-dfe462b2d6bc",
+      "categoryName": "Platos principales",
+      "quantity": 5
+    },
+    {
+      "productId": "176df600-9abf-4bbf-9a39-12ff4cab57f3",
+      "productName": "Huevos trufados",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "1a956dac-7e22-41c7-b9d7-2ed604236bbd",
+      "productName": "Hummus de garbanzos",
+      "categoryId": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+      "categoryName": "Entrantes",
+      "quantity": 8
+    },
+    {
+      "productId": "f0cde7f3-08ce-4952-a32a-471498929140",
+      "productName": "Medio menu",
+      "categoryId": "770e4602-1890-4fcc-89c9-d99845427711",
+      "categoryName": "Carta",
+      "quantity": 1
+    },
+    {
+      "productId": "6a804797-3db2-4d06-8f5d-03fa95e6bfc9",
+      "productName": "On Lemon Lima",
+      "categoryId": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+      "categoryName": "Bebidas",
+      "quantity": 1
+    },
+    {
+      "productId": "35b62ce5-5f7f-4b4d-a9fb-cbc40d0a86ef",
+      "productName": "One lemon Kola",
+      "categoryId": "b254da80-bc45-4dbf-bb9e-eb5d48fe01f0",
+      "categoryName": "Bebidas",
+      "quantity": 1
+    },
+    {
+      "productId": "48563b76-22cf-4b31-8ae7-38fac6c840b0",
+      "productName": "Pancake",
+      "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+      "categoryName": "Postres",
+      "quantity": 3
+    },
+    {
+      "productId": "64b04b29-d83d-4a31-b66f-dc2a48cf0437",
+      "productName": "Plato de la semana",
+      "categoryId": "cfa9c9da-2a90-47f9-8715-1fb8728ead19",
+      "categoryName": "Menu del dia",
+      "quantity": 3
+    },
+    {
+      "productId": "825f03e3-871f-4d67-affd-7a018b138ab0",
+      "productName": "Puding de Chía Tropical",
+      "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+      "categoryName": "Postres",
+      "quantity": 2
+    },
+    {
+      "productId": "41ae27a0-139a-43d8-ad00-c3b58e6dca29",
+      "productName": "Sopa de Calabaza ",
+      "categoryId": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+      "categoryName": "Entrantes",
+      "quantity": 15
+    },
+    {
+      "productId": "f062e443-9f8b-4184-89d7-085ed0ca986d",
+      "productName": "Tostada mediterranea",
+      "categoryId": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+      "categoryName": "Platos",
+      "quantity": 1
+    },
+    {
+      "productId": "d2f5e403-2b00-459e-aad5-91ff8fd3feab",
+      "productName": "Yogur griego",
+      "categoryId": "1186a01c-1a9d-405c-8a57-29eb098adb59",
+      "categoryName": "Postres",
+      "quantity": 6
+    }
+  ]
+}

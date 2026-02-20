@@ -6,14 +6,14 @@
  */
 
 import dotenv from 'dotenv';
-import connectDatabase from '../src/config/database.js';
-import Dish from '../src/models/Dish.js';
-import Ingredient from '../src/models/Ingredient.js';
-import Sale from '../src/models/Sale.js';
-import Purchase from '../src/models/Purchase.js';
-import Wastage from '../src/models/Wastage.js';
-import Supplier from '../src/models/Supplier.js';
-import stockService from '../src/services/stockService.js';
+import connectDatabase from '../../src/config/database.js';
+import Dish from '../../src/models/Dish.js';
+import Ingredient from '../../src/models/Ingredient.js';
+import Sale from '../../src/models/Sale.js';
+import Purchase from '../../src/models/Purchase.js';
+import Wastage from '../../src/models/Wastage.js';
+import Supplier from '../../src/models/Supplier.js';
+import stockService from '../../src/services/stockService.js';
 
 dotenv.config();
 
@@ -53,7 +53,7 @@ const generatePurchases = (ingredients, suppliers, count) => {
   const purchases = [];
   // Categorías que tradicionalmente usan gramos (bulk)
   const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
-  
+
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(2, Math.min(4, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
@@ -86,7 +86,7 @@ const generateWastage = (ingredients, count) => {
   const wastage = [];
   // Categorías que tradicionalmente usan gramos (bulk)
   const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
-  
+
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(1, Math.min(3, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);

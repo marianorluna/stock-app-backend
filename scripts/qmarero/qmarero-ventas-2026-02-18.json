@@ -1,0 +1,544 @@
+{
+  "fecha": "2026-02-18",
+  "fechaInicio": "2026-02-18",
+  "fechaFin": "2026-02-18",
+  "generadoEn": "2026-02-20T20:01:18.388Z",
+  "error": null,
+  "totalTickets": 4,
+  "tickets": [
+    {
+      "id": "260e90ea-30fe-47f3-828f-0f8a7ea48e6e",
+      "comment": null,
+      "created": "2026-02-18T15:27:46.857596+00:00",
+      "closedAt": "2026-02-18T15:47:37.338372+00:00",
+      "tipAmount": 0,
+      "totalAmountWithoutDiscount": 1.8,
+      "totalAmount": 1.8,
+      "totalAmountPaid": 1.8,
+      "discounts": [],
+      "table": {
+        "id": "bbccc137-73ef-4cf4-b53b-6aecc5d616b1",
+        "code": "T1",
+        "place": {
+          "id": "6e61ea62-7ead-4382-b0d7-dd2df169b6e0",
+          "name": "Sala 2",
+          "operative": "TABLES_GRID",
+          "isPrepaid": false,
+          "__typename": "PlaceType"
+        },
+        "__typename": "TableType"
+      },
+      "client": null,
+      "status": "PAID",
+      "invoices": [
+        {
+          "id": "fb4c5674-c8b8-4a25-b8b1-dcbe627612e3",
+          "code": "S/5BQ1XC03J/26/000000219",
+          "variant": "ISSUED",
+          "status": "SIMPLIFIED",
+          "date": "2026-02-18T15:47:37.446942+00:00",
+          "customer": null,
+          "__typename": "InvoiceType"
+        }
+      ],
+      "payments": [
+        {
+          "id": "c791caba-d8c1-4ca5-bbb4-a9e7a365c6fd",
+          "paymentMethod": "CARD",
+          "paymentPlatform": "INPLACE",
+          "status": "PAID",
+          "amount": 1.8,
+          "tipAmount": null,
+          "totalNotRefundedAmountWithTips": 1.8,
+          "__typename": "PaymentType"
+        }
+      ],
+      "products": [
+        {
+          "id": "7fc6c943-53c6-4b9a-af5c-5951138762b4+1.8+sdelivered",
+          "orderItemId": "bcd2fb96-131d-4671-84b0-f193926e53f1",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        }
+      ],
+      "orders": [
+        {
+          "id": "5b22c64f-4d3c-4876-97db-99e339899885",
+          "items": [
+            {
+              "id": "bcd2fb96-131d-4671-84b0-f193926e53f1",
+              "product": {
+                "id": "7fc6c943-53c6-4b9a-af5c-5951138762b4",
+                "name": "Cortado",
+                "price": 1.8,
+                "category": {
+                  "id": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+                  "name": "Café",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        }
+      ],
+      "reviews": [],
+      "__typename": "BillType"
+    },
+    {
+      "id": "25b04b57-85b7-4b30-8e92-b60f46a3c0a3",
+      "comment": null,
+      "created": "2026-02-18T13:31:37.580431+00:00",
+      "closedAt": "2026-02-18T14:33:24.995049+00:00",
+      "tipAmount": 0,
+      "totalAmountWithoutDiscount": 45.7,
+      "totalAmount": 45.7,
+      "totalAmountPaid": 45.7,
+      "discounts": [],
+      "table": {
+        "id": "60473576-7d7a-44ac-845e-cab10b3905d0",
+        "code": "T8",
+        "place": {
+          "id": "6e61ea62-7ead-4382-b0d7-dd2df169b6e0",
+          "name": "Sala 2",
+          "operative": "TABLES_GRID",
+          "isPrepaid": false,
+          "__typename": "PlaceType"
+        },
+        "__typename": "TableType"
+      },
+      "client": null,
+      "status": "PAID",
+      "invoices": [
+        {
+          "id": "e1494c8a-4c11-4a65-88d2-98745b02d6c2",
+          "code": "S/5BQ1XC03J/26/000000218",
+          "variant": "ISSUED",
+          "status": "SIMPLIFIED",
+          "date": "2026-02-18T14:33:25.163092+00:00",
+          "customer": null,
+          "__typename": "InvoiceType"
+        }
+      ],
+      "payments": [
+        {
+          "id": "7d8e36d6-94e1-4bbb-b0d7-852d23f5bd55",
+          "paymentMethod": "CARD",
+          "paymentPlatform": "INPLACE",
+          "status": "PAID",
+          "amount": 45.7,
+          "tipAmount": null,
+          "totalNotRefundedAmountWithTips": 45.7,
+          "__typename": "PaymentType"
+        }
+      ],
+      "products": [
+        {
+          "id": "e00e7b94-213f-443d-8afb-e0f575a317f7+12.5+sdelivered",
+          "orderItemId": "cba4a38e-42c2-4b57-8315-6212d2c290b2",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "f134df78-849d-4b2c-9d2f-f5c8946b9adc+13.5+sdelivered",
+          "orderItemId": "74de6e28-13d7-4052-bb31-5bb899b3a19b",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "176df600-9abf-4bbf-9a39-12ff4cab57f3+12.0+cpase2-2+sdelivered",
+          "orderItemId": "e5ebdc11-106d-4020-a060-f9f95402d86d",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "f6e377c3-f3ad-49a3-a02a-1b9ebda9cbac+2.2+sdelivered",
+          "orderItemId": "71784704-c953-483d-9a33-46be3f30fdc3",
+          "quantity": 2,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03+1.5+sdelivered",
+          "orderItemId": "70a6cd41-5ac2-4609-a24c-d5a7bf010f5d",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "7fc6c943-53c6-4b9a-af5c-5951138762b4+1.8+sdelivered",
+          "orderItemId": "f2ccdb40-e7c2-472d-8ef5-1bd1d7465135",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        }
+      ],
+      "orders": [
+        {
+          "id": "d2a30262-91af-4927-a040-eb1d98d1b384",
+          "items": [
+            {
+              "id": "cba4a38e-42c2-4b57-8315-6212d2c290b2",
+              "product": {
+                "id": "e00e7b94-213f-443d-8afb-e0f575a317f7",
+                "name": "Bowl de pollo",
+                "price": 12.5,
+                "category": {
+                  "id": "770e4602-1890-4fcc-89c9-d99845427711",
+                  "name": "Carta",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            },
+            {
+              "id": "74de6e28-13d7-4052-bb31-5bb899b3a19b",
+              "product": {
+                "id": "f134df78-849d-4b2c-9d2f-f5c8946b9adc",
+                "name": "Bowl del Mar del Norte",
+                "price": 13.5,
+                "category": {
+                  "id": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+                  "name": "Platos",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            },
+            {
+              "id": "e5ebdc11-106d-4020-a060-f9f95402d86d",
+              "product": {
+                "id": "176df600-9abf-4bbf-9a39-12ff4cab57f3",
+                "name": "Huevos trufados",
+                "price": 12,
+                "category": {
+                  "id": "80043172-65c2-4ee1-abb7-1d4538f8e2c5",
+                  "name": "Platos",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        },
+        {
+          "id": "fff6bf3f-303b-40b7-baa7-e774d143dc4d",
+          "items": [
+            {
+              "id": "71784704-c953-483d-9a33-46be3f30fdc3",
+              "product": {
+                "id": "f6e377c3-f3ad-49a3-a02a-1b9ebda9cbac",
+                "name": "Agua",
+                "price": 2.2,
+                "category": {
+                  "id": "55479dfb-f7b6-4ff2-b29e-7f132752c004",
+                  "name": "Bebidas",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 2,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        },
+        {
+          "id": "4c2bd5fe-d7ed-459d-9558-62fc45245f16",
+          "items": [
+            {
+              "id": "70a6cd41-5ac2-4609-a24c-d5a7bf010f5d",
+              "product": {
+                "id": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03",
+                "name": "Café solo",
+                "price": 1.5,
+                "category": {
+                  "id": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+                  "name": "Café",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            },
+            {
+              "id": "f2ccdb40-e7c2-472d-8ef5-1bd1d7465135",
+              "product": {
+                "id": "7fc6c943-53c6-4b9a-af5c-5951138762b4",
+                "name": "Cortado",
+                "price": 1.8,
+                "category": {
+                  "id": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+                  "name": "Café",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        }
+      ],
+      "reviews": [],
+      "__typename": "BillType"
+    },
+    {
+      "id": "9a48ae7d-50ef-4174-88d2-d02129876687",
+      "comment": null,
+      "created": "2026-02-18T12:14:21.672779+00:00",
+      "closedAt": "2026-02-18T13:01:09.739183+00:00",
+      "tipAmount": 0,
+      "totalAmountWithoutDiscount": 39.75,
+      "totalAmount": 39.75,
+      "totalAmountPaid": 39.75,
+      "discounts": [],
+      "table": {
+        "id": "795d6ec2-25cb-407e-98c3-f433a00dc3aa",
+        "code": "T6",
+        "place": {
+          "id": "6e61ea62-7ead-4382-b0d7-dd2df169b6e0",
+          "name": "Sala 2",
+          "operative": "TABLES_GRID",
+          "isPrepaid": false,
+          "__typename": "PlaceType"
+        },
+        "__typename": "TableType"
+      },
+      "client": null,
+      "status": "PAID",
+      "invoices": [
+        {
+          "id": "8226ad8d-1018-4832-a995-e68cf5ec8d39",
+          "code": "S/5BQ1XC03J/26/000000217",
+          "variant": "ISSUED",
+          "status": "SIMPLIFIED",
+          "date": "2026-02-18T13:01:09.885214+00:00",
+          "customer": null,
+          "__typename": "InvoiceType"
+        }
+      ],
+      "payments": [
+        {
+          "id": "d9d1c413-7841-44c6-933b-f194fc7f84ba",
+          "paymentMethod": "CARD",
+          "paymentPlatform": "INPLACE",
+          "status": "PAID",
+          "amount": 39.75,
+          "tipAmount": null,
+          "totalNotRefundedAmountWithTips": 39.75,
+          "__typename": "PaymentType"
+        }
+      ],
+      "products": [
+        {
+          "id": "1a956dac-7e22-41c7-b9d7-2ed604236bbd+15.9+sdelivered",
+          "orderItemId": "cfeeda19-1502-4869-8e48-ec9649b80604",
+          "quantity": 0,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "41ae27a0-139a-43d8-ad00-c3b58e6dca29+15.9+sdelivered",
+          "orderItemId": "fe680ad9-45a7-4423-b266-bab569424333",
+          "quantity": 0,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "64b04b29-d83d-4a31-b66f-dc2a48cf0437+15.9+cpase2-2+sdelivered",
+          "orderItemId": "b8336536-0405-49d9-b526-ce2cf388e7ce",
+          "quantity": 2,
+          "discount": null,
+          "__typename": "BillItemType"
+        },
+        {
+          "id": "f0cde7f3-08ce-4952-a32a-471498929140+7.95+sdelivered",
+          "orderItemId": "4169dcb1-5532-4237-92f6-06d8b9d135a5",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        }
+      ],
+      "orders": [
+        {
+          "id": "020fc210-1044-43f0-8c93-4affcf97e7ff",
+          "items": [
+            {
+              "id": "cfeeda19-1502-4869-8e48-ec9649b80604",
+              "product": {
+                "id": "1a956dac-7e22-41c7-b9d7-2ed604236bbd",
+                "name": "Hummus de garbanzos",
+                "price": 15.9,
+                "category": {
+                  "id": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+                  "name": "Entrantes",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 0,
+              "__typename": "OrderItemType"
+            },
+            {
+              "id": "fe680ad9-45a7-4423-b266-bab569424333",
+              "product": {
+                "id": "41ae27a0-139a-43d8-ad00-c3b58e6dca29",
+                "name": "Sopa de Calabaza ",
+                "price": 15.9,
+                "category": {
+                  "id": "8945a85a-aa3c-4549-8151-ea994534ad3b",
+                  "name": "Entrantes",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 0,
+              "__typename": "OrderItemType"
+            },
+            {
+              "id": "b8336536-0405-49d9-b526-ce2cf388e7ce",
+              "product": {
+                "id": "64b04b29-d83d-4a31-b66f-dc2a48cf0437",
+                "name": "Plato de la semana",
+                "price": 15.9,
+                "category": {
+                  "id": "cfa9c9da-2a90-47f9-8715-1fb8728ead19",
+                  "name": "Menu del dia",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 2,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        },
+        {
+          "id": "368db183-b199-49ae-a1c9-9185f6167e69",
+          "items": [
+            {
+              "id": "4169dcb1-5532-4237-92f6-06d8b9d135a5",
+              "product": {
+                "id": "f0cde7f3-08ce-4952-a32a-471498929140",
+                "name": "Medio menu",
+                "price": 7.95,
+                "category": {
+                  "id": "770e4602-1890-4fcc-89c9-d99845427711",
+                  "name": "Carta",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        }
+      ],
+      "reviews": [],
+      "__typename": "BillType"
+    },
+    {
+      "id": "dd726bcc-f90e-4856-9266-edd15925bcd6",
+      "comment": null,
+      "created": "2026-02-18T12:07:32.528843+00:00",
+      "closedAt": "2026-02-18T12:09:55.752343+00:00",
+      "tipAmount": 0,
+      "totalAmountWithoutDiscount": 1.5,
+      "totalAmount": 1.5,
+      "totalAmountPaid": 1.5,
+      "discounts": [],
+      "table": {
+        "id": "87692efd-d572-4bbd-9cf5-11dea586c82f",
+        "code": "T1",
+        "place": {
+          "id": "01dcb0db-4493-422d-bfe8-1e7e211e015b",
+          "name": "Sala 1",
+          "operative": "TABLES_GRID",
+          "isPrepaid": false,
+          "__typename": "PlaceType"
+        },
+        "__typename": "TableType"
+      },
+      "client": null,
+      "status": "PAID",
+      "invoices": [
+        {
+          "id": "cd486252-7ca9-4de3-8af6-f26a40c1f6df",
+          "code": "S/5BQ1XC03J/26/000000216",
+          "variant": "ISSUED",
+          "status": "SIMPLIFIED",
+          "date": "2026-02-18T12:09:55.865188+00:00",
+          "customer": null,
+          "__typename": "InvoiceType"
+        }
+      ],
+      "payments": [
+        {
+          "id": "34c76577-c738-4d72-8ed2-e072f5836f4c",
+          "paymentMethod": "CARD",
+          "paymentPlatform": "INPLACE",
+          "status": "PAID",
+          "amount": 1.5,
+          "tipAmount": null,
+          "totalNotRefundedAmountWithTips": 1.5,
+          "__typename": "PaymentType"
+        }
+      ],
+      "products": [
+        {
+          "id": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03+1.5+sdelivered",
+          "orderItemId": "cc9f1bdd-a94f-4436-96b1-4c6ddc0dcd22",
+          "quantity": 1,
+          "discount": null,
+          "__typename": "BillItemType"
+        }
+      ],
+      "orders": [
+        {
+          "id": "e67acaa1-fe28-453d-b0d9-a8b91d48b988",
+          "items": [
+            {
+              "id": "cc9f1bdd-a94f-4436-96b1-4c6ddc0dcd22",
+              "product": {
+                "id": "f18fc6a3-3a95-4a1a-8fd7-2b227db64e03",
+                "name": "Café solo",
+                "price": 1.5,
+                "category": {
+                  "id": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
+                  "name": "Café",
+                  "__typename": "CategoryType"
+                },
+                "__typename": "ProductType"
+              },
+              "quantity": 1,
+              "__typename": "OrderItemType"
+            }
+          ],
+          "__typename": "OrderType"
+        }
+      ],
+      "reviews": [],
+      "__typename": "BillType"
+    }
+  ]
+}
