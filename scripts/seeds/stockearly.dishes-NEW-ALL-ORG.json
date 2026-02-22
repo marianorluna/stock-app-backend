@@ -84,6 +84,12 @@
     "categoryName": "Combo"
   },
   {
+    "productId": "edfaf53c-0f88-4dc4-a94f-b392fd4423d8",
+    "productName": "Cafe - Pudin de chia",
+    "categoryId": "160dba99-b179-42ce-a184-57cf4f553cb2",
+    "categoryName": "Combo"
+  },
+  {
     "productId": "92388956-2c03-4563-ab02-48631e65c393",
     "productName": "Café con leche",
     "categoryId": "e96eea7a-499c-47b1-bd60-fc5c0156f164",
@@ -262,6 +268,12 @@
     "productName": "Parés Baltà Brut",
     "categoryId": "482f603b-9645-4278-87ca-c872d2b85291",
     "categoryName": "Copa de vino"
+  },
+  {
+    "productId": "6b013385-30d2-4766-acf7-f7457ed827fd",
+    "productName": "Parés Baltà Brut (cava ecológico)",
+    "categoryId": "a168f01c-ef65-4ed3-92e6-b8cfac324656",
+    "categoryName": "Botella"
   },
   {
     "productId": "24065eb8-a3c9-4b9d-a9ff-b6442d9a6e78",

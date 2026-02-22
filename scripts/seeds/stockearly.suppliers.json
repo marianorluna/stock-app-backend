@@ -1,6 +1,6 @@
 [
   {
-    "sku": "SAL0010SUM",
+    "sku": "SGN0010SUM",
     "name": "AMETLLER ORIGEN HORECA, S.L.",
     "nif": "B67875112",
     "address": "Longitudinal 9, Nº 63 (Mercabarna)",
@@ -10,19 +10,19 @@
     "tel": "932222022"
   },
   {
-    "sku": "SAL0020SUM",
+    "sku": "SGN0020SUM",
     "name": "Suministros Frescos S.L.",
     "contact": "Juan García",
     "email": "pedidos@suministrosfrescos.es"
   },
   {
-    "sku": "SDK0010BEB",
+    "sku": "SBB0010BEB",
     "name": "Bebidas y Cafés del Norte",
     "contact": "María López",
     "email": "ventas@bebidasnorte.es"
   },
   {
-    "sku": "SSL0010ECO",
+    "sku": "SFR0010ECO",
     "name": "Productos Ecológicos Terra"
   }
 ]
