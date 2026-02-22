@@ -8,11 +8,10 @@
         "stockInitial": 550,
         "stock": 550,
         "stockUnit": "ml",
-        "stockUnitName": "litro",
+        "stockUnitName": "mililitro",
         "purchaseUnit": "botella",
         "conversionFactor": 0.001,
         "conversionUnit": "l",
-        "conversionUnitName": "litro",
         "reorderPoint": 55,
         "allergens": [],
         "codeArticlePurchase": "43308"
@@ -30,7 +29,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 0.001,
         "conversionUnit": "kg",
-        "conversionUnitName": "kilogramo",
         "reorderPoint": 50,
         "allergens": [],
         "codeArticlePurchase": "1"
@@ -48,7 +46,6 @@
         "purchaseUnit": "frasco",
         "conversionFactor": 400,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 40,
         "allergens": [],
         "codeArticlePurchase": "43270"
@@ -66,7 +63,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 200,
         "allergens": [
             "huevo",
@@ -87,7 +83,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 2000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "41170"
@@ -105,7 +100,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 600,
         "allergens": [],
         "codeArticlePurchase": "43168"
@@ -123,7 +117,6 @@
         "purchaseUnit": "bandeja",
         "conversionFactor": 125,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 75,
         "allergens": [],
         "codeArticlePurchase": "302"
@@ -141,7 +134,6 @@
         "purchaseUnit": "bolsa",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "46847"
@@ -159,7 +151,6 @@
         "purchaseUnit": "bandeja",
         "conversionFactor": 500,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 300,
         "allergens": [],
         "codeArticlePurchase": "56840"
@@ -177,7 +168,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "314"
@@ -195,7 +185,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [],
         "codeArticlePurchase": "318"
@@ -213,7 +202,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [],
         "codeArticlePurchase": "322"
@@ -231,7 +219,6 @@
         "purchaseUnit": "manojo",
         "conversionFactor": 50,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 30,
         "allergens": [],
         "codeArticlePurchase": "231"
@@ -249,7 +236,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 1500,
         "allergens": [],
         "codeArticlePurchase": "A0095"
@@ -267,7 +253,6 @@
         "purchaseUnit": "caja",
         "conversionFactor": 375,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 750,
         "allergens": [
             "gluten"
@@ -287,7 +272,6 @@
         "purchaseUnit": "unidad",
         "conversionFactor": 400,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 240,
         "allergens": [
             "gluten"
@@ -307,7 +291,6 @@
         "purchaseUnit": "bolsa",
         "conversionFactor": 500,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "45595"
@@ -325,7 +308,6 @@
         "purchaseUnit": "unidad",
         "conversionFactor": 125,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 50,
         "allergens": [
             "lacteos"
@@ -345,7 +327,6 @@
         "purchaseUnit": "lata",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 500,
         "allergens": [],
         "codeArticlePurchase": "30044"
@@ -363,7 +344,6 @@
         "purchaseUnit": "bloque",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [
             "lacteos"
@@ -383,7 +363,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 400,
         "allergens": [
             "lacteos"
@@ -403,7 +382,6 @@
         "purchaseUnit": "bloque",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [
             "lacteos"
@@ -423,7 +401,6 @@
         "purchaseUnit": "vaso",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [
             "lacteos"
@@ -443,7 +420,6 @@
         "purchaseUnit": "bolsa",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [
             "frutos secos"
@@ -463,7 +439,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 1000,
         "allergens": [
             "frutos secos"
@@ -483,7 +458,6 @@
         "purchaseUnit": "caja",
         "conversionFactor": 24,
         "conversionUnit": "u",
-        "conversionUnitName": "unidad",
         "reorderPoint": 5,
         "allergens": [],
         "codeArticlePurchase": "41248"
@@ -501,7 +475,6 @@
         "purchaseUnit": "frasco",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "41058"
@@ -519,7 +492,6 @@
         "purchaseUnit": "frasco",
         "conversionFactor": 250,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 50,
         "allergens": [
             "pescado"
@@ -539,7 +511,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 200,
         "allergens": [
             "huevo"
@@ -559,7 +530,6 @@
         "purchaseUnit": "manojo",
         "conversionFactor": 100,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 50,
         "allergens": [],
         "codeArticlePurchase": "16190"
@@ -577,7 +547,6 @@
         "purchaseUnit": "manojo",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "224"
@@ -595,7 +564,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [],
         "codeArticlePurchase": "17789"
@@ -613,7 +581,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 500,
         "allergens": [],
         "codeArticlePurchase": "41738"
@@ -631,7 +598,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [],
         "codeArticlePurchase": "206"
@@ -649,7 +615,6 @@
         "purchaseUnit": "bandeja",
         "conversionFactor": 250,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 150,
         "allergens": [],
         "codeArticlePurchase": "20107"
@@ -667,7 +632,6 @@
         "purchaseUnit": "manojo",
         "conversionFactor": 50,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 25,
         "allergens": [],
         "codeArticlePurchase": "41063"
@@ -685,7 +649,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "allergens": [],
         "codeArticlePurchase": "106"
@@ -703,7 +666,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "18304"
@@ -721,7 +683,6 @@
         "purchaseUnit": "bolsa",
         "conversionFactor": 100,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 50,
         "allergens": [],
         "codeArticlePurchase": "40980"
@@ -739,7 +700,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "13256"
@@ -757,7 +717,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "242"
@@ -775,7 +734,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "131"
@@ -793,7 +751,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 100,
         "allergens": [],
         "codeArticlePurchase": "122"
@@ -811,7 +768,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "13276"
@@ -829,7 +785,6 @@
         "purchaseUnit": "bandeja",
         "conversionFactor": 70,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 30,
         "allergens": [],
         "codeArticlePurchase": "507"
@@ -847,7 +802,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 200,
         "allergens": [],
         "codeArticlePurchase": "41186"
@@ -865,7 +819,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 500,
         "allergens": [],
         "codeArticlePurchase": "16154"
@@ -883,7 +836,6 @@
         "purchaseUnit": "kg",
         "conversionFactor": 1000,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 400,
         "codeArticlePurchase": "155"
     },
@@ -900,7 +852,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 1000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 500,
         "allergens": [
             "lacteos"
@@ -920,7 +871,6 @@
         "purchaseUnit": "caja",
         "conversionFactor": 12,
         "conversionUnit": "ud",
-        "conversionUnitName": "unidad",
         "reorderPoint": 20,
         "allergens": [
             "huevo"
@@ -940,7 +890,6 @@
         "purchaseUnit": "bandeja",
         "conversionFactor": 350,
         "conversionUnit": "g",
-        "conversionUnitName": "gramo",
         "reorderPoint": 350,
         "allergens": [
             "pescado"
@@ -960,7 +909,6 @@
         "purchaseUnit": "botella",
         "conversionFactor": 5000,
         "conversionUnit": "ml",
-        "conversionUnitName": "mililitro",
         "reorderPoint": 500,
         "allergens": [],
         "codeArticlePurchase": "41423"
