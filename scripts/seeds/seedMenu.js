@@ -2,7 +2,7 @@
  * Script para poblar la base de datos con platos y bebidas.
  * Lee desde stockearly.dishes.json, vincula ingredientes por SKU.
  * Uso: node scripts/seedMenu.js
- * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ * Orden: seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
 import { readFileSync } from 'fs';
@@ -44,15 +44,23 @@ const seed = async () => {
   const resolveRecipe = (recipeItems) => {
     if (!recipeItems || !recipeItems.length) return [];
     return recipeItems.map((item) => {
-      const sku = item.sku;
+      // Usar ingredientSku si está disponible, sino usar sku (para compatibilidad)
+      const sku = item.ingredientSku || item.sku;
+      if (!sku) {
+        throw new Error(`Recipe item missing ingredientSku or sku: ${JSON.stringify(item)}`);
+      }
       const ingredientDoc = findIngredientBySku(sku);
 
-      // Si item.grams está definido, usarlo directamente (ya está en gramos)
-      // Si no, calcular basándose en el nuevo formato de ingredientes
+      // Usar quantityInGrams si está disponible (formato nuevo)
+      // Si no, usar grams (formato antiguo)
+      // Si no hay ninguno, calcular basándose en el nuevo formato de ingredientes
       let quantityInGrams;
 
-      if (item.grams !== undefined) {
-        // Ya está en gramos, usar directamente
+      if (item.quantityInGrams !== undefined) {
+        // Formato nuevo: ya está en gramos
+        quantityInGrams = item.quantityInGrams;
+      } else if (item.grams !== undefined) {
+        // Formato antiguo: ya está en gramos
         quantityInGrams = item.grams;
       } else {
         // Calcular conversionFactorToGrams manualmente ya que .lean() no incluye virtuals
@@ -87,12 +95,17 @@ const seed = async () => {
 
   const dishesPayload = rawDishes.map((dish) => {
     const rawRecipe = dish.recipe && dish.recipe.length ? dish.recipe : [];
+    // Mapear type: 'recipe' -> 'dish', mantener otros tipos
+    let dishType = dish.type ?? 'dish';
+    if (dishType === 'recipe') {
+      dishType = 'dish';
+    }
     return {
       sku: dish.sku,
       name: dish.name,
       description: dish.description ?? '',
       price: dish.price,
-      type: dish.type ?? 'dish',
+      type: dishType,
       recipe: resolveRecipe(rawRecipe),
       isActive: dish.isActive ?? true
     };

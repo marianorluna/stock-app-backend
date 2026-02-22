@@ -2,7 +2,7 @@
  * Script para poblar la base de datos con compras, ventas y mermas.
  * Uso: node scripts/seedEvents.js
  * Orden recomendado de ejecución:
- * seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ * seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
 import dotenv from 'dotenv';
@@ -52,7 +52,7 @@ const pickRandomSupplier = (suppliers) => {
 const generatePurchases = (ingredients, suppliers, count) => {
   const purchases = [];
   // Categorías que tradicionalmente usan gramos (bulk)
-  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
+  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'];
 
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(2, Math.min(4, ingredients.length));
@@ -85,7 +85,7 @@ const generatePurchases = (ingredients, suppliers, count) => {
 const generateWastage = (ingredients, count) => {
   const wastage = [];
   // Categorías que tradicionalmente usan gramos (bulk)
-  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'];
+  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'];
 
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(1, Math.min(3, ingredients.length));

@@ -11,11 +11,12 @@
     "seed:roles": "node scripts/seeds/seedRoles.js",
     "seed:users": "node scripts/seeds/seedUsers.js",
     "seed:ingredients": "node scripts/seeds/seedIngredients.js",
+    "seed:beverages": "node scripts/seeds/seedBeverages.js",
     "seed:menu": "node scripts/seeds/seedMenu.js",
     "seed:suppliers": "node scripts/seeds/seedSuppliers.js",
     "seed:events": "node scripts/seeds/seedEvents.js",
     "seed:clear": "node scripts/clearData.js",
-    "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:menu && npm run seed:suppliers && npm run seed:events",
+    "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:beverages && npm run seed:menu && npm run seed:suppliers && npm run seed:events",
     "qmarero:ventas": "node scripts/qmarero/qmareroVentas.js",
     "test:invoices": "node scripts/testInvoiceProcessor.js"
   },

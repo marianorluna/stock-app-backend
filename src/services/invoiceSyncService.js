@@ -417,7 +417,11 @@ function getCategoryElement(categoria) {
         'otros': 'OT',
         'bebida': 'BE',
         'bebidas': 'BE',
-        'cafe': 'CF'
+        'cafe': 'CF',
+        'aceites': 'AC',
+        'frutos secos': 'FS',
+        'gases': 'GS',
+        'dulces': 'DL'
     };
 
     const normalizedCategory = categoria?.toLowerCase().trim() || 'otros';

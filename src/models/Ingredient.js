@@ -8,6 +8,11 @@ const ingredientSchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
+    description: {
+      type: String,
+      trim: true,
+      default: ''
+    },
     sku: {
       type: String,
       required: true,
@@ -50,7 +55,7 @@ const ingredientSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['bebida', 'cafe', 'condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'],
+      enum: ['bebida', 'cafe', 'condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'gases', 'dulces'],
       required: true
     },
     allergens: {
@@ -91,7 +96,7 @@ ingredientSchema.virtual('conversionFactorToGrams').get(function conversionFacto
 
 ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
   // Para categorías que tradicionalmente usaban 'ingredient', mostrar en gramos
-  const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'].includes(this.category);
+  const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'].includes(this.category);
   
   if (isBulkCategory && this.stockUnit === 'g') {
     return {

@@ -6,7 +6,7 @@ export const getStockSnapshot = asyncHandler(async (req, res) => {
   const ingredients = await Ingredient.find().sort({ name: 1 });
   const inventory = ingredients.map(ingredient => {
     // Categorías que tradicionalmente usan gramos
-    const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'].includes(ingredient.category);
+    const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'].includes(ingredient.category);
     const unit = isBulkCategory && ingredient.stockUnit === 'g' ? 'g' : ingredient.stockUnit ?? ingredient.productUnit ?? 'u';
     return {
       id: ingredient._id,
@@ -28,7 +28,11 @@ export const getStockSnapshot = asyncHandler(async (req, res) => {
     'lacteos': 'ingredient',
     'otros': 'ingredient',
     'proteinas': 'ingredient',
-    'vegetales': 'ingredient'
+    'vegetales': 'ingredient',
+    'aceites': 'ingredient',
+    'frutos secos': 'ingredient',
+    'gases': 'ingredient',
+    'dulces': 'ingredient'
   };
 
   const categories = ['ingredient', 'beverage', 'coffee'];

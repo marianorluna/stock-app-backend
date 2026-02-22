@@ -2,7 +2,7 @@
  * Script para poblar la base de datos con ingredientes.
  * Lee desde stockearly.ingredients.json
  * Uso: node scripts/seedIngredients.js
- * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ * Orden: seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
 import { readFileSync } from 'fs';
@@ -15,6 +15,28 @@ import Ingredient from '../../src/models/Ingredient.js';
 dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Mapeo de categoryName a category (en minúsculas)
+const mapCategoryNameToCategory = (categoryName) => {
+  if (!categoryName) return 'otros';
+  
+  const categoryMap = {
+    'Condimentos': 'condimentos',
+    'Frutas': 'frutas',
+    'Cereales': 'cereales',
+    'Lacteos': 'lacteos',
+    'Frutos secos': 'frutos secos',
+    'Gases': 'gases',
+    'Dulces': 'dulces',
+    'Proteinas': 'proteinas',
+    'Vegetales': 'vegetales',
+    'Aceites': 'aceites',
+    'Cafe': 'cafe',
+    'Bebidas': 'bebida'
+  };
+  
+  return categoryMap[categoryName] || 'otros';
+};
 
 const seed = async () => {
   const mongoUri = process.env.NODE_ENV === 'production'
@@ -30,16 +52,31 @@ const seed = async () => {
   );
 
   const ingredients = rawData.map((item) => {
+    // Convertir 'l' (litro) a 'ml' (mililitro) para mantener consistencia
+    let stockUnit = item.stockUnit ?? 'g';
+    let stock = item.stock ?? item.stockInitial ?? 0;
+    
+    if (stockUnit === 'l') {
+      stockUnit = 'ml';
+      stock = stock * 1000; // Convertir litros a mililitros
+    }
+    
+    // Asegurar que stockUnit sea válido ('u', 'g', 'ml')
+    if (!['u', 'g', 'ml'].includes(stockUnit)) {
+      stockUnit = 'g';
+    }
+    
     return {
       sku: item.sku,
       name: item.name,
-      stock: item.stock ?? 0,
-      stockUnit: item.stockUnit ?? 'g',
+      description: item.description?.trim() ?? '',
+      stock: stock,
+      stockUnit: stockUnit,
       purchaseUnit: item.purchaseUnit?.trim() ?? 'unidad',
-      conversionFactor: item.conversionFactor ?? 1,
+      conversionFactor: (item.conversionFactor !== undefined && item.conversionFactor !== null && item.conversionFactor !== 0) ? item.conversionFactor : 1,
       conversionUnit: item.conversionUnit ?? 'g',
       reorderPoint: item.reorderPoint ?? 0,
-      category: item.category ?? 'otros',
+      category: item.category || mapCategoryNameToCategory(item.categoryName),
       allergens: item.allergens ?? [],
       codeArticlePurchase: item.codeArticlePurchase ?? ''
     };
