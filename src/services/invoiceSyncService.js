@@ -1,3 +1,7 @@
+/**
+ * Sincronización de facturas JSON a la base de datos
+ */
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Ingredient from '../models/Ingredient.js';
 import Purchase from '../models/Purchase.js';
@@ -7,7 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-
+import { getPrompt } from './promptService.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -24,165 +28,6 @@ if (process.env.GEMINI_API_KEY) {
 
 // Unidades estándar (SIMELA) que son válidas tal cual
 const STANDARD_UNITS = ['KG', 'G', 'G.', 'g', 'kg', 'L', 'L.', 'l', 'ML', 'ML.', 'ml', 'M', 'M.', 'm'];
-
-/**
- * Prompt para que Gemini interprete y normalice un item de factura
- */
-const ITEM_INTERPRETATION_PROMPT = `Eres un experto en interpretación de facturas de productos alimentarios. Tu tarea es analizar un item de factura y extraer información precisa y normalizada.
-
-Analiza el siguiente item de factura:
-- Código: {codigo_articulo}
-- Descripción: {descripcion_articulo}
-- Cantidad: {cantidad}
-- Unidad en factura: {unidad}
-- Precio: {precio}
-
-IMPORTANTE sobre unidades:
-- Si la unidad es estándar (KG, g, L, ml, etc.), la cantidad es correcta tal cual
-- Si la unidad es NO estándar (UNI, MAN, SAF, etc.), DEBES analizar la descripción para determinar:
-  * La unidad real del producto (peso/volumen unitario)
-  * La cantidad real en esa unidad (multiplicando cantidad × peso_unitario_extraído)
-
-Ejemplos:
-- "Arroz Jazmin 1 Kg" con unidad "UNI" y cantidad 2 → unidad real: "KG", cantidad_real: 2 (porque cada UNI es 1 Kg)
-- "Leche Entera 1 L" con unidad "UNI" y cantidad 3 → unidad real: "L", cantidad_real: 3 (porque cada UNI es 1 L)
-- "Pan Carasau 400 g" con unidad "UNI" y cantidad 1 → unidad real: "g", cantidad_real: 400 (porque cada UNI es 400g)
-- "Fresa Bandeja 500 g" con unidad "SAF" y cantidad 1 → unidad real: "g", cantidad_real: 500 (porque cada SAF es 500g)
-- "Huevos M Granja 12 uds" con unidad "UNI" y cantidad 4 → unidad real: "u", cantidad_real: 48 (porque cada UNI contiene 12 unidades)
-- "Granada Extra" con unidad "KG" y cantidad 0.32 → unidad real: "KG", cantidad_real: 0.32 (unidad estándar, usar tal cual)
-
-Devuelve SOLO un JSON válido con esta estructura:
-{
-  "codigo_articulo": "código original",
-  "nombre_normalizado": "nombre limpio y normalizado del producto",
-  "unidad_es_estandar": true/false,
-  "unidad_real": "KG|g|L|ml|u|MAN|SAF|etc (unidad real interpretada)",
-  "cantidad_real": número (cantidad en la unidad real, calculada correctamente),
-  "peso_neto_gramos": número (peso neto total en gramos, calculado desde cantidad_real y unidad_real),
-  "categoria": "bebida|cafe|condimentos|frutas|cereales|lacteos|otros|proteinas|vegetales",
-  "alergenos": ["array", "de", "alergenos", "si", "se", "pueden", "identificar"],
-  "purchase_unit": "unidad de compra normalizada (ej: 'KG', 'UNI', 'L', etc)",
-  "conversion_factor": número (factor para convertir 1 unidad de compra a gramos),
-  "conversion_unit": "g|ml|u",
-  "stock_unit": "g|ml|u (unidad de stock recomendada)"
-}
-
-Reglas:
-1. Si unidad es estándar (KG, g, L, ml, etc.): usar cantidad tal cual, unidad_real = unidad
-2. Si unidad es NO estándar (UNI, MAN, SAF, etc.): 
-   - Extraer peso/volumen unitario desde la descripción (ej: "1 Kg", "500 g", "1 L", "125 g", "12 uds")
-   - Calcular cantidad_real = cantidad × peso_unitario_extraído
-   - Determinar unidad_real desde la descripción
-3. Calcular peso_neto_gramos: convertir cantidad_real a gramos según unidad_real
-4. Para categorías, usa el contexto del producto
-5. Para alergenos, identifica solo si es obvio (lacteos, gluten, frutos secos, etc)`;
-
-/**
- * Prompt para matching inteligente con productos existentes
- */
-const MATCHING_PROMPT = `Eres un experto en matching de productos. Tienes un item de factura normalizado y una lista de productos existentes en la base de datos.
-
-Item de factura:
-{codigo_articulo}: {nombre_normalizado} (unidad: {unidad_real}, {peso_neto_gramos}g)
-
-Productos existentes:
-{productos_existentes}
-
-Tu tarea es determinar:
-1. ¿Existe un producto que coincida exactamente por código? (codeArticlePurchase = codigo_articulo)
-2. ¿Existe un producto que coincida por nombre similar? (usando similitud semántica)
-3. Si hay coincidencia, ¿cuál es el ID del producto?
-
-Devuelve SOLO un JSON válido:
-{
-  "coincidencia_por_codigo": {
-    "existe": true/false,
-    "ingredient_id": "id si existe",
-    "nombre": "nombre del producto encontrado"
-  },
-  "coincidencia_por_nombre": {
-    "existe": true/false,
-    "ingredient_id": "id si existe",
-    "nombre": "nombre del producto encontrado",
-    "similitud": "alta|media|baja"
-  },
-  "recomendacion": "usar_codigo|usar_nombre|crear_nuevo",
-  "ingredient_id_final": "id del producto a usar o null si crear nuevo"
-}`;
-
-/**
- * Prompt para procesamiento en batch de todos los items de una factura
- */
-const BATCH_PROCESSING_PROMPT = `Eres un experto en interpretación de facturas de productos alimentarios y matching con base de datos. Tu tarea es procesar TODOS los items de una factura de una vez.
-
-ITEMS DE LA FACTURA:
-{items_list}
-
-INGREDIENTES EXISTENTES EN LA BASE DE DATOS:
-{existing_ingredients_list}
-
-Para CADA item de la factura, debes:
-1. Interpretar y normalizar el item (unidades, cantidades, categorías)
-2. Buscar coincidencias con ingredientes existentes (por código o nombre)
-3. Determinar si crear nuevo ingrediente o usar uno existente
-
-IMPORTANTE sobre unidades:
-- Si la unidad es estándar (KG, g, L, ml, etc.), la cantidad es correcta tal cual
-- Si la unidad es NO estándar (UNI, MAN, SAF, etc.), DEBES analizar la descripción para determinar:
-  * La unidad real del producto (peso/volumen unitario)
-  * La cantidad real en esa unidad (multiplicando cantidad × peso_unitario_extraído)
-
-Ejemplos de interpretación de unidades:
-- "Arroz Jazmin 1 Kg" con unidad "UNI" y cantidad 2 → unidad real: "KG", cantidad_real: 2 (porque cada UNI es 1 Kg)
-- "Leche Entera 1 L" con unidad "UNI" y cantidad 3 → unidad real: "L", cantidad_real: 3 (porque cada UNI es 1 L)
-- "Pan Carasau 400 g" con unidad "UNI" y cantidad 1 → unidad real: "g", cantidad_real: 400 (porque cada UNI es 400g)
-- "Fresa Bandeja 500 g" con unidad "SAF" y cantidad 1 → unidad real: "g", cantidad_real: 500 (porque cada SAF es 500g)
-- "Huevos M Granja 12 uds" con unidad "UNI" y cantidad 4 → unidad real: "u", cantidad_real: 48 (porque cada UNI contiene 12 unidades)
-- "Granada Extra" con unidad "KG" y cantidad 0.32 → unidad real: "KG", cantidad_real: 0.32 (unidad estándar, usar tal cual)
-
-Devuelve SOLO un JSON válido con esta estructura:
-{
-  "items": [
-    {
-      "codigo_articulo": "código original",
-      "descripcion_original": "descripción original",
-      "nombre_normalizado": "nombre limpio y normalizado",
-      "unidad_es_estandar": true/false,
-      "unidad_real": "KG|g|L|ml|u|etc",
-      "cantidad_real": número,
-      "peso_neto_gramos": número,
-      "categoria": "bebida|cafe|condimentos|frutas|cereales|lacteos|otros|proteinas|vegetales",
-      "alergenos": ["array", "de", "alergenos"],
-      "purchase_unit": "unidad de compra",
-      "conversion_factor": número,
-      "conversion_unit": "g|ml|u",
-      "stock_unit": "g|ml|u",
-      "matching": {
-        "coincidencia_por_codigo": {
-          "existe": true/false,
-          "ingredient_id": "id si existe",
-          "nombre": "nombre del producto encontrado"
-        },
-        "coincidencia_por_nombre": {
-          "existe": true/false,
-          "ingredient_id": "id si existe",
-          "nombre": "nombre del producto encontrado",
-          "similitud": "alta|media|baja"
-        },
-        "recomendacion": "usar_codigo|usar_nombre|crear_nuevo",
-        "ingredient_id_final": "id del producto a usar o null si crear nuevo"
-      }
-    }
-  ]
-}
-
-Reglas:
-1. Procesa TODOS los items en una sola respuesta
-2. Para matching, prioriza coincidencia por código sobre coincidencia por nombre
-3. Si no hay coincidencia, ingredient_id_final debe ser null
-4. Calcula peso_neto_gramos correctamente para cada item
-5. Para categorías, usa el contexto del producto
-6. Para alergenos, identifica solo si es obvio (lacteos, gluten, frutos secos, etc)`;
 
 /**
  * Verifica si una unidad es estándar (SIMELA)
@@ -203,7 +48,9 @@ async function interpretInvoiceItem(item) {
 
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-        const prompt = ITEM_INTERPRETATION_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const itemPrompt = await getPrompt('item-interpretation.md');
+        const prompt = itemPrompt
             .replace('{codigo_articulo}', item.codigo_articulo || '')
             .replace('{descripcion_articulo}', item.descripcion_articulo || '')
             .replace('{cantidad}', item.cantidad?.toString() || '0')
@@ -285,7 +132,9 @@ async function findIntelligentMatch(interpretedItem, existingIngredients) {
             `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}`
         ).join('\n');
 
-        const prompt = MATCHING_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const matchingPrompt = await getPrompt('matching.md');
+        const prompt = matchingPrompt
             .replace('{codigo_articulo}', interpretedItem.codigo_articulo)
             .replace('{nombre_normalizado}', interpretedItem.nombre_normalizado)
             .replace('{unidad_real}', interpretedItem.unidad_real)
@@ -350,7 +199,7 @@ async function processInvoiceItemsBatch(invoiceItems, existingIngredients) {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         // Preparar lista de items para el prompt
-        const itemsList = invoiceItems.map((item, index) => 
+        const itemsList = invoiceItems.map((item, index) =>
             `${index + 1}. Código: ${item.codigo_articulo || 'N/A'}, Descripción: ${item.descripcion_articulo || 'N/A'}, Cantidad: ${item.cantidad || 0}, Unidad: ${item.unidad || 'UNI'}, Precio: ${item.precio || 0}`
         ).join('\n');
 
@@ -361,7 +210,9 @@ async function processInvoiceItemsBatch(invoiceItems, existingIngredients) {
             ).join('\n')
             : '(No hay ingredientes existentes en la base de datos)';
 
-        const prompt = BATCH_PROCESSING_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const batchPrompt = await getPrompt('batch-processing.md');
+        const prompt = batchPrompt
             .replace('{items_list}', itemsList)
             .replace('{existing_ingredients_list}', ingredientsList);
 

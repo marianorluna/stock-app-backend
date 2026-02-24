@@ -8,6 +8,7 @@ import { initializeFirebase } from './config/firebase.js';
 import eventBus, { EVENT_TYPES } from './core/eventBus.js';
 import { createNotificationForAdminsAndManagers } from './services/notificationService.js';
 import './subscribers/inventorySubscriber.js';
+import { preloadPrompts } from './services/promptService.js';
 
 dotenv.config();
 
@@ -30,6 +31,9 @@ const bootstrap = async () => {
   }
 
   await connectDatabase(MONGODB_URI);
+
+  //cargar prompts de Gemini desde Cloud Storage
+  await preloadPrompts();
 
   //inicializar Firebase Admin SDK
   initializeFirebase();
@@ -75,7 +79,7 @@ const bootstrap = async () => {
 
   eventBus.on(EVENT_TYPES.SALE_RECORDED, async (sale) => {
     io.emit('inventory:sale', sale);
-    
+
     // Guardar notificación en BD para admins y managers
     try {
       const notification = {
@@ -88,10 +92,10 @@ const bootstrap = async () => {
           sale: sale,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de venta guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {
@@ -112,7 +116,7 @@ const bootstrap = async () => {
 
   eventBus.on(EVENT_TYPES.PURCHASE_RECORDED, async (purchase) => {
     io.emit('inventory:purchase', purchase);
-    
+
     // Guardar notificación en BD para admins y managers
     try {
       const notification = {
@@ -125,10 +129,10 @@ const bootstrap = async () => {
           purchase: purchase,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de compra guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {
@@ -154,7 +158,7 @@ const bootstrap = async () => {
     }
 
     io.emit('inventory:wastage', wastage);
-    
+
     // Guardar notificación en BD para admins y managers
     try {
       // Poblar ingredientes y usuario que reportó para obtener sus nombres
@@ -174,7 +178,7 @@ const bootstrap = async () => {
       const unit = ingredient?.stockUnit || 'g';
       const quantity = item.quantityInGrams;
       const ingredientName = ingredient?.name || 'Ingrediente desconocido';
-      
+
       let message = `Merma de ${ingredientName}: ${quantity} ${unit}`;
       if (item.reason) {
         message += `. Motivo: ${item.reason}`;
@@ -193,10 +197,10 @@ const bootstrap = async () => {
           } : null,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de merma guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {

@@ -1,3 +1,7 @@
+/**
+ * Procesador de facturas PDF a JSON
+ */
+
 import { Storage } from '@google-cloud/storage';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
@@ -7,6 +11,7 @@ import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
 import ProcessedInvoice from '../models/ProcessedInvoice.js';
 import logger from '../config/logger.js';
+import { getPrompt } from './promptService.js';
 
 // Cargar variables de entorno si no están cargadas
 if (!process.env.GEMINI_API_KEY) {
@@ -194,17 +199,6 @@ const initializeClients = () => {
     }
 };
 
-// Prompt para Gemini
-const GEMINI_PROMPT = `Eres un asistente administrativo. Recibirás un PDF de una factura. Tu trabajo es analizar el documento y extraer la siguiente información y devolverla EXCLUSIVAMENTE en formato JSON: {numero_factura, lista_items con codigo_articulo, descripcion_articulo, cantidad, unidad, precio, importe, neto, fecha, total_bruto, total_factura, impuestos, proveedor}. Si un campo no existe, usa null.
-
-IMPORTANTE: 
-- Devuelve SOLO el JSON, sin explicaciones adicionales
-- El formato debe ser válido JSON
-- numero_factura debe ser un string con el número o código de la factura
-- lista_items debe ser un array de objetos
-- Todos los campos numéricos deben ser números, no strings
-- Analiza el PDF completo, incluyendo tablas, texto y cualquier información relevante`;
-
 /**
  * Verifica si un archivo ya fue procesado
  */
@@ -367,7 +361,9 @@ async function processPdfWithGeminiDirectly(pdfPath) {
 
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-        const prompt = `${GEMINI_PROMPT}\n\nAnaliza el siguiente PDF de factura:`;
+        // Cargar prompt desde Cloud Storage
+        const geminiPrompt = await getPrompt('invoice-extraction.md');
+        const prompt = `${geminiPrompt}\n\nAnaliza el siguiente PDF de factura:`;
 
         logger.debug('Enviando PDF directamente a Gemini API...');
 

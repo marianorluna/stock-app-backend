@@ -2,6 +2,12 @@ import mongoose from 'mongoose';
 
 const ingredientSchema = new mongoose.Schema(
   {
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
     name: {
       type: String,
       required: true,
@@ -12,12 +18,6 @@ const ingredientSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ''
-    },
-    sku: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true
     },
     stock: {
       type: Number,
@@ -87,7 +87,7 @@ ingredientSchema.virtual('conversionFactorToGrams').get(function conversionFacto
   if (this.conversionUnit === 'g') {
     return this.conversionFactor;
   }
-  
+
   // Si conversionUnit es 'u' o 'ml', el factor representa unidades/ml por unidad de compra
   // Para mantener compatibilidad, devolvemos el factor directamente
   // El código que lo use deberá considerar la unidad correcta
@@ -97,7 +97,7 @@ ingredientSchema.virtual('conversionFactorToGrams').get(function conversionFacto
 ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
   // Para categorías que tradicionalmente usaban 'ingredient', mostrar en gramos
   const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'].includes(this.category);
-  
+
   if (isBulkCategory && this.stockUnit === 'g') {
     return {
       amount: this.stock,
@@ -119,7 +119,7 @@ ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
 const transformForCompatibility = (doc, ret) => {
   // Agregar campos virtuales para compatibilidad
   ret.productUnit = ret.stockUnit || ret.productUnit;
-  
+
   // Calcular conversionFactorToGrams si no está disponible como virtual
   if (!ret.conversionFactorToGrams && ret.conversionFactor !== undefined) {
     if (ret.conversionUnit === 'g') {
@@ -128,7 +128,7 @@ const transformForCompatibility = (doc, ret) => {
       ret.conversionFactorToGrams = ret.conversionFactor;
     }
   }
-  
+
   return ret;
 };
 
