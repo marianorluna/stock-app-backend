@@ -1,6 +1,6 @@
 /**
  * Script para poblar la base de datos con compras, ventas y mermas.
- * Uso: node scripts/seedEvents.js
+ * Uso: node scripts/seeds/seedEvents.js
  * Orden recomendado de ejecución:
  * seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
@@ -39,11 +39,6 @@ const generateSales = (dishes, count) => {
   return sales;
 };
 
-const toConversion = (ingredient) =>
-  ingredient.conversionFactorToGrams && ingredient.conversionFactorToGrams > 0
-    ? ingredient.conversionFactorToGrams
-    : 1;
-
 const pickRandomSupplier = (suppliers) => {
   const index = randomBetween(0, suppliers.length - 1);
   return suppliers[index].sku;
@@ -51,9 +46,6 @@ const pickRandomSupplier = (suppliers) => {
 
 const generatePurchases = (ingredients, suppliers, count) => {
   const purchases = [];
-  // Categorías que tradicionalmente usan gramos (bulk)
-  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'];
-
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(2, Math.min(4, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
@@ -61,19 +53,12 @@ const generatePurchases = (ingredients, suppliers, count) => {
       supplier: pickRandomSupplier(suppliers),
       invoiceNumber: `INV-${String(i + 1).padStart(3, '0')}`,
       timestamp: new Date(Date.now() - randomBetween(0, 10) * 24 * 60 * 60 * 1000),
-      items: selected.map((ingredient) => {
-        const isBulk = bulkCategories.includes(ingredient.category);
-        const conversion = toConversion(ingredient);
-        const quantityInGrams = isBulk
-          ? randomBetween(500, 3000)
-          : randomBetween(1, 12) * conversion;
-        const unitPrice = Number((Math.random() * 15 + 5).toFixed(2));
-        return {
-          ingredient: ingredient._id,
-          quantityInGrams,
-          unitPrice
-        };
-      }),
+      items: selected.map((ingredient) => ({
+        ingredient: ingredient._id,
+        // Todos los ingredientes usan gramos
+        quantityInGrams: randomBetween(200, 3000),
+        unitPrice: Number((Math.random() * 15 + 5).toFixed(2))
+      })),
       metadata: {
         note: `seed-purchase-${i + 1}`
       }
@@ -84,26 +69,17 @@ const generatePurchases = (ingredients, suppliers, count) => {
 
 const generateWastage = (ingredients, count) => {
   const wastage = [];
-  // Categorías que tradicionalmente usan gramos (bulk)
-  const bulkCategories = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'];
-
   for (let i = 0; i < count; i += 1) {
     const itemsCount = randomBetween(1, Math.min(3, ingredients.length));
     const selected = [...ingredients].sort(() => 0.5 - Math.random()).slice(0, itemsCount);
     wastage.push({
       timestamp: new Date(Date.now() - randomBetween(0, 5) * 24 * 60 * 60 * 1000),
-      items: selected.map((ingredient) => {
-        const isBulk = bulkCategories.includes(ingredient.category);
-        const conversion = toConversion(ingredient);
-        const quantityInGrams = isBulk
-          ? randomBetween(100, 600)
-          : randomBetween(1, 6) * conversion;
-        return {
-          ingredient: ingredient._id,
-          quantityInGrams,
-          reason: `Merma de ${ingredient.name.toLowerCase()}`
-        };
-      }),
+      items: selected.map((ingredient) => ({
+        ingredient: ingredient._id,
+        // Todos los ingredientes usan gramos
+        quantityInGrams: randomBetween(50, 600),
+        reason: `Merma de ${ingredient.name.toLowerCase()}`
+      })),
       metadata: {
         note: `seed-wastage-${i + 1}`
       }
@@ -176,4 +152,3 @@ seed().catch((error) => {
   console.error('Seed failed', error);
   process.exit(1);
 });
-

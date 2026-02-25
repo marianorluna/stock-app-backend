@@ -1,53 +1,55 @@
 import asyncHandler from 'express-async-handler';
 import Ingredient from '../models/Ingredient.js';
+import Beverage from '../models/Beverage.js';
 
-//obtiene el snapshot del inventario con categorías y productos con stock bajo
+// Categorías de ingredientes (no bebidas)
+const INGREDIENT_CATEGORY_NAMES = [
+  'Condimentos', 'Frutas', 'Cereales', 'Lacteos', 'Proteinas',
+  'Vegetales', 'Aceites', 'Frutos secos', 'Gases', 'Dulces', 'Cafe', 'Bebidas'
+];
+
+// Categorías de bebidas
+const BEVERAGE_CATEGORY_NAMES = ['Bebidas', 'Copa de vino', 'Bebida premium', 'Botella'];
+
+// Obtiene el snapshot del inventario con categorías y productos con stock bajo
 export const getStockSnapshot = asyncHandler(async (req, res) => {
-  const ingredients = await Ingredient.find().sort({ name: 1 });
-  const inventory = ingredients.map(ingredient => {
-    // Categorías que tradicionalmente usan gramos
-    const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales', 'aceites', 'frutos secos', 'dulces'].includes(ingredient.category);
-    const unit = isBulkCategory && ingredient.stockUnit === 'g' ? 'g' : ingredient.stockUnit ?? ingredient.productUnit ?? 'u';
-    return {
-      id: ingredient._id,
-      name: ingredient.name,
-      category: ingredient.category,
-      stock: ingredient.stock,
-      reorderPoint: ingredient.reorderPoint,
-      unit
-    };
-  });
+  const [ingredients, beverages] = await Promise.all([
+    Ingredient.find().sort({ name: 1 }),
+    Beverage.find().sort({ name: 1 })
+  ]);
 
-  // Mapear categorías nuevas a categorías antiguas para compatibilidad con frontend
-  const categoryMapping = {
-    'bebida': 'beverage',
-    'cafe': 'coffee',
-    'condimentos': 'ingredient',
-    'frutas': 'ingredient',
-    'cereales': 'ingredient',
-    'lacteos': 'ingredient',
-    'otros': 'ingredient',
-    'proteinas': 'ingredient',
-    'vegetales': 'ingredient',
-    'aceites': 'ingredient',
-    'frutos secos': 'ingredient',
-    'gases': 'ingredient',
-    'dulces': 'ingredient'
+  const ingredientItems = ingredients.map(ingredient => ({
+    id: ingredient._id,
+    name: ingredient.name,
+    categoryName: ingredient.categoryName,
+    itemType: 'ingredient',
+    stock: ingredient.stock,
+    reorderPoint: ingredient.reorderPoint,
+    unit: 'g'
+  }));
+
+  const beverageItems = beverages.map(beverage => ({
+    id: beverage._id,
+    name: beverage.name,
+    categoryName: beverage.categoryName,
+    itemType: 'beverage',
+    stock: beverage.stock,
+    reorderPoint: beverage.reorderPoint,
+    unit: 'ml'
+  }));
+
+  const inventory = [...ingredientItems, ...beverageItems];
+
+  const categoryTotals = {
+    ingredient: {
+      total: ingredientItems.length,
+      lowStock: ingredientItems.filter(item => item.stock <= item.reorderPoint).length
+    },
+    beverage: {
+      total: beverageItems.length,
+      lowStock: beverageItems.filter(item => item.stock <= item.reorderPoint).length
+    }
   };
-
-  const categories = ['ingredient', 'beverage', 'coffee'];
-  const categoryTotals = categories.reduce((acc, oldCategory) => {
-    const items = inventory.filter(item => {
-      const mappedCategory = categoryMapping[item.category] || 'ingredient';
-      return mappedCategory === oldCategory;
-    });
-    const lowStockCount = items.filter(item => item.stock <= item.reorderPoint).length;
-    acc[oldCategory] = {
-      total: items.length,
-      lowStock: lowStockCount
-    };
-    return acc;
-  }, {});
 
   res.json({
     generatedAt: new Date(),
@@ -56,4 +58,3 @@ export const getStockSnapshot = asyncHandler(async (req, res) => {
     categoryTotals
   });
 });
-

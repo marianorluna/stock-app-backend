@@ -63,27 +63,8 @@ const seed = async () => {
         // Formato antiguo: ya está en gramos
         quantityInGrams = item.grams;
       } else {
-        // Calcular conversionFactorToGrams manualmente ya que .lean() no incluye virtuals
-        // El conversionFactor representa cuántas unidades de conversionUnit hay en 1 unidad de purchaseUnit
-        // Para convertir a gramos, necesitamos considerar stockUnit y conversionUnit
-        let conversionFactorToGrams = 1;
-
-        if (ingredientDoc.conversionFactor) {
-          if (ingredientDoc.conversionUnit === 'g') {
-            // Si conversionUnit es 'g', el factor ya está en gramos
-            conversionFactorToGrams = ingredientDoc.conversionFactor;
-          } else if (ingredientDoc.conversionUnit === 'ml') {
-            // Para ml, asumimos 1ml ≈ 1g para la mayoría de líquidos
-            conversionFactorToGrams = ingredientDoc.conversionFactor;
-          } else {
-            // Para 'u' (unidades), el factor representa unidades por unidad de compra
-            // Si el stockUnit es 'g', necesitamos un valor por defecto razonable
-            // Por ahora usamos el factor directamente
-            conversionFactorToGrams = ingredientDoc.conversionFactor;
-          }
-        }
-
-        quantityInGrams = conversionFactorToGrams;
+        // Sin datos de cantidad: asumir 1g como valor por defecto
+        quantityInGrams = 1;
       }
 
       return {

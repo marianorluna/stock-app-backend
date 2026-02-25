@@ -1,7 +1,7 @@
 /**
  * Script para poblar la base de datos con ingredientes.
- * Lee desde stockearly.ingredients.json
- * Uso: node scripts/seedIngredients.js
+ * Lee desde stockearly.ingredients-NEW.json
+ * Uso: node scripts/seeds/seedIngredients.js
  * Orden: seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
@@ -16,28 +16,6 @@ dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-// Mapeo de categoryName a category (en minúsculas)
-const mapCategoryNameToCategory = (categoryName) => {
-  if (!categoryName) return 'otros';
-  
-  const categoryMap = {
-    'Condimentos': 'condimentos',
-    'Frutas': 'frutas',
-    'Cereales': 'cereales',
-    'Lacteos': 'lacteos',
-    'Frutos secos': 'frutos secos',
-    'Gases': 'gases',
-    'Dulces': 'dulces',
-    'Proteinas': 'proteinas',
-    'Vegetales': 'vegetales',
-    'Aceites': 'aceites',
-    'Cafe': 'cafe',
-    'Bebidas': 'bebida'
-  };
-  
-  return categoryMap[categoryName] || 'otros';
-};
-
 const seed = async () => {
   const mongoUri = process.env.NODE_ENV === 'production'
     ? (process.env.MONGODB_URI_ATLAS ?? process.env.MONGODB_URI)
@@ -51,36 +29,21 @@ const seed = async () => {
     readFileSync(join(__dirname, 'stockearly.ingredients.json'), 'utf-8')
   );
 
-  const ingredients = rawData.map((item) => {
-    // Convertir 'l' (litro) a 'ml' (mililitro) para mantener consistencia
-    let stockUnit = item.stockUnit ?? 'g';
-    let stock = item.stock ?? item.stockInitial ?? 0;
-    
-    if (stockUnit === 'l') {
-      stockUnit = 'ml';
-      stock = stock * 1000; // Convertir litros a mililitros
-    }
-    
-    // Asegurar que stockUnit sea válido ('u', 'g', 'ml')
-    if (!['u', 'g', 'ml'].includes(stockUnit)) {
-      stockUnit = 'g';
-    }
-    
-    return {
-      sku: item.sku,
-      name: item.name,
-      description: item.description?.trim() ?? '',
-      stock: stock,
-      stockUnit: stockUnit,
-      purchaseUnit: item.purchaseUnit?.trim() ?? 'unidad',
-      conversionFactor: (item.conversionFactor !== undefined && item.conversionFactor !== null && item.conversionFactor !== 0) ? item.conversionFactor : 1,
-      conversionUnit: item.conversionUnit ?? 'g',
-      reorderPoint: item.reorderPoint ?? 0,
-      category: item.category || mapCategoryNameToCategory(item.categoryName),
-      allergens: item.allergens ?? [],
-      codeArticlePurchase: item.codeArticlePurchase ?? ''
-    };
-  });
+  const ingredients = rawData.map((item) => ({
+    sku: item.sku,
+    name: item.name,
+    description: item.description?.trim() ?? '',
+    // categoryName se calcula automáticamente desde el SKU en el pre-save hook
+    stock: item.stock ?? item.stockInitial ?? 0,
+    stockUnit: 'g',
+    stockUnitName: item.stockUnitName ?? 'gramo',
+    factorMermaNat: item.factorMermaNat ?? 0,
+    reorderPoint: item.reorderPoint ?? 0,
+    allergens: item.allergens ?? [],
+    codeArticlePurchase: item.codeArticlePurchase ?? '',
+    pesoUnitarioGramos: item.pesoUnitarioGramos ?? 0,
+    stockMerma: item.stockMerma ?? 0
+  }));
 
   await connectDatabase(mongoUri);
 

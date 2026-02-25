@@ -206,7 +206,7 @@ async function processInvoiceItemsBatch(invoiceItems, existingIngredients) {
         // Preparar lista de ingredientes existentes
         const ingredientsList = existingIngredients.length > 0
             ? existingIngredients.map(ing =>
-                `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}, Categoría: ${ing.category || 'otros'}`
+                `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}, Categoría: ${ing.categoryName || 'otros'}`
             ).join('\n')
             : '(No hay ingredientes existentes en la base de datos)';
 
@@ -491,14 +491,11 @@ export async function syncInvoiceToDatabase(jsonPath) {
                             name: processedItem.nombre_normalizado,
                             sku: sku,
                             stock: 0,
-                            stockUnit: processedItem.stock_unit || 'g',
-                            purchaseUnit: processedItem.purchase_unit || processedItem.unidad_real,
-                            conversionFactor: processedItem.conversion_factor || 1,
-                            conversionUnit: processedItem.conversion_unit || 'g',
+                            stockUnit: 'g',
                             reorderPoint: 0,
-                            category: processedItem.categoria || 'otros',
                             allergens: processedItem.alergenos || [],
                             codeArticlePurchase: processedItem.codigo_articulo
+                            // categoryName se calcula automáticamente desde el SKU
                         });
 
                         logger.info(`✅ Nuevo ingrediente creado: ${ingredient.name} (SKU: ${ingredient.sku})`);

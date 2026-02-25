@@ -18,7 +18,8 @@
     "seed:clear": "node scripts/clearData.js",
     "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:beverages && npm run seed:menu && npm run seed:suppliers && npm run seed:events",
     "qmarero:ventas": "node scripts/qmarero/qmareroVentas.js",
-    "test:invoices": "node scripts/testInvoiceProcessor.js"
+    "test:invoices": "node scripts/testInvoiceProcessor.js",
+    "script:unify": "node scripts/unificarItemsFactura.js"
   },
   "engines": {
     "node": ">=18.18.0"

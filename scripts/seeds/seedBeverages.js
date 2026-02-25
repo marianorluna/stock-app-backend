@@ -1,7 +1,7 @@
 /**
  * Script para poblar la base de datos con bebidas.
- * Lee desde stockearly.bebidas.json y las carga como ingredientes con category='bebida'.
- * Uso: node scripts/seedBeverages.js
+ * Lee desde stockearly.bebidas.json y las carga como documentos Beverage.
+ * Uso: node scripts/seeds/seedBeverages.js
  * Orden: seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
@@ -10,20 +10,11 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 import connectDatabase from '../../src/config/database.js';
-import Ingredient from '../../src/models/Ingredient.js';
+import Beverage from '../../src/models/Beverage.js';
 
 dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-
-// Mapeo de categoryName a category para bebidas
-const mapBeverageCategoryNameToCategory = (categoryName) => {
-  if (!categoryName) return 'bebida';
-  
-  // Todas las bebidas van a category 'bebida' independientemente de su categoryName
-  // (Bebidas, Copa de vino, Bebida Premium, Botella)
-  return 'bebida';
-};
 
 const seed = async () => {
   const mongoUri = process.env.NODE_ENV === 'production'
@@ -38,21 +29,18 @@ const seed = async () => {
     readFileSync(join(__dirname, 'stockearly.bebidas.json'), 'utf-8')
   );
 
-  const beverages = rawData.map((item) => {
-    return {
-      sku: item.sku,
-      name: item.name,
-      stock: item.stock ?? item.stockInitial ?? 0,
-      stockUnit: item.stockUnit ?? 'u',
-      purchaseUnit: item.purchaseUnit?.trim() ?? 'unidad',
-      conversionFactor: item.conversionFactor ?? 1,
-      conversionUnit: item.conversionUnit ?? 'u',
-      reorderPoint: item.reorderPoint ?? 0,
-      category: mapBeverageCategoryNameToCategory(item.categoryName),
-      allergens: item.allergens ?? [],
-      codeArticlePurchase: item.codeArticlePurchase ?? ''
-    };
-  });
+  const beverages = rawData.map((item) => ({
+    sku: item.sku,
+    name: item.name,
+    description: item.description?.trim() ?? '',
+    // categoryName se calcula automáticamente desde el SKU en el pre-save hook
+    stock: item.stock ?? item.stockInitial ?? 0,
+    stockUnit: item.stockUnit ?? 'u',
+    stockUnitName: item.stockUnitName ?? 'unidad',
+    reorderPoint: item.reorderPoint ?? 0,
+    allergens: item.allergens ?? [],
+    codeArticlePurchase: item.codeArticlePurchase ?? ''
+  }));
 
   await connectDatabase(mongoUri);
 
@@ -64,7 +52,7 @@ const seed = async () => {
     }
   }));
 
-  const result = await Ingredient.bulkWrite(operations);
+  const result = await Beverage.bulkWrite(operations);
   console.log('Beverage seed completed', { inserted: result.upsertedCount ?? 0, modified: result.modifiedCount ?? 0 });
   process.exit(0);
 };
