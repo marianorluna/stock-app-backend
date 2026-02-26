@@ -25,7 +25,9 @@ export const getStockSnapshot = asyncHandler(async (req, res) => {
     itemType: 'ingredient',
     stock: ingredient.stock,
     reorderPoint: ingredient.reorderPoint,
-    unit: 'g'
+    unit: 'g',
+    factorMermaNat: ingredient.factorMermaNat,
+    stockMerma: ingredient.stockMerma
   }));
 
   const beverageItems = beverages.map(beverage => ({
@@ -35,26 +37,30 @@ export const getStockSnapshot = asyncHandler(async (req, res) => {
     itemType: 'beverage',
     stock: beverage.stock,
     reorderPoint: beverage.reorderPoint,
-    unit: 'ml'
+    unit: 'u'
   }));
 
   const inventory = [...ingredientItems, ...beverageItems];
 
+  // Stock efectivo: usa stockMerma para ingredientes con factorMermaNat > 0, stock para el resto
+  const effectiveStock = (item) =>
+    item.factorMermaNat > 0 && item.stockMerma != null ? item.stockMerma : item.stock;
+
   const categoryTotals = {
     ingredient: {
       total: ingredientItems.length,
-      lowStock: ingredientItems.filter(item => item.stock <= item.reorderPoint).length
+      lowStock: ingredientItems.filter(item => effectiveStock(item) <= item.reorderPoint).length
     },
     beverage: {
       total: beverageItems.length,
-      lowStock: beverageItems.filter(item => item.stock <= item.reorderPoint).length
+      lowStock: beverageItems.filter(item => effectiveStock(item) <= item.reorderPoint).length
     }
   };
 
   res.json({
     generatedAt: new Date(),
     inventory,
-    lowStock: inventory.filter(item => item.stock <= item.reorderPoint),
+    lowStock: inventory.filter(item => effectiveStock(item) <= item.reorderPoint),
     categoryTotals
   });
 });

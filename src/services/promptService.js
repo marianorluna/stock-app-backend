@@ -11,11 +11,15 @@ if (!process.env.GCS_PROJECT_ID) {
 const PROMPTS_BUCKET_NAME = process.env.GCS_BUCKET_PROMPTS_NAME || 'etama-prompts';
 const PROMPTS_BUCKET_PROJECT_ID = process.env.GCS_PROJECT_ID || 'stockearly-app';
 
-// Cache de prompts con metadatos: { content: string, etag: string, updated: string, timestamp: number }
+// TTL del cache (por defecto 1 hora). Configurable con PROMPTS_CACHE_TTL_MS.
+const CACHE_TTL_MS = parseInt(process.env.PROMPTS_CACHE_TTL_MS || '3600000', 10);
+
+// Cache principal: Map<promptName, { content: string, timestamp: number }>
 const promptsCache = new Map();
 
-// TTL del cache como respaldo (en milisegundos) - por defecto 24 horas
-const CACHE_TTL_MS = parseInt(process.env.PROMPTS_CACHE_TTL_MS || '86400000', 10); // 24 horas
+// Request deduplication: Map<promptName, Promise<string>>
+// Evita que múltiples llamadas concurrentes descarguen el mismo prompt a la vez.
+const inFlightRequests = new Map();
 
 // Cliente de Storage (se inicializa cuando sea necesario)
 let storage = null;
@@ -75,7 +79,7 @@ const buildCredentials = (prefix) => {
 };
 
 /**
- * Inicializa el cliente de Storage
+ * Inicializa el cliente de Storage (singleton)
  */
 const initializeStorage = () => {
     if (storage) {
@@ -105,102 +109,99 @@ const initializeStorage = () => {
 };
 
 /**
- * Verifica si un prompt en cache está actualizado comparando ETag y fecha de actualización
+ * Descarga un prompt desde Cloud Storage y lo guarda en cache.
+ * Función interna — 1 sola llamada de red.
+ * @param {string} promptName
+ * @returns {Promise<string>}
  */
-const isCacheValid = (cached, currentETag, currentUpdated) => {
-    // Verificar ETag (más confiable)
-    if (cached.etag === currentETag) {
-        return true;
-    }
+async function _downloadPrompt(promptName) {
+    const storageClient = initializeStorage();
+    const bucket = storageClient.bucket(PROMPTS_BUCKET_NAME);
+    const file = bucket.file(promptName);
 
-    // Si el ETag cambió, el archivo fue modificado
-    if (cached.etag !== currentETag) {
-        return false;
-    }
+    logger.info(`📥 Cargando prompt '${promptName}' desde Cloud Storage...`);
 
-    // Verificar TTL como respaldo (por si acaso el ETag no está disponible)
-    const age = Date.now() - cached.timestamp;
-    if (age > CACHE_TTL_MS) {
-        logger.debug(`Cache expirado por TTL (edad: ${Math.round(age / 1000 / 60)} minutos)`);
-        return false;
-    }
-
-    return true;
-};
-
-/**
- * Carga un prompt desde Cloud Storage
- * @param {string} promptName - Nombre del archivo del prompt (ej: 'invoice-extraction.md')
- * @param {boolean} forceRefresh - Si es true, fuerza la recarga desde Cloud Storage
- * @returns {Promise<string>} El contenido del prompt
- */
-export async function getPrompt(promptName, forceRefresh = false) {
     try {
-        // Inicializar Storage si no está inicializado
-        const storageClient = initializeStorage();
-
-        // Obtener metadatos del archivo para verificar si cambió
-        const bucket = storageClient.bucket(PROMPTS_BUCKET_NAME);
-
-        // Verificar que el bucket existe
-        const [bucketExists] = await bucket.exists();
-        if (!bucketExists) {
-            throw new Error(`El bucket ${PROMPTS_BUCKET_NAME} no existe o no tienes permisos para acceder`);
-        }
-
-        const file = bucket.file(promptName);
-        const [fileExists] = await file.exists();
-
-        if (!fileExists) {
-            throw new Error(`El archivo de prompt '${promptName}' no existe en el bucket ${PROMPTS_BUCKET_NAME}`);
-        }
-
-        // Obtener metadatos del archivo
-        const [metadata] = await file.getMetadata();
-        const currentETag = metadata.etag;
-        const currentUpdated = metadata.updated;
-
-        // Verificar cache (solo si no se fuerza refresh)
-        if (!forceRefresh && promptsCache.has(promptName)) {
-            const cached = promptsCache.get(promptName);
-
-            // Verificar si el cache es válido comparando ETag y fecha
-            if (isCacheValid(cached, currentETag, currentUpdated)) {
-                const age = Math.round((Date.now() - cached.timestamp) / 1000);
-                logger.debug(`📋 Prompt '${promptName}' cargado desde cache (edad: ${age}s, ETag: ${currentETag.substring(0, 8)}...)`);
-                return cached.content;
-            } else {
-                logger.info(`🔄 Prompt '${promptName}' actualizado en bucket (ETag cambió), recargando...`);
-                promptsCache.delete(promptName);
-            }
-        }
-
-        // Descargar prompt desde Cloud Storage
-        if (forceRefresh) {
-            logger.info(`🔄 Recargando prompt '${promptName}' desde Cloud Storage (forzado)...`);
-        } else {
-            logger.info(`📥 Cargando prompt '${promptName}' desde Cloud Storage...`);
-        }
-
-        // Descargar el contenido del archivo
         const [contents] = await file.download();
         const promptText = contents.toString('utf-8');
 
-        // Guardar en cache con metadatos
         promptsCache.set(promptName, {
             content: promptText,
-            etag: currentETag,
-            updated: currentUpdated,
             timestamp: Date.now()
         });
 
-        logger.info(`✅ Prompt '${promptName}' cargado correctamente desde Cloud Storage (${promptText.length} caracteres, ETag: ${currentETag.substring(0, 8)}...)`);
+        logger.info(`✅ Prompt '${promptName}' cargado correctamente desde Cloud Storage (${promptText.length} caracteres)`);
         return promptText;
-
     } catch (error) {
         logger.error(`❌ Error cargando prompt '${promptName}':`, error);
         throw error;
     }
+}
+
+/**
+ * Lanza un refresco en background (patrón SWR).
+ * Retorna inmediatamente; los errores no se propagan al caller.
+ * @param {string} promptName
+ */
+function _backgroundRefresh(promptName) {
+    if (inFlightRequests.has(promptName)) return; // ya hay un refresco en curso
+
+    logger.debug(`🔄 Refrescando prompt '${promptName}' en background (cache vencido)...`);
+
+    const promise = _downloadPrompt(promptName)
+        .then(() => logger.debug(`✅ Background refresh completado: '${promptName}'`))
+        .catch(err => logger.warn(`⚠️ Background refresh fallido para '${promptName}': ${err.message}`))
+        .finally(() => inFlightRequests.delete(promptName));
+
+    inFlightRequests.set(promptName, promise);
+}
+
+/**
+ * Obtiene el contenido de un prompt.
+ *
+ * Estrategia (Lazy + TTL Cache + Stale-While-Revalidate):
+ *  - Cache fresco (dentro del TTL)  → retorna inmediatamente, 0 llamadas de red.
+ *  - Cache vencido (pasado el TTL)  → retorna el contenido viejo inmediatamente
+ *                                     y lanza un refresco en background.
+ *  - Sin cache (primera vez)        → descarga lazy, con request deduplication
+ *                                     para evitar descargas duplicadas concurrentes.
+ *
+ * @param {string} promptName - Nombre del archivo (ej: 'invoice-extraction.md')
+ * @param {boolean} forceRefresh - Si true, invalida el cache y fuerza descarga inmediata
+ * @returns {Promise<string>} El contenido del prompt
+ */
+export async function getPrompt(promptName, forceRefresh = false) {
+    if (forceRefresh) {
+        promptsCache.delete(promptName);
+        inFlightRequests.delete(promptName);
+    }
+
+    // 1. Cache hit fresco → 0 llamadas de red
+    if (promptsCache.has(promptName)) {
+        const cached = promptsCache.get(promptName);
+        const age = Date.now() - cached.timestamp;
+
+        if (age < CACHE_TTL_MS) {
+            logger.debug(`📋 Prompt '${promptName}' servido desde cache (edad: ${Math.round(age / 1000)}s)`);
+            return cached.content;
+        }
+
+        // Cache vencido → SWR: devolver contenido viejo + refrescar en background sin bloquear
+        logger.debug(`⏳ Cache vencido para '${promptName}', lanzando refresh en background`);
+        _backgroundRefresh(promptName);
+        return cached.content;
+    }
+
+    // 2. Request deduplication: si ya hay una descarga en curso, esperar la misma Promise
+    if (inFlightRequests.has(promptName)) {
+        logger.debug(`⏳ Prompt '${promptName}' ya se está descargando, esperando...`);
+        return inFlightRequests.get(promptName);
+    }
+
+    // 3. Primera carga (lazy) — registrar Promise para deduplication
+    const promise = _downloadPrompt(promptName).finally(() => inFlightRequests.delete(promptName));
+    inFlightRequests.set(promptName, promise);
+    return promise;
 }
 
 /**
@@ -219,18 +220,20 @@ export function clearPromptsCache() {
 export function getCacheInfo() {
     const info = {
         total: promptsCache.size,
+        ttlMs: CACHE_TTL_MS,
         prompts: []
     };
 
     for (const [name, cached] of promptsCache.entries()) {
         const age = Date.now() - cached.timestamp;
+        const remainingTtl = Math.max(0, CACHE_TTL_MS - age);
         info.prompts.push({
             name,
             size: cached.content.length,
             ageSeconds: Math.round(age / 1000),
             ageMinutes: Math.round(age / 1000 / 60),
-            etag: cached.etag?.substring(0, 16) + '...',
-            updated: cached.updated
+            remainingTtlSeconds: Math.round(remainingTtl / 1000),
+            fresh: age < CACHE_TTL_MS
         });
     }
 
@@ -238,17 +241,23 @@ export function getCacheInfo() {
 }
 
 /**
- * Recarga un prompt específico desde Cloud Storage
+ * Recarga un prompt específico desde Cloud Storage (fuerza descarga inmediata)
  */
 export async function reloadPrompt(promptName) {
     return await getPrompt(promptName, true);
 }
 
 /**
- * Recarga todos los prompts en cache
+ * Recarga todos los prompts que están actualmente en cache
  */
 export async function reloadAllPrompts() {
     const promptNames = Array.from(promptsCache.keys());
+
+    if (promptNames.length === 0) {
+        logger.info('ℹ️  No hay prompts en cache para recargar');
+        return {};
+    }
+
     logger.info(`🔄 Recargando ${promptNames.length} prompts desde Cloud Storage...`);
 
     const results = {};
@@ -264,36 +273,6 @@ export async function reloadAllPrompts() {
 
     const successCount = Object.values(results).filter(r => r.success).length;
     logger.info(`✅ Recarga completada: ${successCount}/${promptNames.length} prompts recargados correctamente`);
-
-    return results;
-}
-
-/**
- * Precarga todos los prompts necesarios
- */
-export async function preloadPrompts() {
-    const requiredPrompts = [
-        'invoice-extraction.md',      // GEMINI_PROMPT
-        'item-interpretation.md',     // ITEM_INTERPRETATION_PROMPT
-        'matching.md',                // MATCHING_PROMPT
-        'batch-processing.md'         // BATCH_PROCESSING_PROMPT
-    ];
-
-    logger.info(`🔄 Precargando ${requiredPrompts.length} prompts desde Cloud Storage...`);
-
-    const results = {};
-    for (const promptName of requiredPrompts) {
-        try {
-            const prompt = await getPrompt(promptName);
-            results[promptName] = { success: true, length: prompt.length };
-        } catch (error) {
-            results[promptName] = { success: false, error: error.message };
-            logger.error(`❌ Error precargando '${promptName}':`, error);
-        }
-    }
-
-    const successCount = Object.values(results).filter(r => r.success).length;
-    logger.info(`✅ Precarga completada: ${successCount}/${requiredPrompts.length} prompts cargados correctamente`);
 
     return results;
 }

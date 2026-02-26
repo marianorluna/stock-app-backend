@@ -48,7 +48,7 @@ const beverageSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
-            enum: ['ml', 'u'],
+            enum: ['u'],
             default: 'u'
         },
         stockUnitName: {

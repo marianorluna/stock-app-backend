@@ -8,7 +8,6 @@ import { initializeFirebase } from './config/firebase.js';
 import eventBus, { EVENT_TYPES } from './core/eventBus.js';
 import { createNotificationForAdminsAndManagers } from './services/notificationService.js';
 import './subscribers/inventorySubscriber.js';
-import { preloadPrompts } from './services/promptService.js';
 
 dotenv.config();
 
@@ -31,9 +30,6 @@ const bootstrap = async () => {
   }
 
   await connectDatabase(MONGODB_URI);
-
-  //cargar prompts de Gemini desde Cloud Storage
-  await preloadPrompts();
 
   //inicializar Firebase Admin SDK
   initializeFirebase();

@@ -64,8 +64,14 @@ const commitStockUpdates = async (updates, metadata) => {
 
   // Guardar el stock anterior para detectar cambios a stock bajo
   const previousStockMap = new Map(
-    ingredients.map(ing => [ing._id.toString(), { stock: ing.stock, reorderPoint: ing.reorderPoint }])
+    ingredients.map(ing => [ing._id.toString(), {
+      stock: ing.stock,
+      stockMerma: ing.stockMerma,
+      reorderPoint: ing.reorderPoint
+    }])
   );
+
+  const isPurchase = metadata?.context === 'purchase';
 
   const bulkOperations = updates.map(update => {
     const ingredient = ingredientMap.get(update.ingredientId.toString());
@@ -73,10 +79,16 @@ const commitStockUpdates = async (updates, metadata) => {
       return null;
     }
 
+    // stockMerma: en compras se aplica el factor de merma natural al delta entrante
+    // en ventas/mermas/reversiones se usa el mismo delta
+    const stockMermaDelta = isPurchase && ingredient.factorMermaNat > 0
+      ? update.delta * (1 - ingredient.factorMermaNat)
+      : update.delta;
+
     return {
       updateOne: {
         filter: { _id: update.ingredientId },
-        update: { $inc: { stock: update.delta } }
+        update: { $inc: { stock: update.delta, stockMerma: stockMermaDelta } }
       }
     };
   }).filter(Boolean);
@@ -109,13 +121,17 @@ const checkLowStockAndNotify = async (ingredientIds, previousStockMap) => {
         return false;
       }
 
+      // Usar stockMerma como stock efectivo si el ingrediente tiene factor de merma natural
+      const effectiveStock = ingredient.factorMermaNat > 0 ? ingredient.stockMerma : ingredient.stock;
+      const previousEffectiveStock = ingredient.factorMermaNat > 0 ? (previous.stockMerma ?? previous.stock) : previous.stock;
+
       // Verificar si ahora está en stock bajo pero antes no lo estaba
-      const wasAboveReorderPoint = previous.stock > previous.reorderPoint;
-      const isNowBelowReorderPoint = ingredient.stock <= ingredient.reorderPoint;
+      const wasAboveReorderPoint = previousEffectiveStock > previous.reorderPoint;
+      const isNowBelowReorderPoint = effectiveStock <= ingredient.reorderPoint;
 
       logger.debug(`Verificando ${ingredient.name}:`, {
-        stockAnterior: previous.stock,
-        stockActual: ingredient.stock,
+        stockAnterior: previousEffectiveStock,
+        stockActual: effectiveStock,
         reorderPoint: ingredient.reorderPoint,
         wasAbove: wasAboveReorderPoint,
         isNowBelow: isNowBelowReorderPoint,
@@ -129,19 +145,20 @@ const checkLowStockAndNotify = async (ingredientIds, previousStockMap) => {
     // Si hay productos en stock bajo, notificar a managers
     if (lowStockIngredients.length > 0) {
       for (const ingredient of lowStockIngredients) {
-        const unit = ingredient.stockUnit || 'u';
-        const stockDisplay = `${ingredient.stock} ${unit}`;
+        const unit = ingredient.stockUnit || 'g';
+        const effectiveStockValue = ingredient.factorMermaNat > 0 ? ingredient.stockMerma : ingredient.stock;
+        const stockDisplay = `${effectiveStockValue} ${unit}`;
         const reorderDisplay = `${ingredient.reorderPoint} ${unit}`;
 
         const notification = {
           title: 'Stock Bajo Detectado',
-          message: `${ingredient.name} está en stock bajo (${stockDisplay}). Punto de reorden: ${reorderDisplay}. Es necesario hacer una compra.`,
+          message: `${ingredient.name} está en stock bajo (Stock Real: ${stockDisplay}). Punto de reorden: ${reorderDisplay}. Es necesario hacer una compra.`,
           type: 'stock',
           data: {
             type: 'low_stock',
             ingredientId: ingredient._id.toString(),
             ingredientName: ingredient.name,
-            stock: ingredient.stock,
+            stock: effectiveStockValue,
             reorderPoint: ingredient.reorderPoint,
             unit: unit,
           },
