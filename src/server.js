@@ -7,6 +7,7 @@ import logger from './config/logger.js';
 import { initializeFirebase } from './config/firebase.js';
 import eventBus, { EVENT_TYPES } from './core/eventBus.js';
 import { createNotificationForAdminsAndManagers } from './services/notificationService.js';
+import { initScheduler } from './services/schedulerService.js';
 import './subscribers/inventorySubscriber.js';
 
 dotenv.config();
@@ -214,6 +215,20 @@ const bootstrap = async () => {
       logger.error('Error guardando notificación de merma en BD:', error);
     }
   });
+
+  // Eventos de actualización automática de stock (para bloquear operaciones manuales e informar al frontend)
+  eventBus.on(EVENT_TYPES.STOCK_UPDATE_STARTED, () => {
+    io.emit('stock_update_started');
+    logger.info('WebSocket: Emitido stock_update_started');
+  });
+
+  eventBus.on(EVENT_TYPES.STOCK_UPDATE_COMPLETED, () => {
+    io.emit('stock_update_completed');
+    logger.info('WebSocket: Emitido stock_update_completed');
+  });
+
+  // Inicializar scheduler de tareas programadas (actualización diaria de stock)
+  await initScheduler();
 
   server.listen(PORT, () => {
     logger.info(`Server running on port ${PORT} ✅`);

@@ -1,4 +1,5 @@
 import Ingredient from '../models/Ingredient.js';
+import Beverage from '../models/Beverage.js';
 import Dish from '../models/Dish.js';
 import logger from '../config/logger.js';
 import { sendPushNotificationToRole } from './pushService.js';
@@ -36,22 +37,54 @@ const applyPurchaseToStock = async (purchase) => {
   await commitStockUpdates(updates, { context: 'purchase', referenceId: purchase._id });
 };
 
-//aplica una merma al inventario restando los ingredientes desperdiciados
+//aplica una merma al inventario restando ingredientes o bebidas desperdiciadas
 const applyWastageToStock = async (wastage) => {
-  const updates = wastage.items.map(item => ({
-    ingredientId: item.ingredient,
-    delta: -Math.abs(item.quantityInGrams)
-  }));
-  await commitStockUpdates(updates, { context: 'wastage', referenceId: wastage._id });
+  const ingredientUpdates = wastage.items
+    .filter(item => item.ingredient)
+    .map(item => ({ ingredientId: item.ingredient, delta: -Math.abs(item.quantityInGrams) }));
+
+  const beverageUpdates = wastage.items
+    .filter(item => item.beverage)
+    .map(item => ({ beverageId: item.beverage, delta: -Math.abs(item.quantityInUnits ?? 1) }));
+
+  if (ingredientUpdates.length) {
+    await commitStockUpdates(ingredientUpdates, { context: 'wastage', referenceId: wastage._id });
+  }
+  if (beverageUpdates.length) {
+    await commitBeverageStockUpdates(beverageUpdates, { context: 'wastage', referenceId: wastage._id });
+  }
 };
 
-//revierte una merma del inventario sumando los ingredientes previamente restados
+//revierte una compra del inventario restando los ingredientes que se sumaron
+const revertPurchaseFromStock = async (purchase) => {
+  const updates = purchase.items
+    .filter(item => item.ingredient)
+    .map(item => ({
+      ingredientId: item.ingredient._id ?? item.ingredient,
+      delta: -Math.abs(item.quantityInGrams)
+    }));
+  if (updates.length) {
+    // Usar contexto 'purchase' para que stockMerma se revierta con el mismo factor
+    await commitStockUpdates(updates, { context: 'purchase', referenceId: purchase._id });
+  }
+};
+
+//revierte una merma del inventario sumando ingredientes o bebidas previamente restados
 const revertWastageFromStock = async (wastage) => {
-  const updates = wastage.items.map(item => ({
-    ingredientId: item.ingredient,
-    delta: Math.abs(item.quantityInGrams)
-  }));
-  await commitStockUpdates(updates, { context: 'wastage-revert', referenceId: wastage._id });
+  const ingredientUpdates = wastage.items
+    .filter(item => item.ingredient)
+    .map(item => ({ ingredientId: item.ingredient, delta: Math.abs(item.quantityInGrams) }));
+
+  const beverageUpdates = wastage.items
+    .filter(item => item.beverage)
+    .map(item => ({ beverageId: item.beverage, delta: Math.abs(item.quantityInUnits ?? 1) }));
+
+  if (ingredientUpdates.length) {
+    await commitStockUpdates(ingredientUpdates, { context: 'wastage-revert', referenceId: wastage._id });
+  }
+  if (beverageUpdates.length) {
+    await commitBeverageStockUpdates(beverageUpdates, { context: 'wastage-revert', referenceId: wastage._id });
+  }
 };
 
 //ejecuta actualizaciones masivas de stock en la base de datos
@@ -101,6 +134,22 @@ const commitStockUpdates = async (updates, metadata) => {
   // Verificar productos que pasaron a stock bajo después de la actualización
   await checkLowStockAndNotify(ingredientIds, previousStockMap);
 
+  return result;
+};
+
+//ejecuta actualizaciones masivas de stock en la base de datos para bebidas
+const commitBeverageStockUpdates = async (updates, metadata) => {
+  if (!updates.length) return;
+
+  const bulkOperations = updates.map(update => ({
+    updateOne: {
+      filter: { _id: update.beverageId },
+      update: { $inc: { stock: update.delta } }
+    }
+  }));
+
+  const result = await Beverage.bulkWrite(bulkOperations);
+  logger.info('Beverage stock updated', { result, ...metadata });
   return result;
 };
 
@@ -206,7 +255,8 @@ const stockService = {
   applySaleToStock,
   applyPurchaseToStock,
   applyWastageToStock,
-  revertWastageFromStock
+  revertWastageFromStock,
+  revertPurchaseFromStock
 };
 
 export default stockService;

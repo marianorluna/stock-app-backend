@@ -547,6 +547,49 @@ async function saveInvoiceJSON(data, outputDir = './output/invoices') {
 }
 
 /**
+ * Compara los datos de una factura recién extraída con los registros existentes
+ * en ProcessedInvoice para evitar duplicados en el flujo de carga manual (PDF subido).
+ *
+ * Compara: numeroFactura, fecha, proveedor, totalBruto, totalFactura, impuestos.
+ * Se requiere al menos el campo "numeroFactura" para hacer la búsqueda.
+ *
+ * @param {Object} structuredData  Datos extraídos por Gemini de la nueva factura
+ * @returns {Object|null}          El registro duplicado encontrado, o null si no hay
+ */
+async function checkUploadedInvoiceDuplicate(structuredData) {
+    if (!structuredData.numeroFactura) {
+        // Sin número de factura no podemos comparar de forma fiable
+        logger.debug('checkUploadedInvoiceDuplicate: sin numeroFactura, omitiendo chequeo');
+        return null;
+    }
+
+    const query = { status: 'success' };
+
+    // Campos obligatorios de la búsqueda (al menos el número de factura)
+    query['invoiceData.numeroFactura'] = structuredData.numeroFactura;
+
+    // Campos opcionales: se añaden al filtro solo si están presentes en la factura nueva
+    if (structuredData.proveedor) {
+        query['invoiceData.proveedor'] = structuredData.proveedor;
+    }
+    if (structuredData.fecha) {
+        query['invoiceData.fecha'] = structuredData.fecha;
+    }
+    if (structuredData.totalBruto != null) {
+        query['invoiceData.totalBruto'] = structuredData.totalBruto;
+    }
+    if (structuredData.totalFactura != null) {
+        query['invoiceData.totalFactura'] = structuredData.totalFactura;
+    }
+    if (structuredData.impuestos != null) {
+        query['invoiceData.impuestos'] = structuredData.impuestos;
+    }
+
+    logger.debug('checkUploadedInvoiceDuplicate: buscando con query', query);
+    return await ProcessedInvoice.findOne(query).lean();
+}
+
+/**
  * Procesa una factura desde una ruta local o del bucket
  * Detecta automáticamente si es un archivo local o del bucket
  */
@@ -608,6 +651,23 @@ export async function processInvoiceFromPath(filePathOrName, bucketName = null) 
         logger.info(`🤖 Paso 2/3: Procesando PDF directamente con Gemini 2.5 Flash...`);
         const structuredData = await processPdfWithGeminiDirectly(tempPdfPath);
 
+        // Para archivos cargados manualmente, verificar duplicados ANTES de guardar
+        if (isLocalFile) {
+            const duplicate = await checkUploadedInvoiceDuplicate(structuredData);
+            if (duplicate) {
+                const invoiceNum  = structuredData.numeroFactura || 'desconocido';
+                const proveedorTxt = structuredData.proveedor ? ` de "${structuredData.proveedor}"` : '';
+                const fechaTxt    = structuredData.fecha ? ` con fecha ${structuredData.fecha}` : '';
+                const dupErr = new Error(
+                    `La factura "${invoiceNum}"${proveedorTxt}${fechaTxt} ya existe en el sistema. ` +
+                    `No es posible registrar la misma factura dos veces.`
+                );
+                dupErr.isDuplicateInvoice = true;
+                logger.warn(`⚠️  Factura duplicada detectada: ${invoiceNum} (coincide con ProcessedInvoice ${duplicate._id})`);
+                throw dupErr;
+            }
+        }
+
         // Guardar JSON
         logger.info(`💾 Paso 3/3: Guardando JSON...`);
         const jsonPath = await saveInvoiceJSON(structuredData);
@@ -645,16 +705,18 @@ export async function processInvoiceFromPath(filePathOrName, bucketName = null) 
             bucketName: actualBucketName
         });
 
-        // Marcar como fallido en BD
-        try {
-            const bucketNameForDb = isLocalFile ? 'local' : actualBucketName;
-            await markAsProcessed(bucketNameForDb, actualFileName || filePathOrName, '', null, error.message);
-            logger.debug(`Estado de fallo guardado en MongoDB`);
-        } catch (dbError) {
-            logger.error(`Error guardando estado de fallo en MongoDB:`, {
-                error: dbError.message,
-                originalError: error.message
-            });
+        // Para duplicados intencionales no se crea ningún registro fallido en BD
+        if (!error.isDuplicateInvoice) {
+            try {
+                const bucketNameForDb = isLocalFile ? 'local' : actualBucketName;
+                await markAsProcessed(bucketNameForDb, actualFileName || filePathOrName, '', null, error.message);
+                logger.debug(`Estado de fallo guardado en MongoDB`);
+            } catch (dbError) {
+                logger.error(`Error guardando estado de fallo en MongoDB:`, {
+                    error: dbError.message,
+                    originalError: error.message
+                });
+            }
         }
 
         throw error;

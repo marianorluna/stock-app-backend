@@ -4,7 +4,9 @@ import logger from '../config/logger.js';
 export const EVENT_TYPES = Object.freeze({
   SALE_RECORDED: 'SALE_RECORDED',
   PURCHASE_RECORDED: 'PURCHASE_RECORDED',
-  WASTAGE_RECORDED: 'WASTAGE_RECORDED'
+  WASTAGE_RECORDED: 'WASTAGE_RECORDED',
+  STOCK_UPDATE_STARTED: 'STOCK_UPDATE_STARTED',
+  STOCK_UPDATE_COMPLETED: 'STOCK_UPDATE_COMPLETED'
 });
 
 //bus de eventos personalizado que extiende eventemitter con logging

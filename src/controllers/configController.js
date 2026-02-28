@@ -82,3 +82,50 @@ export const getBearer = asyncHandler(async (req, res) => {
         value: config.value_qm_bearer
     });
 });
+
+/**
+ * Obtiene el horario de actualización diaria configurado
+ * GET /api/config/schedule
+ */
+export const getSchedule = asyncHandler(async (req, res) => {
+    const config = await Config.findOne();
+
+    res.json({
+        success: true,
+        dailyUpdateSchedule: config?.dailyUpdateSchedule ?? '18:00'
+    });
+});
+
+/**
+ * Actualiza el horario de actualización diaria
+ * PUT /api/config/schedule
+ * Body: { dailyUpdateSchedule: "18:00" }
+ */
+export const updateSchedule = asyncHandler(async (req, res) => {
+    const { dailyUpdateSchedule } = req.body;
+
+    if (!dailyUpdateSchedule || typeof dailyUpdateSchedule !== 'string') {
+        res.status(400);
+        throw new Error('El horario es requerido');
+    }
+
+    const trimmed = dailyUpdateSchedule.trim();
+    if (!/^\d{2}:\d{2}$/.test(trimmed)) {
+        res.status(400);
+        throw new Error('El formato de horario debe ser HH:MM (ej: 18:00)');
+    }
+
+    const config = await Config.findOneAndUpdate(
+        {},
+        { dailyUpdateSchedule: trimmed },
+        { upsert: true, new: true }
+    );
+
+    logger.info(`Horario de actualización diaria actualizado a ${trimmed}`);
+
+    res.json({
+        success: true,
+        dailyUpdateSchedule: config.dailyUpdateSchedule,
+        message: `Horario actualizado a ${trimmed}`
+    });
+});

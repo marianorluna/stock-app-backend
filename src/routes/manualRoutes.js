@@ -3,6 +3,7 @@ import {
   recordManualSale,
   recordManualPurchase,
   recordManualWastage,
+  deleteManualPurchase,
   listManualSales,
   listManualPurchases,
   listManualWastage,
@@ -33,6 +34,8 @@ router
   .route('/purchases')
   .get(hasPermission('manual', 'read'), listManualPurchases)
   .post(hasPermission('manual', 'create'), validateBody(manualPurchaseSchema), recordManualPurchase);
+
+router.route('/purchases/:id').delete(hasPermission('inventory', 'delete'), deleteManualPurchase);
 
 router
   .route('/wastage')

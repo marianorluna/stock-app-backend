@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticate, hasPermission } from '../middleware/authMiddleware.js';
-import { updateBearer, getBearer } from '../controllers/configController.js';
+import { updateBearer, getBearer, getSchedule, updateSchedule } from '../controllers/configController.js';
 
 const router = Router();
 
@@ -12,5 +12,11 @@ router.get('/bearer', hasPermission('config', 'read'), getBearer);
 
 // Actualizar el bearer - requiere permiso config:update
 router.put('/bearer', hasPermission('config', 'update'), updateBearer);
+
+// Obtener el horario de actualización diaria - requiere permiso config:read
+router.get('/schedule', hasPermission('config', 'read'), getSchedule);
+
+// Actualizar el horario de actualización diaria - requiere permiso config:update
+router.put('/schedule', hasPermission('config', 'update'), updateSchedule);
 
 export default router;
