@@ -13,11 +13,12 @@ import { updateStockFromPOS } from '../services/posStockUpdateService.js';
  */
 export const updateStockFromPOSController = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
+    const { date } = req.body || {}; // Fecha opcional en formato YYYY-MM-DD
 
-    logger.info(`📲 Iniciando actualización de stock desde TPV por usuario ${userId}`);
+    logger.info(`📲 Iniciando actualización de stock desde TPV por usuario ${userId}${date ? ` para fecha ${date}` : ' (día de hoy)'}`);
 
     try {
-        const result = await updateStockFromPOS({ userId });
+        const result = await updateStockFromPOS({ userId, date });
         res.json({ success: true, ...result });
     } catch (err) {
         // Importación duplicada → 409 Conflict

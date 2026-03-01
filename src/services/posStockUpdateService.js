@@ -220,13 +220,14 @@ function extraerItemsDeTickets(tickets) {
 // ─── Función principal del servicio ──────────────────────────────────────────
 
 /**
- * Actualiza el stock del inventario con las ventas del TPV del día actual.
+ * Actualiza el stock del inventario con las ventas del TPV del día actual o de una fecha específica.
  *
  * @param {Object} options
  * @param {string} [options.userId] - ID del usuario que ejecuta la importación
+ * @param {string} [options.date] - Fecha en formato YYYY-MM-DD (opcional, por defecto usa el día de hoy)
  * @returns {Promise<Object>} - Resultado detallado del proceso
  */
-export async function updateStockFromPOS({ userId } = {}) {
+export async function updateStockFromPOS({ userId, date } = {}) {
     const steps = [];
 
     // ── Paso 1: Obtener bearer de la BD ───────────────────────────────────────
@@ -245,11 +246,36 @@ export async function updateStockFromPOS({ userId } = {}) {
         throw { steps, error: err.message };
     }
 
-    // ── Paso 2: Verificar duplicado ────────────────────────────────────────────
-    steps.push({ step: 2, name: 'Verificar que no se haya importado hoy', success: false });
+    // ── Paso 2: Determinar fecha a usar ───────────────────────────────────────
+    let fechaSeleccionada;
+    let fechaStr;
 
-    const hoy     = new Date();
-    const fechaStr = formatearFechaUTC(hoy);
+    if (date && typeof date === 'string') {
+        // Validar formato YYYY-MM-DD
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(date)) {
+            throw { steps, error: 'Formato de fecha inválido. Debe ser YYYY-MM-DD (ejemplo: 2024-01-15)' };
+        }
+
+        // Crear Date desde la fecha proporcionada (en UTC para evitar problemas de zona horaria)
+        const [year, month, day] = date.split('-').map(Number);
+        fechaSeleccionada = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+        
+        // Validar que la fecha sea válida
+        if (isNaN(fechaSeleccionada.getTime())) {
+            throw { steps, error: 'Fecha inválida proporcionada' };
+        }
+
+        fechaStr = formatearFechaUTC(fechaSeleccionada);
+    } else {
+        // Usar fecha de hoy si no se proporciona
+        fechaSeleccionada = new Date();
+        fechaStr = formatearFechaUTC(fechaSeleccionada);
+    }
+
+    // ── Paso 3: Verificar duplicado ────────────────────────────────────────────
+    const mensajeVerificacion = date ? `Verificar que no se haya importado el ${fechaStr}` : 'Verificar que no se haya importado hoy';
+    steps.push({ step: 2, name: mensajeVerificacion, success: false });
 
     try {
         const existingImport = await QmareroImport.findOne({ date: fechaStr });
@@ -272,12 +298,12 @@ export async function updateStockFromPOS({ userId } = {}) {
         throw { steps, error: err.message };
     }
 
-    // ── Paso 3: Obtener tickets de Qamarero ────────────────────────────────────
+    // ── Paso 4: Obtener tickets de Qamarero ────────────────────────────────────
     steps.push({ step: 3, name: `Obtener tickets PAID del día ${fechaStr} desde Qamarero`, success: false });
 
     let tickets = [];
     try {
-        tickets = await obtenerTicketsDelDia(hoy, bearer);
+        tickets = await obtenerTicketsDelDia(fechaSeleccionada, bearer);
         steps[steps.length - 1].success = true;
         steps[steps.length - 1].details = { totalTickets: tickets.length };
         logger.info(`✅ Obtenidos ${tickets.length} tickets de Qamarero para ${fechaStr}`);
@@ -303,7 +329,7 @@ export async function updateStockFromPOS({ userId } = {}) {
         };
     }
 
-    // ── Paso 4: Extraer items por productId ────────────────────────────────────
+    // ── Paso 5: Extraer items por productId ────────────────────────────────────
     steps.push({ step: 4, name: 'Extraer y agrupar items por productId', success: false });
 
     let extractedItems = [];
@@ -317,7 +343,7 @@ export async function updateStockFromPOS({ userId } = {}) {
         throw { steps, error: `Error extrayendo items: ${err.message}` };
     }
 
-    // ── Paso 5: Guardar importación en la BD ──────────────────────────────────
+    // ── Paso 6: Guardar importación en la BD ──────────────────────────────────
     steps.push({ step: 5, name: 'Guardar registro de importación', success: false });
 
     try {
@@ -336,7 +362,7 @@ export async function updateStockFromPOS({ userId } = {}) {
         throw { steps, error: `Error guardando importación: ${err.message}` };
     }
 
-    // ── Paso 6: Matching y descuento de stock ─────────────────────────────────
+    // ── Paso 7: Matching y descuento de stock ─────────────────────────────────
     steps.push({ step: 6, name: 'Descontar stock por ventas del TPV', success: false });
 
     let updatedIngredients = [];
@@ -489,7 +515,7 @@ export async function updateStockFromPOS({ userId } = {}) {
         throw { steps, error: `Error actualizando stock: ${err.message || err}` };
     }
 
-    // ── Paso 7: Crear documentos Sale por ticket y emitir evento ─────────────
+    // ── Paso 8: Crear documentos Sale por ticket y emitir evento ─────────────
     try {
         const [allDishesForSale, allBeveragesForSale] = await Promise.all([
             Dish.find({ productId: { $ne: '', $exists: true } }).lean(),

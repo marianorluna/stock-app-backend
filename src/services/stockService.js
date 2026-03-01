@@ -4,7 +4,7 @@ import Dish from '../models/Dish.js';
 import logger from '../config/logger.js';
 import { sendPushNotificationToRole } from './pushService.js';
 import { createNotificationForRole } from './notificationService.js';
-import { sendLowStockAlert } from './emailService.js';
+import { sendLowStockAlert, sendLowBeverageStockAlert } from './emailService.js';
 import Config from '../models/Config.js';
 
 //aplica una venta al inventario restando los ingredientes según las recetas
@@ -143,16 +143,144 @@ const commitStockUpdates = async (updates, metadata) => {
 const commitBeverageStockUpdates = async (updates, metadata) => {
   if (!updates.length) return;
 
-  const bulkOperations = updates.map(update => ({
-    updateOne: {
-      filter: { _id: update.beverageId },
-      update: { $inc: { stock: update.delta } }
+  const beverageIds = [...new Set(updates.map(update => update.beverageId.toString()))];
+  const beverages = await Beverage.find({ _id: { $in: beverageIds } }).lean();
+  const beverageMap = new Map(beverages.map(beverage => [beverage._id.toString(), beverage]));
+
+  // Guardar el stock anterior para detectar cambios a stock bajo
+  const previousStockMap = new Map(
+    beverages.map(bev => [bev._id.toString(), {
+      stock: bev.stock,
+      reorderPoint: bev.reorderPoint
+    }])
+  );
+
+  const bulkOperations = updates.map(update => {
+    const beverage = beverageMap.get(update.beverageId.toString());
+    if (!beverage) {
+      return null;
     }
-  }));
+
+    return {
+      updateOne: {
+        filter: { _id: update.beverageId },
+        update: { $inc: { stock: update.delta } }
+      }
+    };
+  }).filter(Boolean);
+
+  if (!bulkOperations.length) return;
 
   const result = await Beverage.bulkWrite(bulkOperations);
   logger.info('Beverage stock updated', { result, ...metadata });
+
+  // Verificar productos que pasaron a stock bajo después de la actualización
+  await checkLowBeverageStockAndNotify(beverageIds, previousStockMap);
+
   return result;
+};
+
+// Verifica bebidas en stock bajo y notifica a managers
+const checkLowBeverageStockAndNotify = async (beverageIds, previousStockMap) => {
+  try {
+    logger.info('Verificando stock bajo de bebidas', { beverageIds: beverageIds.length });
+
+    // Obtener las bebidas actualizadas
+    const updatedBeverages = await Beverage.find({ _id: { $in: beverageIds } }).lean();
+    logger.info('Bebidas actualizadas obtenidas', { count: updatedBeverages.length });
+
+    // Identificar bebidas que pasaron a stock bajo
+    const lowStockBeverages = updatedBeverages.filter(beverage => {
+      const previous = previousStockMap.get(beverage._id.toString());
+      if (!previous) {
+        logger.debug(`No se encontró stock anterior para ${beverage.name}`);
+        return false;
+      }
+
+      // Verificar si ahora está en stock bajo pero antes no lo estaba
+      const wasAboveReorderPoint = previous.stock > previous.reorderPoint;
+      const isNowBelowReorderPoint = beverage.stock <= beverage.reorderPoint;
+
+      logger.debug(`Verificando ${beverage.name}:`, {
+        stockAnterior: previous.stock,
+        stockActual: beverage.stock,
+        reorderPoint: beverage.reorderPoint,
+        wasAbove: wasAboveReorderPoint,
+        isNowBelow: isNowBelowReorderPoint,
+      });
+
+      return wasAboveReorderPoint && isNowBelowReorderPoint;
+    });
+
+    logger.info('Bebidas en stock bajo detectadas', { count: lowStockBeverages.length });
+
+    // Si hay bebidas en stock bajo, notificar a managers
+    if (lowStockBeverages.length > 0) {
+      for (const beverage of lowStockBeverages) {
+        const unit = beverage.stockUnit || 'u';
+        const stockDisplay = `${beverage.stock} ${unit}`;
+        const reorderDisplay = `${beverage.reorderPoint} ${unit}`;
+
+        const notification = {
+          title: 'Stock Bajo Detectado',
+          message: `${beverage.name} está en stock bajo (Stock: ${stockDisplay}). Punto de reorden: ${reorderDisplay}. Es necesario hacer una compra.`,
+          type: 'stock',
+          data: {
+            type: 'low_stock',
+            beverageId: beverage._id.toString(),
+            beverageName: beverage.name,
+            stock: beverage.stock,
+            reorderPoint: beverage.reorderPoint,
+            unit: unit,
+          },
+        };
+
+        logger.info(`Enviando notificación de stock bajo para ${beverage.name}`, {
+          beverageId: beverage._id,
+          stock: beverage.stock,
+          reorderPoint: beverage.reorderPoint,
+        });
+
+        // Guardar notificación en la base de datos para todos los managers
+        try {
+          await createNotificationForRole('manager', notification);
+          logger.info(`Notificación guardada en BD para ${beverage.name}`);
+        } catch (error) {
+          logger.error(`Error guardando notificación en BD para ${beverage.name}:`, error);
+        }
+
+        // Enviar notificación push a todos los managers
+        try {
+          await sendPushNotificationToRole('manager', notification);
+          logger.info(`Notificación push enviada para ${beverage.name}`);
+        } catch (error) {
+          logger.error(`Error enviando notificación push para ${beverage.name}:`, error);
+        }
+
+        // Enviar notificación vía WebSocket si está disponible
+        if (global.broadcastNotification) {
+          global.broadcastNotification(notification);
+          logger.info(`Notificación WebSocket enviada para ${beverage.name}`);
+        } else {
+          logger.warn('global.broadcastNotification no está disponible');
+        }
+      }
+
+      // Enviar UN email agrupado con todas las bebidas en stock bajo
+      try {
+        const config = await Config.findOne().lean();
+        const toEmails = (config?.notificationEmails ?? []).map(e => e.email).filter(Boolean);
+        await sendLowBeverageStockAlert(lowStockBeverages, toEmails);
+      } catch (emailError) {
+        logger.error('Error enviando email de alerta de stock bajo de bebidas:', emailError);
+      }
+
+    } else {
+      logger.debug('No se detectaron bebidas que pasaron a stock bajo');
+    }
+  } catch (error) {
+    logger.error('Error verificando stock bajo de bebidas y enviando notificaciones:', error);
+  }
 };
 
 // Verifica productos en stock bajo y notifica a managers

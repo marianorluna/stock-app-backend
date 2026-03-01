@@ -33,7 +33,7 @@ const seed = async () => {
     sku: item.sku,
     name: item.name,
     description: item.description?.trim() ?? '',
-    // categoryName se calcula automáticamente desde el SKU en el pre-save hook
+    categoryName: item.categoryName ?? '',
     stock: item.stock ?? item.stockInitial ?? 0,
     stockUnit: 'g',
     stockUnitName: item.stockUnitName ?? 'gramo',

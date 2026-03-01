@@ -13,7 +13,7 @@ const mapSkuElementToCategoryName = (skuElement) => {
     'FR': 'Frutas',
     'PR': 'Proteinas',
     'GS': 'Gases',
-    'BE': 'Bebidas',
+    'LI': 'Liquidos',
     'CF': 'Cafe',
     'AC': 'Aceites',
     'FS': 'Frutos secos',
@@ -113,8 +113,10 @@ ingredientSchema.pre('validate', function (next) {
   next();
 });
 
-// Pre-save hook: calcular categoryName desde SKU antes de guardar
+// Pre-save hook: calcular categoryName desde SKU y stockMerma antes de guardar
 ingredientSchema.pre('save', function (next) {
+  // Calcular categoryName desde SKU si es necesario
+  // Si categoryName ya existe pero no coincide con el SKU, recalcularlo
   if (!this.categoryName || this.isModified('sku')) {
     if (!this.sku || this.sku.length < 3) {
       return next(new Error('SKU inválido: debe tener al menos 3 caracteres para extraer el elemento'));
@@ -128,7 +130,27 @@ ingredientSchema.pre('save', function (next) {
     }
 
     this.categoryName = categoryName;
+  } else {
+    // Si categoryName existe, validar que coincida con el SKU
+    if (this.sku && this.sku.length >= 3) {
+      const skuElement = this.sku.substring(1, 3);
+      const expectedCategoryName = mapSkuElementToCategoryName(skuElement);
+      if (expectedCategoryName && this.categoryName !== expectedCategoryName) {
+        // Si no coincide, usar el calculado desde el SKU (el SKU es la fuente de verdad)
+        this.categoryName = expectedCategoryName;
+      }
+    }
   }
+
+  // Calcular stockMerma: si factorMermaNat es 0, stockMerma = stock; si no, stockMerma = stock - (stock * factorMermaNat)
+  if (this.isModified('stock') || this.isModified('factorMermaNat') || this.isNew) {
+    if (this.factorMermaNat === 0 || this.factorMermaNat == null) {
+      this.stockMerma = this.stock;
+    } else {
+      this.stockMerma = this.stock - (this.stock * this.factorMermaNat);
+    }
+  }
+
   next();
 });
 
