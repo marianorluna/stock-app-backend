@@ -20,7 +20,8 @@ const permissions = [
 
     //Inventory
     { name: 'inventory:read', resource: 'inventory', action: 'read', description: 'Ver inventario' },
-    { name: 'inventory:create', resource: 'inventory', action: 'create', description: 'Crear/actualizar inventario' },
+    { name: 'inventory:create', resource: 'inventory', action: 'create', description: 'Crear registros de inventario' },
+    { name: 'inventory:update', resource: 'inventory', action: 'update', description: 'Actualizar stock de inventario (incluye TPV Qamarero)' },
     { name: 'inventory:delete', resource: 'inventory', action: 'delete', description: 'Eliminar registros de inventario' },
 
     //Ingredients
@@ -70,7 +71,7 @@ const roles = [
         description: 'Dueño con control de acceso y gestión',
         permissions: [
             'dashboard:read',
-            'inventory:read', 'inventory:create', 'inventory:delete',
+            'inventory:read', 'inventory:create', 'inventory:update', 'inventory:delete',
             'ingredients:read', 'ingredients:create', 'ingredients:update', 'ingredients:delete',
             'recipes:read', 'recipes:create', 'recipes:update', 'recipes:delete',
             'suppliers:read', 'suppliers:create', 'suppliers:update', 'suppliers:delete',

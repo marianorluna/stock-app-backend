@@ -7,6 +7,7 @@ import Wastage from '../models/Wastage.js';
 import WastagePreset from '../models/WastagePreset.js';
 import Beverage from '../models/Beverage.js';
 import ProcessedInvoice from '../models/ProcessedInvoice.js';
+import QmareroImport from '../models/QmareroImport.js';
 import eventBus, { EVENT_TYPES } from '../core/eventBus.js';
 import stockService from '../services/stockService.js';
 import logger from '../config/logger.js';
@@ -235,6 +236,128 @@ export const deleteManualPurchase = asyncHandler(async (req, res) => {
   // ── 4. Eliminar el registro de compra ──────────────────────────────────────
   await Purchase.findByIdAndDelete(id);
   logger.info(`✅ Compra ${id} eliminada correctamente`);
+
+  res.status(204).end();
+});
+
+// Elimina una venta, revierte el stock de ingredientes (y bebidas si era POS)
+// y elimina el QmareroImport del día si era la última venta POS de esa jornada
+export const deleteManualSale = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400);
+    throw new Error('ID de venta no válido');
+  }
+
+  // Usar .lean() para obtener objetos planos y garantizar compatibilidad con stockService
+  const sale = await Sale.findById(id)
+    .populate({
+      path: 'lines.dish',
+      populate: { path: 'recipe.ingredient', select: 'name sku stock stockMerma factorMermaNat' }
+    })
+    .lean();
+
+  if (!sale) {
+    res.status(404);
+    throw new Error('Venta no encontrada');
+  }
+
+  logger.info(`🗑️  Eliminando venta ${id} (source: ${sale.source}, lines: ${sale.lines?.length ?? 0})`);
+
+  // ── 1. Revertir stock de ingredientes ──────────────────────────────────────
+  try {
+    if (sale.source === 'pos') {
+      // Con .lean(), line.dish es un objeto plano o un ObjectId si populate falló
+      const dishQuantities = sale.lines
+        .filter(line => {
+          if (!line.dish || typeof line.dish !== 'object') {
+            logger.warn(`⚠️  Venta ${id}: dish no poblado para línea ${JSON.stringify(line)}`);
+            return false;
+          }
+          if (!Array.isArray(line.dish.recipe) || line.dish.recipe.length === 0) {
+            logger.warn(`⚠️  Venta ${id}: plato ${line.dish._id} sin receta, se omite del revert`);
+            return false;
+          }
+          return true;
+        })
+        .map(line => ({ dish: line.dish, quantity: line.quantity }));
+
+      logger.info(`   → ${dishQuantities.length} plato(s) a revertir en ingredientes`);
+
+      if (dishQuantities.length > 0) {
+        await stockService.revertPOSSaleFromStock(dishQuantities);
+        logger.info(`✅ Stock ingredientes POS revertido para venta ${id}`);
+      } else {
+        logger.warn(`⚠️  Venta ${id}: no se encontraron platos con receta — no se revertió stock de ingredientes`);
+      }
+    } else {
+      await stockService.revertSaleFromStock(sale);
+      logger.info(`✅ Stock manual revertido para venta ${id}`);
+    }
+  } catch (err) {
+    logger.error(`❌ Error revirtiendo stock de ingredientes para venta ${id}:`, err);
+    res.status(500);
+    throw new Error(`Error al revertir el stock de ingredientes: ${err.message}`);
+  }
+
+  // ── 2. Revertir stock de bebidas (solo ventas POS con beverageLines en metadata) ─
+  if (sale.source === 'pos') {
+    const beverageLines = sale.metadata instanceof Map
+      ? sale.metadata.get('beverageLines')
+      : sale.metadata?.beverageLines;
+
+    if (Array.isArray(beverageLines) && beverageLines.length > 0) {
+      try {
+        const beverageUpdates = beverageLines.map(bl => ({
+          beverageId: bl.beverageId,
+          delta: Math.abs(Math.round(Number(bl.quantity))) // positivo = devolver al stock
+        }));
+        await stockService.commitBeverageStockUpdates(beverageUpdates, {
+          context: 'pos-sale-revert',
+          referenceId: id
+        });
+        logger.info(`✅ Stock bebidas POS revertido para venta ${id} (${beverageUpdates.length} bebida(s))`);
+      } catch (err) {
+        // No bloqueante: si falla, se avisa por log pero se continúa
+        logger.warn(`⚠️  No se pudo revertir stock de bebidas para venta ${id}: ${err.message}`);
+      }
+    }
+
+    // ── 3. Eliminar QmareroImport si es la última venta POS del día ───────────
+    const fechaTPV = sale.metadata instanceof Map
+      ? sale.metadata.get('fechaTPV')
+      : sale.metadata?.fechaTPV;
+
+    if (fechaTPV && typeof fechaTPV === 'string') {
+      try {
+        const dayStart = new Date(fechaTPV + 'T00:00:00.000Z');
+        const dayEnd   = new Date(fechaTPV + 'T23:59:59.999Z');
+
+        const remainingSales = await Sale.countDocuments({
+          _id:       { $ne: sale._id },
+          source:    'pos',
+          timestamp: { $gte: dayStart, $lte: dayEnd }
+        });
+
+        if (remainingSales === 0) {
+          const deleted = await QmareroImport.deleteOne({ date: fechaTPV });
+          if (deleted.deletedCount > 0) {
+            logger.info(`✅ QmareroImport eliminado para ${fechaTPV} — permite reimportación del día`);
+          }
+        } else {
+          logger.info(`ℹ️  Quedan ${remainingSales} venta(s) POS para ${fechaTPV}, QmareroImport se mantiene`);
+        }
+      } catch (err) {
+        logger.warn(`⚠️  No se pudo verificar/eliminar QmareroImport: ${err.message}`);
+      }
+    }
+  }
+
+  // ── 4. Eliminar el documento Sale ──────────────────────────────────────────
+  await Sale.findByIdAndDelete(id);
+  eventBus.emit(EVENT_TYPES.SALE_RECORDED, { deleted: true, _id: id });
+  logger.info(`✅ Venta ${id} eliminada correctamente`);
 
   res.status(204).end();
 });

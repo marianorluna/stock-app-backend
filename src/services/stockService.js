@@ -4,6 +4,8 @@ import Dish from '../models/Dish.js';
 import logger from '../config/logger.js';
 import { sendPushNotificationToRole } from './pushService.js';
 import { createNotificationForRole } from './notificationService.js';
+import { sendLowStockAlert } from './emailService.js';
+import Config from '../models/Config.js';
 
 //aplica una venta al inventario restando los ingredientes según las recetas
 const applySaleToStock = async (sale) => {
@@ -243,6 +245,16 @@ const checkLowStockAndNotify = async (ingredientIds, previousStockMap) => {
           logger.warn('global.broadcastNotification no está disponible');
         }
       }
+
+      // Enviar UN email agrupado con todos los ingredientes en stock bajo
+      try {
+        const config = await Config.findOne().lean();
+        const toEmails = (config?.notificationEmails ?? []).map(e => e.email).filter(Boolean);
+        await sendLowStockAlert(lowStockIngredients, toEmails);
+      } catch (emailError) {
+        logger.error('Error enviando email de alerta de stock bajo:', emailError);
+      }
+
     } else {
       logger.debug('No se detectaron ingredientes que pasaron a stock bajo');
     }
@@ -251,12 +263,205 @@ const checkLowStockAndNotify = async (ingredientIds, previousStockMap) => {
   }
 };
 
+/**
+ * Aplica las ventas del TPV (Qamarero) al inventario usando la fórmula específica:
+ *   - stockMerma: -= quantityInGrams * dishQuantity  (gramos brutos de receta)
+ *   - stock:      -= (quantityInGrams / (1 - factorMermaNat)) * dishQuantity  (con factor de merma)
+ *
+ * Activa las notificaciones de stock bajo igual que el resto de operaciones.
+ *
+ * @param {Array<{ dish: Object, quantity: number }>} dishQuantities
+ *   Array de platos populados (recipe.ingredient con _id, name, sku, factorMermaNat) y su cantidad vendida
+ * @returns {Promise<{ updatedIngredients: Array }>}
+ */
+const applyPOSSaleToStock = async (dishQuantities) => {
+  // Acumular deltas por ingredienteId
+  const deltaMap = new Map();
+  // Map: ingId → { ingredientId, deltaStock, deltaMerma }
+
+  for (const { dish, quantity } of dishQuantities) {
+    if (!dish.recipe || !dish.recipe.length) continue;
+
+    for (const recipeItem of dish.recipe) {
+      if (!recipeItem.ingredient) continue;
+      const ing = recipeItem.ingredient;
+      const ingId = ing._id.toString();
+      const qInGrams = recipeItem.quantityInGrams;
+      const factor   = ing.factorMermaNat || 0;
+
+      // stockMerma: gramos brutos de receta × cantidad vendida
+      const deltaMerma = -Math.round(qInGrams * quantity);
+
+      // stock: gramos brutos / (1 - factor) × cantidad vendida
+      const deltaStock = (factor > 0 && factor < 1)
+        ? -Math.round((qInGrams / (1 - factor)) * quantity)
+        : -Math.round(qInGrams * quantity);
+
+      if (deltaMap.has(ingId)) {
+        const existing = deltaMap.get(ingId);
+        existing.deltaStock += deltaStock;
+        existing.deltaMerma += deltaMerma;
+      } else {
+        deltaMap.set(ingId, {
+          ingredientId: ing._id,
+          deltaStock,
+          deltaMerma
+        });
+      }
+    }
+  }
+
+  if (!deltaMap.size) return { updatedIngredients: [] };
+
+  const ingredientIds = Array.from(deltaMap.keys());
+  const ingredients   = await Ingredient.find({ _id: { $in: ingredientIds } }).lean();
+
+  // Guardar stock previo para detectar si alguno cruza el punto de reorden
+  const previousStockMap = new Map(
+    ingredients.map(ing => [ing._id.toString(), {
+      stock:        ing.stock,
+      stockMerma:   ing.stockMerma,
+      reorderPoint: ing.reorderPoint
+    }])
+  );
+
+  // BulkWrite con deltas distintos para stock y stockMerma
+  const bulkOps        = [];
+  const updatedIngredients = [];
+
+  for (const ing of ingredients) {
+    const ingId = ing._id.toString();
+    const delta = deltaMap.get(ingId);
+    if (!delta) continue;
+
+    bulkOps.push({
+      updateOne: {
+        filter: { _id: ing._id },
+        update: { $inc: { stock: delta.deltaStock, stockMerma: delta.deltaMerma } }
+      }
+    });
+
+    updatedIngredients.push({
+      name:               ing.name,
+      sku:                ing.sku,
+      stockAnterior:      ing.stock,
+      stockMermaAnterior: ing.stockMerma,
+      stockRestado:       Math.abs(delta.deltaStock),
+      stockMermaRestada:  Math.abs(delta.deltaMerma),
+      stockNuevo:         ing.stock + delta.deltaStock,
+      stockMermaNuevo:    ing.stockMerma + delta.deltaMerma
+    });
+  }
+
+  if (bulkOps.length > 0) {
+    await Ingredient.bulkWrite(bulkOps);
+    logger.info('POS sale stock updated', { ingredientsUpdated: bulkOps.length });
+
+    // Verificar y notificar stock bajo (misma lógica que ventas/mermas)
+    await checkLowStockAndNotify(ingredientIds, previousStockMap);
+  }
+
+  return { updatedIngredients };
+};
+
+/**
+ * Revierte una venta manual sumando al stock los ingredientes que se restaron.
+ * Usa los mismos deltas que applySaleToStock pero invertidos (positivos).
+ */
+const revertSaleFromStock = async (sale) => {
+  const dishIds = sale.lines.map(line => line.dish?._id ?? line.dish);
+  const dishes  = await Dish.find({ _id: { $in: dishIds } }).populate('recipe.ingredient');
+
+  const updates = [];
+
+  dishes.forEach(dish => {
+    const saleLine = sale.lines.find(line =>
+      (line.dish?._id ?? line.dish).toString() === dish._id.toString()
+    );
+    if (!saleLine) return;
+
+    dish.recipe.forEach(recipeItem => {
+      const totalQuantity = recipeItem.quantityInGrams * saleLine.quantity;
+      updates.push({
+        ingredientId: recipeItem.ingredient._id,
+        delta: totalQuantity // positivo → devuelve al stock
+      });
+    });
+  });
+
+  if (updates.length > 0) {
+    await commitStockUpdates(updates, { context: 'sale-revert', referenceId: sale._id });
+  }
+};
+
+/**
+ * Revierte las ventas del TPV del inventario usando la misma fórmula que
+ * applyPOSSaleToStock pero con deltas positivos (devuelve el stock restado).
+ *
+ * @param {Array<{ dish: Object, quantity: number }>} dishQuantities
+ */
+const revertPOSSaleFromStock = async (dishQuantities) => {
+  const deltaMap = new Map();
+
+  for (const { dish, quantity } of dishQuantities) {
+    if (!dish.recipe || !dish.recipe.length) continue;
+
+    for (const recipeItem of dish.recipe) {
+      if (!recipeItem.ingredient) continue;
+      const ing    = recipeItem.ingredient;
+      const ingId  = ing._id.toString();
+      const qGrams = recipeItem.quantityInGrams;
+      const factor = ing.factorMermaNat || 0;
+
+      // Misma fórmula que applyPOSSaleToStock pero en positivo
+      const deltaMerma = Math.round(qGrams * quantity);
+      const deltaStock = (factor > 0 && factor < 1)
+        ? Math.round((qGrams / (1 - factor)) * quantity)
+        : Math.round(qGrams * quantity);
+
+      if (deltaMap.has(ingId)) {
+        const existing = deltaMap.get(ingId);
+        existing.deltaStock += deltaStock;
+        existing.deltaMerma += deltaMerma;
+      } else {
+        deltaMap.set(ingId, { ingredientId: ing._id, deltaStock, deltaMerma });
+      }
+    }
+  }
+
+  if (!deltaMap.size) return;
+
+  const ingredientIds = Array.from(deltaMap.keys());
+  const ingredients   = await Ingredient.find({ _id: { $in: ingredientIds } }).lean();
+
+  const bulkOps = ingredients.map(ing => {
+    const ingId = ing._id.toString();
+    const delta = deltaMap.get(ingId);
+    if (!delta) return null;
+    return {
+      updateOne: {
+        filter: { _id: ing._id },
+        update: { $inc: { stock: delta.deltaStock, stockMerma: delta.deltaMerma } }
+      }
+    };
+  }).filter(Boolean);
+
+  if (bulkOps.length > 0) {
+    await Ingredient.bulkWrite(bulkOps);
+    logger.info('POS sale stock reverted', { ingredientsReverted: bulkOps.length });
+  }
+};
+
 const stockService = {
   applySaleToStock,
   applyPurchaseToStock,
   applyWastageToStock,
   revertWastageFromStock,
-  revertPurchaseFromStock
+  revertPurchaseFromStock,
+  revertSaleFromStock,
+  revertPOSSaleFromStock,
+  applyPOSSaleToStock,
+  commitBeverageStockUpdates
 };
 
 export default stockService;

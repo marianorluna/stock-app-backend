@@ -19,7 +19,8 @@
     "seed:all": "npm run seed:roles && npm run seed:ingredients && npm run seed:beverages && npm run seed:menu && npm run seed:suppliers && npm run seed:events",
     "qmarero:ventas": "node scripts/qmarero/qmareroVentas.js",
     "test:invoices": "node scripts/testInvoiceProcessor.js",
-    "script:unify": "node scripts/unificarItemsFactura.js"
+    "script:unify": "node scripts/unificarItemsFactura.js",
+    "test:email": "node scripts/testEmail.js"
   },
   "engines": {
     "node": ">=18.18.0"
@@ -39,6 +40,7 @@
     "mongoose": "^8.5.1",
     "morgan": "^1.10.0",
     "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.1",
     "socket.io": "^4.7.5",
     "web-push": "^3.6.7",
     "winston": "^3.13.0"

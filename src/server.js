@@ -77,6 +77,9 @@ const bootstrap = async () => {
   eventBus.on(EVENT_TYPES.SALE_RECORDED, async (sale) => {
     io.emit('inventory:sale', sale);
 
+    // Si el evento es de eliminación, no crear notificación de "nueva venta"
+    if (sale.deleted) return;
+
     // Guardar notificación en BD para admins y managers
     try {
       const notification = {

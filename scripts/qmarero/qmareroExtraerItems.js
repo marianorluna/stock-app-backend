@@ -4,7 +4,7 @@
  * Agrupa los items por nombre de producto y suma las cantidades.
  * 
  * Uso:
- *   node scripts/qmarero/qm-extraerItems.js qmarero-ventas-2026-02-15_2026-02-20.json
+ *   node scripts/qmarero/qmareroExtraerItems.js qmarero-ventas-2026-02-15_2026-02-20.json
  */
 
 import fs from 'fs/promises';

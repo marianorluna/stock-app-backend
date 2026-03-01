@@ -23,6 +23,12 @@ const dishSchema = new mongoose.Schema(
       unique: true,
       trim: true
     },
+    // ID del producto en Qamarero (UUID) para matching con tickets TPV
+    productId: {
+      type: String,
+      trim: true,
+      default: ''
+    },
     name: {
       type: String,
       required: true,

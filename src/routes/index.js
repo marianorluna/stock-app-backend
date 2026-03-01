@@ -11,6 +11,7 @@ import supplierRoutes from './supplierRoutes.js';
 import notificationsRoutes from './notifications.js';
 import invoiceSyncRoutes from './invoiceSyncRoutes.js';
 import configRoutes from './configRoutes.js';
+import posRoutes from './posRoutes.js';
 
 const apiRouter = Router();
 
@@ -26,6 +27,7 @@ apiRouter.use('/suppliers', supplierRoutes);
 apiRouter.use('/notifications', notificationsRoutes);
 apiRouter.use('/invoices', invoiceSyncRoutes);
 apiRouter.use('/config', configRoutes);
+apiRouter.use('/pos', posRoutes);
 
 export default apiRouter;
 

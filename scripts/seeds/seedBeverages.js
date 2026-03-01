@@ -31,6 +31,7 @@ const seed = async () => {
 
   const beverages = rawData.map((item) => ({
     sku: item.sku,
+    productId: item.productId ?? '',
     name: item.name,
     description: item.description?.trim() ?? '',
     // categoryName se calcula automáticamente desde el SKU en el pre-save hook

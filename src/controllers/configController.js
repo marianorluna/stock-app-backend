@@ -129,3 +129,187 @@ export const updateSchedule = asyncHandler(async (req, res) => {
         message: `Horario actualizado a ${trimmed}`
     });
 });
+
+/**
+ * Obtiene el horario de cierre de ventas del TPV
+ * GET /api/config/sales-schedule
+ */
+export const getSalesSchedule = asyncHandler(async (req, res) => {
+    const config = await Config.findOne();
+
+    res.json({
+        success: true,
+        salesCloseTime: config?.salesCloseTime ?? '17:30'
+    });
+});
+
+/**
+ * Actualiza el horario de cierre de ventas del TPV
+ * PUT /api/config/sales-schedule
+ * Body: { salesCloseTime: "17:30" }
+ */
+export const updateSalesSchedule = asyncHandler(async (req, res) => {
+    const { salesCloseTime } = req.body;
+
+    if (!salesCloseTime || typeof salesCloseTime !== 'string') {
+        res.status(400);
+        throw new Error('El horario de cierre de ventas es requerido');
+    }
+
+    const trimmed = salesCloseTime.trim();
+    if (!/^\d{2}:\d{2}$/.test(trimmed)) {
+        res.status(400);
+        throw new Error('El formato de horario debe ser HH:MM (ej: 17:30)');
+    }
+
+    const config = await Config.findOneAndUpdate(
+        {},
+        { salesCloseTime: trimmed },
+        { upsert: true, new: true }
+    );
+
+    logger.info(`Horario de cierre de ventas actualizado a ${trimmed}`);
+
+    res.json({
+        success: true,
+        salesCloseTime: config.salesCloseTime,
+        message: `Horario de cierre de ventas actualizado a ${trimmed}`
+    });
+});
+
+// ─── Emails de notificación ───────────────────────────────────────────────────
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Obtiene todos los emails de notificación
+ * GET /api/config/notification-emails
+ */
+export const getNotificationEmails = asyncHandler(async (req, res) => {
+    const config = await Config.findOne();
+    res.json({
+        success: true,
+        emails: config?.notificationEmails ?? []
+    });
+});
+
+/**
+ * Agrega un nuevo email de notificación
+ * POST /api/config/notification-emails
+ * Body: { email: "ejemplo@correo.com" }
+ */
+export const addNotificationEmail = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+        res.status(400);
+        throw new Error('El email es requerido');
+    }
+
+    const trimmed = email.trim().toLowerCase();
+
+    if (!EMAIL_REGEX.test(trimmed)) {
+        res.status(400);
+        throw new Error('El formato del email no es válido');
+    }
+
+    // Verificar duplicado
+    const existing = await Config.findOne({ 'notificationEmails.email': trimmed });
+    if (existing) {
+        res.status(400);
+        throw new Error('El email ya está registrado');
+    }
+
+    const config = await Config.findOneAndUpdate(
+        {},
+        { $push: { notificationEmails: { email: trimmed } } },
+        { upsert: true, new: true }
+    );
+
+    const addedEmail = config.notificationEmails[config.notificationEmails.length - 1];
+    logger.info(`Email de notificación agregado: ${trimmed}`);
+
+    res.status(201).json({
+        success: true,
+        message: 'Email agregado exitosamente',
+        emailEntry: addedEmail
+    });
+});
+
+/**
+ * Actualiza un email de notificación existente
+ * PUT /api/config/notification-emails/:id
+ * Body: { email: "nuevo@correo.com" }
+ */
+export const updateNotificationEmail = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    if (!email || typeof email !== 'string' || !email.trim()) {
+        res.status(400);
+        throw new Error('El email es requerido');
+    }
+
+    const trimmed = email.trim().toLowerCase();
+
+    if (!EMAIL_REGEX.test(trimmed)) {
+        res.status(400);
+        throw new Error('El formato del email no es válido');
+    }
+
+    // Verificar que no exista otro con ese email (excepto el mismo)
+    const duplicate = await Config.findOne({
+        'notificationEmails.email': trimmed,
+        'notificationEmails._id': { $ne: id }
+    });
+    if (duplicate) {
+        res.status(400);
+        throw new Error('El email ya está registrado');
+    }
+
+    const config = await Config.findOneAndUpdate(
+        { 'notificationEmails._id': id },
+        { $set: { 'notificationEmails.$.email': trimmed } },
+        { new: true }
+    );
+
+    if (!config) {
+        res.status(404);
+        throw new Error('Email no encontrado');
+    }
+
+    const updatedEmail = config.notificationEmails.find(e => String(e._id) === String(id));
+    logger.info(`Email de notificación actualizado: ${trimmed}`);
+
+    res.json({
+        success: true,
+        message: 'Email actualizado exitosamente',
+        emailEntry: updatedEmail
+    });
+});
+
+/**
+ * Elimina un email de notificación
+ * DELETE /api/config/notification-emails/:id
+ */
+export const deleteNotificationEmail = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const config = await Config.findOneAndUpdate(
+        { 'notificationEmails._id': id },
+        { $pull: { notificationEmails: { _id: id } } },
+        { new: true }
+    );
+
+    if (!config) {
+        res.status(404);
+        throw new Error('Email no encontrado');
+    }
+
+    logger.info(`Email de notificación eliminado: ${id}`);
+
+    res.json({
+        success: true,
+        message: 'Email eliminado exitosamente'
+    });
+});

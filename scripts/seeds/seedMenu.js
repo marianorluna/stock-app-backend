@@ -83,6 +83,7 @@ const seed = async () => {
     }
     return {
       sku: dish.sku,
+      productId: dish.productId ?? '',
       name: dish.name,
       description: dish.description ?? '',
       price: dish.price,
