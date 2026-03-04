@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import Purchase from '../models/Purchase.js';
 import Supplier from '../models/Supplier.js';
+import { createNotificationForAdminsAndManagers } from '../services/notificationService.js';
+import logger from '../config/logger.js';
 
 //obtiene la lista de proveedores: todos los Supplier + stats desde Purchase (supplier = SKU)
 export const listSuppliers = asyncHandler(async (_req, res) => {
@@ -72,6 +74,41 @@ export const createSupplier = asyncHandler(async (req, res) => {
 
   const supplier = await Supplier.create(supplierData);
 
+  // Crear notificación para admins y managers
+  try {
+    const notification = {
+      title: 'Nuevo Proveedor Creado',
+      message: `Se creó el proveedor "${supplier.name}" (SKU: ${supplier.sku})`,
+      type: 'info',
+      data: {
+        supplierSku: supplier.sku,
+        supplierName: supplier.name,
+        action: 'created',
+        createdBy: req.user?.id || req.user?._id?.toString(),
+      },
+    };
+
+    const savedNotifications = await createNotificationForAdminsAndManagers(notification);
+    
+    // Enviar notificaciones vía WebSocket
+    if (savedNotifications && savedNotifications.length > 0) {
+      const sendNotificationToUser = global.sendNotificationToUser;
+      if (typeof sendNotificationToUser === 'function') {
+        savedNotifications.forEach((savedNotif) => {
+          const userId = savedNotif.userId.toString();
+          sendNotificationToUser(userId, {
+            title: savedNotif.title,
+            message: savedNotif.message,
+            type: savedNotif.type,
+            data: savedNotif.data,
+          });
+        });
+      }
+    }
+  } catch (notifError) {
+    logger.error('Error creando notificación de proveedor:', notifError);
+  }
+
   res.status(201).json({
     sku: supplier.sku,
     name: supplier.name,
@@ -120,18 +157,93 @@ export const updateSupplier = asyncHandler(async (req, res) => {
     throw new Error('Proveedor no encontrado');
   }
 
+  // Crear notificación para admins y managers
+  try {
+    const notification = {
+      title: 'Proveedor Actualizado',
+      message: `Se actualizó el proveedor "${supplier.name}" (SKU: ${supplier.sku})`,
+      type: 'info',
+      data: {
+        supplierSku: supplier.sku,
+        supplierName: supplier.name,
+        action: 'updated',
+        updatedBy: req.user?.id || req.user?._id?.toString(),
+      },
+    };
+
+    const savedNotifications = await createNotificationForAdminsAndManagers(notification);
+    
+    // Enviar notificaciones vía WebSocket
+    if (savedNotifications && savedNotifications.length > 0) {
+      const sendNotificationToUser = global.sendNotificationToUser;
+      if (typeof sendNotificationToUser === 'function') {
+        savedNotifications.forEach((savedNotif) => {
+          const userId = savedNotif.userId.toString();
+          sendNotificationToUser(userId, {
+            title: savedNotif.title,
+            message: savedNotif.message,
+            type: savedNotif.type,
+            data: savedNotif.data,
+          });
+        });
+      }
+    }
+  } catch (notifError) {
+    logger.error('Error creando notificación de proveedor:', notifError);
+  }
+
   res.json({ updated: 1 });
 });
 
 //elimina el proveedor de todas sus compras (unset) y opcionalmente del modelo Supplier
 export const deleteSupplier = asyncHandler(async (req, res) => {
   const supplierSku = decodeSupplierSku(req.params.supplierSku);
+  
+  // Obtener el proveedor antes de eliminarlo para la notificación
+  const supplier = await Supplier.findOne({ sku: supplierSku });
+  const supplierName = supplier?.name || supplierSku;
+  
   const { modifiedCount } = await Purchase.updateMany(
     { supplier: supplierSku },
     { $unset: { supplier: '' } }
   );
 
   await Supplier.deleteOne({ sku: supplierSku });
+
+  // Crear notificación para admins y managers
+  try {
+    const notification = {
+      title: 'Proveedor Eliminado',
+      message: `Se eliminó el proveedor "${supplierName}" (SKU: ${supplierSku})`,
+      type: 'warning',
+      data: {
+        supplierSku: supplierSku,
+        supplierName: supplierName,
+        action: 'deleted',
+        deletedBy: req.user?.id || req.user?._id?.toString(),
+      },
+    };
+
+    const savedNotifications = await createNotificationForAdminsAndManagers(notification);
+    
+    // Enviar notificaciones vía WebSocket
+    if (savedNotifications && savedNotifications.length > 0) {
+      const sendNotificationToUser = global.sendNotificationToUser;
+      if (typeof sendNotificationToUser === 'function') {
+        savedNotifications.forEach((savedNotif) => {
+          const userId = savedNotif.userId.toString();
+          sendNotificationToUser(userId, {
+            title: savedNotif.title,
+            message: savedNotif.message,
+            type: savedNotif.type,
+            data: savedNotif.data,
+          });
+        });
+      }
+    }
+  } catch (notifError) {
+    logger.error('Error creando notificación de proveedor:', notifError);
+  }
 
   res.json({ updated: modifiedCount });
 });

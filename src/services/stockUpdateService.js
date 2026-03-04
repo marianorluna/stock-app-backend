@@ -60,7 +60,7 @@ function unificarItemsDeFacturas(jsonPaths) {
         continue;
       }
 
-      const codigo = String(item.codigoArticulo).trim();
+      const codigo = String(item.codigoArticulo).trim().toUpperCase();
 
       if (itemsMap.has(codigo)) {
         const existing = itemsMap.get(codigo);
@@ -132,7 +132,7 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
   const ingredientMap = new Map();
   const ingredientDuplicates = new Set();
   for (const ing of allIngredients) {
-    const code = String(ing.codeArticlePurchase).trim();
+    const code = String(ing.codeArticlePurchase).trim().toUpperCase();
     if (ingredientMap.has(code)) ingredientDuplicates.add(code);
     else ingredientMap.set(code, ing);
   }
@@ -140,7 +140,7 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
   const beverageMap = new Map();
   const beverageDuplicates = new Set();
   for (const bev of allBeverages) {
-    const code = String(bev.codeArticlePurchase).trim();
+    const code = String(bev.codeArticlePurchase).trim().toUpperCase();
     if (beverageMap.has(code)) beverageDuplicates.add(code);
     else beverageMap.set(code, bev);
   }
@@ -163,8 +163,12 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
     const purchaseItems = [];
 
     for (const item of listaItems) {
-      const codigo = String(item.codigoArticulo || '').trim();
+      const codigo = String(item.codigoArticulo || '').trim().toUpperCase();
       if (!codigo) continue;
+
+      let matched = false;
+
+      // Intentar match como ingrediente primero
       if (!ingredientDuplicates.has(codigo)) {
         const ingredient = ingredientMap.get(codigo);
         if (ingredient) {
@@ -173,7 +177,42 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
             quantityInGrams: Number(item.cantidadTotalGramos) || 0,
             unitPrice: Number(item.precioUnitario) || 0
           });
+          matched = true;
         }
+      }
+
+      // Si no es ingrediente, intentar match como bebida
+      if (!matched && !beverageDuplicates.has(codigo)) {
+        const beverage = beverageMap.get(codigo);
+        if (beverage) {
+          purchaseItems.push({
+            beverage: beverage._id,
+            quantityInUnits: Number(item.cantidadFactura) || 0,
+            unitPrice: Number(item.precioUnitario) || 0
+          });
+          matched = true;
+        }
+      }
+
+      // Si no hay match, registrar igualmente como item sin match
+      if (!matched) {
+        const isDuplicateIng = ingredientDuplicates.has(codigo);
+        const isDuplicateBev = beverageDuplicates.has(codigo);
+        purchaseItems.push({
+          unmatchedItem: {
+            codigoArticulo: codigo,
+            descripcionArticulo: item.descripcionArticulo || null,
+            cantidadFactura: Number(item.cantidadFactura) || 0,
+            cantidadTotalGramos: Number(item.cantidadTotalGramos) || 0,
+            unidadFactura: item.unidadFactura || null,
+            razon: isDuplicateIng
+              ? 'Código duplicado en ingredientes — debe resolverse manualmente'
+              : isDuplicateBev
+              ? 'Código duplicado en bebidas — debe resolverse manualmente'
+              : 'No se encontró ningún ingrediente ni bebida con este código'
+          },
+          unitPrice: Number(item.precioUnitario) || 0
+        });
       }
     }
 
@@ -190,6 +229,9 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
     }
 
     try {
+      const ingredientItemsCount = purchaseItems.filter(i => i.ingredient).length;
+      const beverageItemsCount = purchaseItems.filter(i => i.beverage).length;
+
       const purchase = await Purchase.create({
         supplier: invoiceData.proveedor || null,
         invoiceNumber: invoiceData.numeroFactura || null,
@@ -201,7 +243,8 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
           impuestos: invoiceData.impuestos ?? null,
           jsonPath,
           totalItemsFactura: listaItems.length,
-          itemsIngredientesMatch: purchaseItems.length
+          itemsIngredientesMatch: ingredientItemsCount,
+          itemsBebidasMatch: beverageItemsCount
         }))
       });
 
@@ -210,7 +253,8 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
         invoiceNumber: purchase.invoiceNumber,
         supplier: purchase.supplier,
         date: purchaseDate,
-        ingredientItemsCount: purchaseItems.length,
+        ingredientItemsCount,
+        beverageItemsCount,
         totalItemsInInvoice: listaItems.length
       });
 
@@ -233,7 +277,7 @@ async function _runStockUpdateFromJsons(newJsonPaths, steps, pdfMeta) {
   const unmatchedItems = [];
 
   for (const item of unifiedItems) {
-    const codigo = item.codigoArticulo;
+    const codigo = String(item.codigoArticulo || '').trim().toUpperCase();
     const isIngDuplicate = ingredientDuplicates.has(codigo);
     const isBevDuplicate = beverageDuplicates.has(codigo);
 

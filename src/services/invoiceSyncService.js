@@ -4,6 +4,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Ingredient from '../models/Ingredient.js';
+import Beverage from '../models/Beverage.js';
 import Purchase from '../models/Purchase.js';
 import stockService from './stockService.js';
 import logger from '../config/logger.js';
@@ -203,18 +204,23 @@ async function processInvoiceItemsBatch(invoiceItems, existingIngredients) {
             `${index + 1}. Código: ${item.codigo_articulo || 'N/A'}, Descripción: ${item.descripcion_articulo || 'N/A'}, Cantidad: ${item.cantidad || 0}, Unidad: ${item.unidad || 'UNI'}, Precio: ${item.precio || 0}`
         ).join('\n');
 
-        // Preparar lista de ingredientes existentes
-        const ingredientsList = existingIngredients.length > 0
-            ? existingIngredients.map(ing =>
-                `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}, Categoría: ${ing.categoryName || 'otros'}`
-            ).join('\n')
-            : '(No hay ingredientes existentes en la base de datos)';
+        // Preparar lista de productos existentes (ingredientes y bebidas)
+        const productsList = existingIngredients.length > 0
+            ? existingIngredients.map(product => {
+                const type = product._type === 'beverage' ? 'BEBIDA' : 'INGREDIENTE';
+                const code = product.codeArticlePurchase || 'N/A';
+                const name = product.name || 'N/A';
+                const sku = product.sku || 'N/A';
+                const category = product.categoryName || (product._type === 'beverage' ? 'bebidas' : 'otros');
+                return `- ID: ${product._id}, Tipo: ${type}, Código: ${code}, Nombre: ${name}, SKU: ${sku}, Categoría: ${category}`;
+            }).join('\n')
+            : '(No hay productos existentes en la base de datos)';
 
         // Cargar prompt desde Cloud Storage
         const batchPrompt = await getPrompt('batch-processing.md');
         const prompt = batchPrompt
             .replace('{items_list}', itemsList)
-            .replace('{existing_ingredients_list}', ingredientsList);
+            .replace('{existing_ingredients_list}', productsList);
 
         logger.info(`🤖 Procesando ${invoiceItems.length} items en batch con Gemini`);
 
@@ -395,6 +401,152 @@ async function generateSku(categoria, nombreProducto) {
 }
 
 /**
+ * Mapea la categoría de bebida al elemento de 2 letras según SKU_ELEMENTS.md
+ */
+function getBeverageCategoryElement(categoria) {
+    // Normalizar categoría
+    const normalizedCategory = categoria?.toLowerCase().trim() || 'bebidas';
+    
+    // Mapeo según SKU_ELEMENTS.md - sección Bebidas (B)
+    const categoryMap = {
+        'bebidas': 'BD',
+        'bebida': 'BD',
+        'copa de vino': 'CV',
+        'bebida premium': 'BP',
+        'bebidas premium': 'BP',
+        'premium': 'BP',
+        'botella': 'BT',
+        'botellas': 'BT'
+    };
+
+    return categoryMap[normalizedCategory] || 'BD'; // Por defecto 'BD' para bebidas
+}
+
+/**
+ * Busca el siguiente número disponible para una categoría de bebida
+ * Los números van en incrementos de 10: 0010, 0020, 0030, etc.
+ */
+async function getNextNumberForBeverageCategory(element) {
+    try {
+        // Buscar todos los SKUs que empiecen con B + elemento
+        const prefix = `B${element}`;
+        const existingBeverages = await Beverage.find({
+            sku: { $regex: `^${prefix}` }
+        }).select('sku').lean();
+
+        // Extraer números de los SKUs existentes
+        const numbers = existingBeverages
+            .map(bev => {
+                // El formato es B + Elemento(2) + Número(4) + Código(3)
+                // Extraer el número de las posiciones 3-6
+                const sku = bev.sku || '';
+                if (sku.length >= 7 && sku.startsWith(prefix)) {
+                    const numberPart = sku.substring(3, 7);
+                    const num = parseInt(numberPart, 10);
+                    return isNaN(num) ? 0 : num;
+                }
+                return 0;
+            })
+            .filter(num => num > 0);
+
+        if (numbers.length === 0) {
+            return 10; // Empezar con 0010
+        }
+
+        // Encontrar el siguiente número múltiplo de 10
+        const maxNumber = Math.max(...numbers);
+        const nextNumber = Math.ceil((maxNumber + 1) / 10) * 10;
+
+        // Asegurar que no esté en el rango reservado 0011-0019
+        if (nextNumber >= 11 && nextNumber <= 19) {
+            return 20;
+        }
+
+        return nextNumber;
+
+    } catch (error) {
+        logger.error(`Error buscando siguiente número para categoría de bebida ${element}:`, error);
+        return 10; // Fallback: empezar con 0010
+    }
+}
+
+/**
+ * Genera un SKU único para bebidas siguiendo las reglas de SKU_ELEMENTS.md
+ * Formato: [Tipo][Elemento][Número][Código] = 10 caracteres
+ * - Tipo: B (Beverage)
+ * - Elemento: 2 letras según categoría (BD, CV, BP, BT)
+ * - Número: 0010, 0020, 0030... (incrementos de 10)
+ * - Código: 3 letras del nombre del producto
+ */
+async function generateBeverageSku(categoria, nombreProducto) {
+    // Tipo: B para Beverage
+    const tipo = 'B';
+
+    // Elemento: 2 letras según categoría
+    const elemento = getBeverageCategoryElement(categoria);
+
+    // Número: siguiente disponible en incrementos de 10
+    const numero = await getNextNumberForBeverageCategory(elemento);
+    const numeroStr = String(numero).padStart(4, '0'); // 0010, 0020, etc.
+
+    // Código: 3 letras desde el nombre
+    const codigo = generateProductCode(nombreProducto);
+
+    // Combinar: B + Elemento + Número + Código = 10 caracteres
+    const sku = `${tipo}${elemento}${numeroStr}${codigo}`;
+
+    // Verificar que el SKU generado no exista (por si hay colisión)
+    const existing = await Beverage.findOne({ sku });
+    if (existing) {
+        // Si existe, usar el rango reservado 0011-0019 para colisiones
+        // Buscar el siguiente número disponible en ese rango
+        for (let i = 11; i <= 19; i++) {
+            const collisionSku = `${tipo}${elemento}${String(i).padStart(4, '0')}${codigo}`;
+            const collisionExists = await Beverage.findOne({ sku: collisionSku });
+            if (!collisionExists) {
+                logger.warn(`⚠️  SKU de bebida ${sku} ya existe, usando colisión: ${collisionSku}`);
+                return collisionSku;
+            }
+        }
+        // Si todos los números de colisión están ocupados, incrementar el número base
+        const nextBaseNumber = Math.ceil((numero + 1) / 10) * 10;
+        const nextSku = `${tipo}${elemento}${String(nextBaseNumber).padStart(4, '0')}${codigo}`;
+        logger.warn(`⚠️  SKU de bebida ${sku} y colisiones ocupadas, usando: ${nextSku}`);
+        return nextSku;
+    }
+
+    return sku;
+}
+
+/**
+ * Normaliza los datos de factura de camelCase a snake_case
+ * para compatibilidad con el formato esperado
+ */
+function normalizeInvoiceData(invoiceData) {
+    // Normalizar listaItems a lista_items
+    const listaItems = invoiceData.listaItems || invoiceData.lista_items || [];
+    
+    const normalizedItems = listaItems.map(item => ({
+        codigo_articulo: item.codigoArticulo || item.codigo_articulo || '',
+        descripcion_articulo: item.descripcionArticulo || item.descripcion_articulo || item.descripcionArtificacion || '',
+        cantidad: item.cantidadFactura || item.cantidad || 0,
+        unidad: item.unidadFactura || item.unidad || 'UNI',
+        precio: item.precioUnitario || item.precio || 0
+    }));
+
+    return {
+        ...invoiceData,
+        lista_items: normalizedItems,
+        proveedor: invoiceData.proveedor || '',
+        numero_factura: invoiceData.numeroFactura || invoiceData.numero_factura || '',
+        fecha: invoiceData.fecha || '',
+        total_bruto: invoiceData.totalBruto || invoiceData.total_bruto || 0,
+        total_factura: invoiceData.totalFactura || invoiceData.total_factura || 0,
+        impuestos: invoiceData.impuestos || []
+    };
+}
+
+/**
  * Sincroniza los productos de una factura con la base de datos usando Gemini
  */
 export async function syncInvoiceToDatabase(jsonPath) {
@@ -405,7 +557,10 @@ export async function syncInvoiceToDatabase(jsonPath) {
             throw new Error(`El archivo JSON no existe: ${jsonPath}`);
         }
 
-        const invoiceData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        const rawInvoiceData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        
+        // Normalizar datos de camelCase a snake_case
+        const invoiceData = normalizeInvoiceData(rawInvoiceData);
 
         if (!invoiceData.lista_items || !Array.isArray(invoiceData.lista_items)) {
             throw new Error('El JSON de factura no tiene lista_items válida');
@@ -413,16 +568,25 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
         logger.info(`📦 Procesando ${invoiceData.lista_items.length} items con Gemini (batch)`);
 
-        // Obtener todos los ingredientes existentes para matching
-        const existingIngredients = await Ingredient.find({}).lean();
-        logger.debug(`📋 ${existingIngredients.length} ingredientes existentes cargados para matching`);
+        // Obtener todos los ingredientes y bebidas existentes para matching
+        const [existingIngredients, existingBeverages] = await Promise.all([
+            Ingredient.find({}).lean(),
+            Beverage.find({}).lean()
+        ]);
+        logger.debug(`📋 ${existingIngredients.length} ingredientes y ${existingBeverages.length} bebidas existentes cargados para matching`);
+
+        // Combinar ingredientes y bebidas para el matching (Gemini necesita ambos)
+        const allExistingProducts = [
+            ...existingIngredients.map(ing => ({ ...ing, _type: 'ingredient' })),
+            ...existingBeverages.map(bev => ({ ...bev, _type: 'beverage' }))
+        ];
 
         // Procesar TODOS los items en una sola llamada a Gemini
         let processedItems;
         try {
             processedItems = await processInvoiceItemsBatch(
                 invoiceData.lista_items,
-                existingIngredients
+                allExistingProducts
             );
         } catch (error) {
             logger.error(`❌ Error en procesamiento batch, fallando a procesamiento individual:`, error);
@@ -432,7 +596,9 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
         const purchaseItems = [];
         const newIngredients = [];
+        const newBeverages = [];
         const updatedIngredients = [];
+        const updatedBeverages = [];
         const errors = [];
 
         // Verificar si es modo preview
@@ -444,90 +610,186 @@ export async function syncInvoiceToDatabase(jsonPath) {
             const originalItem = invoiceData.lista_items[i];
 
             try {
-                // Buscar el ingrediente según el matching de Gemini
-                let ingredient = null;
-                if (processedItem.matching?.ingredient_id_final) {
-                    ingredient = existingIngredients.find(
-                        ing => ing._id.toString() === processedItem.matching.ingredient_id_final
-                    );
-                }
+                // Determinar si es bebida o ingrediente
+                const isBeverage = processedItem.categoria === 'bebida' || 
+                                   processedItem.categoria === 'bebidas' ||
+                                   (processedItem.peso_neto_gramos === 0 && processedItem.cantidad_real > 0);
 
-                if (ingredient) {
-                    // Ingrediente existe: actualizar stock
-                    logger.info(`✅ Ingrediente encontrado: ${ingredient.name}`);
+                if (isBeverage) {
+                    // ─── PROCESAR BEBIDA ─────────────────────────────────────────
+                    let beverage = null;
+                    if (processedItem.matching?.ingredient_id_final) {
+                        // Buscar en bebidas existentes
+                        beverage = existingBeverages.find(
+                            bev => bev._id.toString() === processedItem.matching.ingredient_id_final
+                        );
+                    }
 
-                    const quantityInGrams = processedItem.peso_neto_gramos || 0;
+                    if (beverage) {
+                        // Bebida existe: actualizar stock
+                        logger.info(`✅ Bebida encontrada: ${beverage.name}`);
 
-                    if (quantityInGrams > 0) {
-                        purchaseItems.push({
-                            ingredient: ingredient._id,
-                            quantityInGrams,
-                            unitPrice: parseFloat(originalItem.precio) || 0
-                        });
+                        const quantityInUnits = processedItem.cantidad_real || 0;
 
-                        updatedIngredients.push({
-                            codigo: processedItem.codigo_articulo,
-                            nombre: ingredient.name,
-                            cantidadAnterior: ingredient.stock,
-                            cantidadAgregada: quantityInGrams,
-                            unidad_interpretada: processedItem.unidad_real,
-                            cantidad_real: processedItem.cantidad_real
-                        });
+                        if (quantityInUnits > 0) {
+                            purchaseItems.push({
+                                beverage: beverage._id,
+                                quantityInUnits,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            updatedBeverages.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: beverage.name,
+                                cantidadAnterior: beverage.stock,
+                                cantidadAgregada: quantityInUnits,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        } else {
+                            logger.warn(`⚠️  Cantidad en unidades es 0, omitiendo bebida ${processedItem.codigo_articulo}`);
+                        }
                     } else {
-                        logger.warn(`⚠️  Peso en gramos es 0, omitiendo item ${processedItem.codigo_articulo}`);
+                        // Bebida no existe: crear nueva
+                        logger.info(`🆕 Creando nueva bebida: ${processedItem.nombre_normalizado}`);
+
+                        // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
+                        const categoria = processedItem.categoria || 'bebidas';
+                        const nombreProducto = processedItem.nombre_normalizado;
+                        const sku = await generateBeverageSku(categoria, nombreProducto);
+
+                        if (!isPreview) {
+                            // Crear nueva bebida (solo si no es preview)
+                            beverage = await Beverage.create({
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0,
+                                stockUnit: 'u',
+                                stockUnitName: 'unidad',
+                                reorderPoint: 0,
+                                allergens: processedItem.alergenos || [],
+                                codeArticlePurchase: processedItem.codigo_articulo
+                                // categoryName se calcula automáticamente desde el SKU
+                            });
+
+                            logger.info(`✅ Nueva bebida creada: ${beverage.name} (SKU: ${beverage.sku})`);
+                            existingBeverages.push(beverage);
+                        } else {
+                            // En modo preview, crear un objeto simulado
+                            beverage = {
+                                _id: `preview-${Date.now()}-${Math.random()}`,
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0
+                            };
+                            logger.info(`👁️  Preview: se crearía nueva bebida ${beverage.name} (SKU: ${beverage.sku})`);
+                        }
+
+                        const quantityInUnits = processedItem.cantidad_real || 0;
+
+                        if (quantityInUnits > 0) {
+                            purchaseItems.push({
+                                beverage: beverage._id,
+                                quantityInUnits,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            newBeverages.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: processedItem.nombre_normalizado,
+                                sku: beverage.sku,
+                                cantidad: quantityInUnits,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        }
                     }
                 } else {
-                    // Ingrediente no existe: crear nuevo
-                    logger.info(`🆕 Creando nuevo ingrediente: ${processedItem.nombre_normalizado}`);
-
-                    // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
-                    const categoria = processedItem.categoria || 'otros';
-                    const nombreProducto = processedItem.nombre_normalizado;
-                    const sku = await generateSku(categoria, nombreProducto);
-
-                    if (!isPreview) {
-                        // Crear nuevo ingrediente (solo si no es preview)
-                        ingredient = await Ingredient.create({
-                            name: processedItem.nombre_normalizado,
-                            sku: sku,
-                            stock: 0,
-                            stockUnit: 'g',
-                            reorderPoint: 0,
-                            allergens: processedItem.alergenos || [],
-                            codeArticlePurchase: processedItem.codigo_articulo
-                            // categoryName se calcula automáticamente desde el SKU
-                        });
-
-                        logger.info(`✅ Nuevo ingrediente creado: ${ingredient.name} (SKU: ${ingredient.sku})`);
-                        existingIngredients.push(ingredient);
-                    } else {
-                        // En modo preview, crear un objeto simulado
-                        ingredient = {
-                            _id: `preview-${Date.now()}-${Math.random()}`,
-                            name: processedItem.nombre_normalizado,
-                            sku: sku,
-                            stock: 0
-                        };
-                        logger.info(`👁️  Preview: se crearía nuevo ingrediente ${ingredient.name} (SKU: ${ingredient.sku})`);
+                    // ─── PROCESAR INGREDIENTE ───────────────────────────────────
+                    let ingredient = null;
+                    if (processedItem.matching?.ingredient_id_final) {
+                        ingredient = existingIngredients.find(
+                            ing => ing._id.toString() === processedItem.matching.ingredient_id_final
+                        );
                     }
 
-                    const quantityInGrams = processedItem.peso_neto_gramos || 0;
+                    if (ingredient) {
+                        // Ingrediente existe: actualizar stock
+                        logger.info(`✅ Ingrediente encontrado: ${ingredient.name}`);
 
-                    if (quantityInGrams > 0) {
-                        purchaseItems.push({
-                            ingredient: ingredient._id,
-                            quantityInGrams,
-                            unitPrice: parseFloat(originalItem.precio) || 0
-                        });
+                        const quantityInGrams = processedItem.peso_neto_gramos || 0;
 
-                        newIngredients.push({
-                            codigo: processedItem.codigo_articulo,
-                            nombre: processedItem.nombre_normalizado,
-                            sku: ingredient.sku,
-                            cantidad: quantityInGrams,
-                            unidad_interpretada: processedItem.unidad_real,
-                            cantidad_real: processedItem.cantidad_real
-                        });
+                        if (quantityInGrams > 0) {
+                            purchaseItems.push({
+                                ingredient: ingredient._id,
+                                quantityInGrams,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            updatedIngredients.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: ingredient.name,
+                                cantidadAnterior: ingredient.stock,
+                                cantidadAgregada: quantityInGrams,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        } else {
+                            logger.warn(`⚠️  Peso en gramos es 0, omitiendo item ${processedItem.codigo_articulo}`);
+                        }
+                    } else {
+                        // Ingrediente no existe: crear nuevo
+                        logger.info(`🆕 Creando nuevo ingrediente: ${processedItem.nombre_normalizado}`);
+
+                        // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
+                        const categoria = processedItem.categoria || 'otros';
+                        const nombreProducto = processedItem.nombre_normalizado;
+                        const sku = await generateSku(categoria, nombreProducto);
+
+                        if (!isPreview) {
+                            // Crear nuevo ingrediente (solo si no es preview)
+                            ingredient = await Ingredient.create({
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0,
+                                stockUnit: 'g',
+                                reorderPoint: 0,
+                                allergens: processedItem.alergenos || [],
+                                codeArticlePurchase: processedItem.codigo_articulo
+                                // categoryName se calcula automáticamente desde el SKU
+                            });
+
+                            logger.info(`✅ Nuevo ingrediente creado: ${ingredient.name} (SKU: ${ingredient.sku})`);
+                            existingIngredients.push(ingredient);
+                        } else {
+                            // En modo preview, crear un objeto simulado
+                            ingredient = {
+                                _id: `preview-${Date.now()}-${Math.random()}`,
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0
+                            };
+                            logger.info(`👁️  Preview: se crearía nuevo ingrediente ${ingredient.name} (SKU: ${ingredient.sku})`);
+                        }
+
+                        const quantityInGrams = processedItem.peso_neto_gramos || 0;
+
+                        if (quantityInGrams > 0) {
+                            purchaseItems.push({
+                                ingredient: ingredient._id,
+                                quantityInGrams,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            newIngredients.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: processedItem.nombre_normalizado,
+                                sku: ingredient.sku,
+                                cantidad: quantityInGrams,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        }
                     }
                 }
 
@@ -572,8 +834,8 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
             logger.info(`✅ Registro de compra creado: ${purchase._id}`);
 
-            // Actualizar stock
-            logger.info(`📊 Actualizando stock de ingredientes...`);
+            // Actualizar stock (ingredientes y bebidas)
+            logger.info(`📊 Actualizando stock de ingredientes y bebidas...`);
             await stockService.applyPurchaseToStock(purchase);
         } else {
             logger.info(`👁️  Modo preview: no se creará registro de compra ni se actualizará el stock`);
@@ -591,7 +853,9 @@ export async function syncInvoiceToDatabase(jsonPath) {
             purchaseId: purchase._id,
             totalItems: purchaseItems.length,
             nuevosIngredientes: newIngredients.length,
+            nuevasBebidas: newBeverages.length,
             ingredientesActualizados: updatedIngredients.length,
+            bebidasActualizadas: updatedBeverages.length,
             errores: errors.length
         });
 
@@ -602,11 +866,15 @@ export async function syncInvoiceToDatabase(jsonPath) {
             summary: {
                 totalItems: purchaseItems.length,
                 nuevosIngredientes: newIngredients.length,
+                nuevasBebidas: newBeverages.length,
                 ingredientesActualizados: updatedIngredients.length,
+                bebidasActualizadas: updatedBeverages.length,
                 errores: errors.length
             },
             nuevosIngredientes: newIngredients,
+            nuevasBebidas: newBeverages,
             ingredientesActualizados: updatedIngredients,
+            bebidasActualizadas: updatedBeverages,
             errors
         };
 

@@ -230,6 +230,17 @@ const bootstrap = async () => {
     logger.info('WebSocket: Emitido stock_update_completed');
   });
 
+  // Eventos de actualización de ingredientes y bebidas (para actualizar inventario en tiempo real)
+  eventBus.on(EVENT_TYPES.INGREDIENT_UPDATED, (ingredient) => {
+    io.emit('inventory:ingredient_updated', ingredient);
+    logger.info('WebSocket: Emitido inventory:ingredient_updated', { ingredientId: ingredient._id });
+  });
+
+  eventBus.on(EVENT_TYPES.BEVERAGE_UPDATED, (beverage) => {
+    io.emit('inventory:beverage_updated', beverage);
+    logger.info('WebSocket: Emitido inventory:beverage_updated', { beverageId: beverage._id });
+  });
+
   // Inicializar scheduler de tareas programadas (actualización diaria de stock)
   await initScheduler();
 

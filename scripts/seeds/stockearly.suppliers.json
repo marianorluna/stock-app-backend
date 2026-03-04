@@ -1,13 +1,43 @@
 [
   {
     "sku": "SGN0010SUM",
-    "name": "AMETLLER ORIGEN HORECA, S.L.",
+    "name": "Ametller Origen Horeca, S.L.",
     "nif": "B67875112",
     "address": "Longitudinal 9, Nº 63 (Mercabarna)",
     "city": "Barcelona",
     "zip": "08040",
     "country": "España",
     "tel": "932222022"
+  },
+  {
+    "sku": "SBB0010CZA",
+    "name": "Comestibles Zafon S.L.",
+    "nif": "B58080250",
+    "address": "Av. Maresme 66",
+    "city": "Cornella de Llobregat",
+    "zip": "08940",
+    "country": "España",
+    "tel": "932602424"
+  },
+  {
+    "sku": "SBB0020BBS",
+    "name": "Barcelona Bier 2014 S.L.",
+    "nif": "B66360280",
+    "address": "Provença  495",
+    "city": "Barcelona",
+    "zip": "08025",
+    "country": "España",
+    "tel": "931168714"
+  },
+  {
+    "sku": "SBB0030URB",
+    "name": "Plus Box Tecnologies S.L.",
+    "nif": "B64838683",
+    "address": "Paseo Joan Miró, 5",
+    "city": "Parets del Vallés",
+    "zip": "08150",
+    "country": "España",
+    "tel": "610463136"
   },
   {
     "sku": "SGN0020SUM",

@@ -30,13 +30,32 @@ const applySaleToStock = async (sale) => {
   await commitStockUpdates(updates, { context: 'sale', referenceId: sale._id });
 };
 
-//aplica una compra al inventario sumando los ingredientes comprados
+//aplica una compra al inventario sumando los ingredientes y bebidas comprados
 const applyPurchaseToStock = async (purchase) => {
-  const updates = purchase.items.map(item => ({
-    ingredientId: item.ingredient,
-    delta: item.quantityInGrams
-  }));
-  await commitStockUpdates(updates, { context: 'purchase', referenceId: purchase._id });
+  // Separar items de ingredientes y bebidas
+  const ingredientUpdates = purchase.items
+    .filter(item => item.ingredient)
+    .map(item => ({
+      ingredientId: item.ingredient,
+      delta: item.quantityInGrams
+    }));
+
+  const beverageUpdates = purchase.items
+    .filter(item => item.beverage)
+    .map(item => ({
+      beverageId: item.beverage,
+      delta: item.quantityInUnits
+    }));
+
+  // Actualizar stock de ingredientes
+  if (ingredientUpdates.length > 0) {
+    await commitStockUpdates(ingredientUpdates, { context: 'purchase', referenceId: purchase._id });
+  }
+
+  // Actualizar stock de bebidas
+  if (beverageUpdates.length > 0) {
+    await commitBeverageStockUpdates(beverageUpdates, { context: 'purchase', referenceId: purchase._id });
+  }
 };
 
 //aplica una merma al inventario restando ingredientes o bebidas desperdiciadas
@@ -57,17 +76,29 @@ const applyWastageToStock = async (wastage) => {
   }
 };
 
-//revierte una compra del inventario restando los ingredientes que se sumaron
+//revierte una compra del inventario restando los ingredientes y bebidas que se sumaron
 const revertPurchaseFromStock = async (purchase) => {
-  const updates = purchase.items
+  // Revertir ingredientes
+  const ingredientUpdates = purchase.items
     .filter(item => item.ingredient)
     .map(item => ({
       ingredientId: item.ingredient._id ?? item.ingredient,
       delta: -Math.abs(item.quantityInGrams)
     }));
-  if (updates.length) {
+  if (ingredientUpdates.length) {
     // Usar contexto 'purchase' para que stockMerma se revierta con el mismo factor
-    await commitStockUpdates(updates, { context: 'purchase', referenceId: purchase._id });
+    await commitStockUpdates(ingredientUpdates, { context: 'purchase', referenceId: purchase._id });
+  }
+
+  // Revertir bebidas
+  const beverageUpdates = purchase.items
+    .filter(item => item.beverage)
+    .map(item => ({
+      beverageId: item.beverage._id ?? item.beverage,
+      delta: -Math.abs(item.quantityInUnits)
+    }));
+  if (beverageUpdates.length) {
+    await commitBeverageStockUpdates(beverageUpdates, { context: 'purchase-revert', referenceId: purchase._id });
   }
 };
 

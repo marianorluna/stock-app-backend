@@ -391,6 +391,7 @@ export const listManualPurchases = asyncHandler(async (req, res) => {
   const purchases = await Purchase.find(filter)
     .sort({ timestamp: -1 })
     .populate('items.ingredient', 'name categoryName stockUnit')
+    .populate('items.beverage', 'name categoryName stockUnit')
     .lean();
 
   res.json(purchases);
