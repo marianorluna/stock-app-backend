@@ -10,10 +10,37 @@ import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import zlib from 'zlib';
+import { promisify } from 'util';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const gunzip = promisify(zlib.gunzip);
 
 dotenv.config();
+
+/**
+ * Descomprime una respuesta si está comprimida con gzip
+ */
+async function decompressResponse(resp) {
+    const contentEncoding = resp.headers.get('content-encoding');
+
+    // Obtener el buffer de la respuesta
+    const buffer = Buffer.from(await resp.arrayBuffer());
+
+    // Solo intentar descomprimir si el header indica gzip explícitamente
+    if (contentEncoding && contentEncoding.toLowerCase() === 'gzip') {
+        try {
+            const decompressed = await gunzip(buffer);
+            return decompressed.toString('utf8');
+        } catch (err) {
+            // Si falla la descompresión, intentar como texto normal (sin advertencia)
+            return buffer.toString('utf8');
+        }
+    }
+
+    // Si no está comprimido, devolver como texto
+    return buffer.toString('utf8');
+}
 
 /**
  * Llama a la API de Qamarero con las variables de entorno.
@@ -37,6 +64,7 @@ async function llamarQamarero(inputExtra = {}) {
     const headers = {
         'User-Agent': 'Mozilla/5.0 (Node.js)',
         'Content-Type': 'application/json',
+        'Accept-Encoding': 'gzip, deflate, br',
     };
     if (bearer) {
         headers['Authorization'] = 'JWT ' + bearer;
@@ -57,10 +85,21 @@ async function llamarQamarero(inputExtra = {}) {
     });
 
     if (!resp.ok) {
-        throw new Error(`HTTP ${resp.status} al llamar Qamarero.`);
+        const errorText = await resp.text().catch(() => 'No se pudo leer el error');
+        throw new Error(`HTTP ${resp.status} al llamar Qamarero: ${errorText.substring(0, 200)}`);
     }
 
-    const data = await resp.json();
+    // Descomprimir la respuesta si es necesario
+    const text = await decompressResponse(resp);
+
+    // Parsear el JSON
+    let data;
+    try {
+        data = JSON.parse(text);
+    } catch (err) {
+        throw new Error(`Error al parsear JSON: ${err.message}. Primeros 500 chars de respuesta: ${text.substring(0, 500)}`);
+    }
+
     if (data?.errors?.length) {
         throw new Error('API error: ' + (data.errors[0].message || 'desconocido'));
     }

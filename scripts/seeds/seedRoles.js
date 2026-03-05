@@ -7,9 +7,9 @@
 
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Role from '../src/models/Role.js';
-import Permission from '../src/models/Permission.js';
-import connectDatabase from '../src/config/database.js';
+import Role from '../../src/models/Role.js';
+import Permission from '../../src/models/Permission.js';
+import connectDatabase from '../../src/config/database.js';
 
 dotenv.config();
 
@@ -20,7 +20,9 @@ const permissions = [
 
     //Inventory
     { name: 'inventory:read', resource: 'inventory', action: 'read', description: 'Ver inventario' },
-    { name: 'inventory:create', resource: 'inventory', action: 'create', description: 'Crear/actualizar inventario' },
+    { name: 'inventory:create', resource: 'inventory', action: 'create', description: 'Crear registros de inventario' },
+    { name: 'inventory:update', resource: 'inventory', action: 'update', description: 'Actualizar stock de inventario (incluye TPV Qamarero)' },
+    { name: 'inventory:delete', resource: 'inventory', action: 'delete', description: 'Eliminar registros de inventario' },
 
     //Ingredients
     { name: 'ingredients:read', resource: 'ingredients', action: 'read', description: 'Ver ingredientes' },
@@ -50,7 +52,11 @@ const permissions = [
     { name: 'users:create', resource: 'users', action: 'create', description: 'Crear usuarios' },
     { name: 'users:update', resource: 'users', action: 'update', description: 'Actualizar usuarios' },
     { name: 'users:delete', resource: 'users', action: 'delete', description: 'Eliminar usuarios' },
-    { name: 'roles:manage', resource: 'roles', action: 'manage', description: 'Gestionar roles' }
+    { name: 'roles:manage', resource: 'roles', action: 'manage', description: 'Gestionar roles' },
+
+    //Config
+    { name: 'config:read', resource: 'config', action: 'read', description: 'Ver configuraciones' },
+    { name: 'config:update', resource: 'config', action: 'update', description: 'Actualizar configuraciones' }
 ];
 
 //definición de roles con sus permisos asociados
@@ -65,12 +71,13 @@ const roles = [
         description: 'Dueño con control de acceso y gestión',
         permissions: [
             'dashboard:read',
-            'inventory:read', 'inventory:create',
+            'inventory:read', 'inventory:create', 'inventory:update', 'inventory:delete',
             'ingredients:read', 'ingredients:create', 'ingredients:update', 'ingredients:delete',
             'recipes:read', 'recipes:create', 'recipes:update', 'recipes:delete',
             'suppliers:read', 'suppliers:create', 'suppliers:update', 'suppliers:delete',
             'manual:read', 'manual:create', 'manual:delete',
-            'users:read', 'users:create', 'users:update'
+            'users:read', 'users:create', 'users:update',
+            'config:read', 'config:update'
         ]
     },
     {

@@ -1,28 +1,32 @@
 import asyncHandler from 'express-async-handler';
-import Dish from '../models/Dish.js';
+import Beverage from '../models/Beverage.js';
+import eventBus, { EVENT_TYPES } from '../core/eventBus.js';
 import { createNotificationForAdminsAndManagers } from '../services/notificationService.js';
 import logger from '../config/logger.js';
 
-//obtiene la lista de platos con sus recetas pobladas
-export const listDishes = asyncHandler(async (req, res) => {
-  const dishes = await Dish.find().populate('recipe.ingredient').sort({ name: 1 });
-  res.json(dishes);
+// Obtiene la lista de bebidas ordenada por nombre
+export const listBeverages = asyncHandler(async (req, res) => {
+  const beverages = await Beverage.find().sort({ name: 1 });
+  res.json(beverages);
 });
 
-//crea un nuevo plato/receta
-export const createDish = asyncHandler(async (req, res) => {
-  const dish = await Dish.create(req.body);
+// Crea una nueva bebida
+export const createBeverage = asyncHandler(async (req, res) => {
+  const beverage = await Beverage.create(req.body);
+  
+  // Emitir evento para notificar creación (actualización en tiempo real)
+  eventBus.emit(EVENT_TYPES.BEVERAGE_UPDATED, beverage);
   
   // Crear notificación para admins y managers
   try {
     const notification = {
-      title: 'Nueva Receta Creada',
-      message: `Se creó la receta "${dish.name}" (SKU: ${dish.sku})`,
+      title: 'Nueva Bebida Creada',
+      message: `Se creó la bebida "${beverage.name}" (SKU: ${beverage.sku})`,
       type: 'info',
       data: {
-        dishId: dish._id.toString(),
-        dishName: dish.name,
-        dishSku: dish.sku,
+        beverageId: beverage._id.toString(),
+        beverageName: beverage.name,
+        beverageSku: beverage.sku,
         action: 'created',
         createdBy: req.user?.id || req.user?._id?.toString(),
       },
@@ -46,31 +50,34 @@ export const createDish = asyncHandler(async (req, res) => {
       }
     }
   } catch (notifError) {
-    logger.error('Error creando notificación de receta:', notifError);
+    logger.error('Error creando notificación de bebida:', notifError);
   }
   
-  res.status(201).json(dish);
+  res.status(201).json(beverage);
 });
 
-//actualiza un plato existente
-export const updateDish = asyncHandler(async (req, res) => {
+// Actualiza una bebida existente
+export const updateBeverage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const dish = await Dish.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-  if (!dish) {
+  const beverage = await Beverage.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+  if (!beverage) {
     res.status(404);
-    throw new Error('Dish not found');
+    throw new Error('Beverage not found');
   }
+  
+  // Emitir evento para notificar cambio de stock (actualización en tiempo real)
+  eventBus.emit(EVENT_TYPES.BEVERAGE_UPDATED, beverage);
   
   // Crear notificación para admins y managers
   try {
     const notification = {
-      title: 'Receta Actualizada',
-      message: `Se actualizó la receta "${dish.name}" (SKU: ${dish.sku})`,
+      title: 'Bebida Actualizada',
+      message: `Se actualizó la bebida "${beverage.name}" (SKU: ${beverage.sku})`,
       type: 'info',
       data: {
-        dishId: dish._id.toString(),
-        dishName: dish.name,
-        dishSku: dish.sku,
+        beverageId: beverage._id.toString(),
+        beverageName: beverage.name,
+        beverageSku: beverage.sku,
         action: 'updated',
         updatedBy: req.user?.id || req.user?._id?.toString(),
       },
@@ -94,31 +101,31 @@ export const updateDish = asyncHandler(async (req, res) => {
       }
     }
   } catch (notifError) {
-    logger.error('Error creando notificación de receta:', notifError);
+    logger.error('Error creando notificación de bebida:', notifError);
   }
   
-  res.json(dish);
+  res.json(beverage);
 });
 
-//elimina un plato
-export const deleteDish = asyncHandler(async (req, res) => {
+// Elimina una bebida
+export const deleteBeverage = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const dish = await Dish.findByIdAndDelete(id);
-  if (!dish) {
+  const beverage = await Beverage.findByIdAndDelete(id);
+  if (!beverage) {
     res.status(404);
-    throw new Error('Dish not found');
+    throw new Error('Beverage not found');
   }
   
   // Crear notificación para admins y managers
   try {
     const notification = {
-      title: 'Receta Eliminada',
-      message: `Se eliminó la receta "${dish.name}" (SKU: ${dish.sku})`,
+      title: 'Bebida Eliminada',
+      message: `Se eliminó la bebida "${beverage.name}" (SKU: ${beverage.sku})`,
       type: 'warning',
       data: {
-        dishId: id,
-        dishName: dish.name,
-        dishSku: dish.sku,
+        beverageId: id,
+        beverageName: beverage.name,
+        beverageSku: beverage.sku,
         action: 'deleted',
         deletedBy: req.user?.id || req.user?._id?.toString(),
       },
@@ -142,9 +149,8 @@ export const deleteDish = asyncHandler(async (req, res) => {
       }
     }
   } catch (notifError) {
-    logger.error('Error creando notificación de receta:', notifError);
+    logger.error('Error creando notificación de bebida:', notifError);
   }
   
   res.status(204).end();
 });
-

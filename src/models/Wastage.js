@@ -5,11 +5,24 @@ const wastageItemSchema = new mongoose.Schema(
     ingredient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Ingredient',
-      required: true
+      required: false,
+      default: undefined
+    },
+    beverage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Beverage',
+      required: false,
+      default: undefined
     },
     quantityInGrams: {
       type: Number,
-      required: true
+      required: false,
+      default: undefined
+    },
+    quantityInUnits: {
+      type: Number,
+      required: false,
+      default: undefined
     },
     reason: {
       type: String,

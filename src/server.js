@@ -7,6 +7,7 @@ import logger from './config/logger.js';
 import { initializeFirebase } from './config/firebase.js';
 import eventBus, { EVENT_TYPES } from './core/eventBus.js';
 import { createNotificationForAdminsAndManagers } from './services/notificationService.js';
+import { initScheduler } from './services/schedulerService.js';
 import './subscribers/inventorySubscriber.js';
 
 dotenv.config();
@@ -75,7 +76,10 @@ const bootstrap = async () => {
 
   eventBus.on(EVENT_TYPES.SALE_RECORDED, async (sale) => {
     io.emit('inventory:sale', sale);
-    
+
+    // Si el evento es de eliminación, no crear notificación de "nueva venta"
+    if (sale.deleted) return;
+
     // Guardar notificación en BD para admins y managers
     try {
       const notification = {
@@ -88,10 +92,10 @@ const bootstrap = async () => {
           sale: sale,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de venta guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {
@@ -112,7 +116,7 @@ const bootstrap = async () => {
 
   eventBus.on(EVENT_TYPES.PURCHASE_RECORDED, async (purchase) => {
     io.emit('inventory:purchase', purchase);
-    
+
     // Guardar notificación en BD para admins y managers
     try {
       const notification = {
@@ -125,10 +129,10 @@ const bootstrap = async () => {
           purchase: purchase,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de compra guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {
@@ -154,7 +158,7 @@ const bootstrap = async () => {
     }
 
     io.emit('inventory:wastage', wastage);
-    
+
     // Guardar notificación en BD para admins y managers
     try {
       // Poblar ingredientes y usuario que reportó para obtener sus nombres
@@ -174,7 +178,7 @@ const bootstrap = async () => {
       const unit = ingredient?.stockUnit || 'g';
       const quantity = item.quantityInGrams;
       const ingredientName = ingredient?.name || 'Ingrediente desconocido';
-      
+
       let message = `Merma de ${ingredientName}: ${quantity} ${unit}`;
       if (item.reason) {
         message += `. Motivo: ${item.reason}`;
@@ -193,10 +197,10 @@ const bootstrap = async () => {
           } : null,
         },
       };
-      
+
       const savedNotifications = await createNotificationForAdminsAndManagers(notification);
       logger.info('Notificación de merma guardada en BD');
-      
+
       // Enviar notificaciones vía WebSocket a los usuarios que las recibieron
       if (savedNotifications && savedNotifications.length > 0) {
         savedNotifications.forEach((savedNotif) => {
@@ -214,6 +218,31 @@ const bootstrap = async () => {
       logger.error('Error guardando notificación de merma en BD:', error);
     }
   });
+
+  // Eventos de actualización automática de stock (para bloquear operaciones manuales e informar al frontend)
+  eventBus.on(EVENT_TYPES.STOCK_UPDATE_STARTED, () => {
+    io.emit('stock_update_started');
+    logger.info('WebSocket: Emitido stock_update_started');
+  });
+
+  eventBus.on(EVENT_TYPES.STOCK_UPDATE_COMPLETED, () => {
+    io.emit('stock_update_completed');
+    logger.info('WebSocket: Emitido stock_update_completed');
+  });
+
+  // Eventos de actualización de ingredientes y bebidas (para actualizar inventario en tiempo real)
+  eventBus.on(EVENT_TYPES.INGREDIENT_UPDATED, (ingredient) => {
+    io.emit('inventory:ingredient_updated', ingredient);
+    logger.info('WebSocket: Emitido inventory:ingredient_updated', { ingredientId: ingredient._id });
+  });
+
+  eventBus.on(EVENT_TYPES.BEVERAGE_UPDATED, (beverage) => {
+    io.emit('inventory:beverage_updated', beverage);
+    logger.info('WebSocket: Emitido inventory:beverage_updated', { beverageId: beverage._id });
+  });
+
+  // Inicializar scheduler de tareas programadas (actualización diaria de stock)
+  await initScheduler();
 
   server.listen(PORT, () => {
     logger.info(`Server running on port ${PORT} ✅`);

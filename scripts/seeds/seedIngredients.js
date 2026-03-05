@@ -1,16 +1,16 @@
 /**
  * Script para poblar la base de datos con ingredientes.
- * Lee desde stockearly.ingredients.updated.json
- * Uso: node scripts/seedIngredients.js
- * Orden: seedRoles -> seedIngredients -> seedMenu -> seedSuppliers -> seedEvents
+ * Lee desde stockearly.ingredients-NEW.json
+ * Uso: node scripts/seeds/seedIngredients.js
+ * Orden: seedRoles -> seedIngredients -> seedBeverages -> seedMenu -> seedSuppliers -> seedEvents
  */
 
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
-import connectDatabase from '../src/config/database.js';
-import Ingredient from '../src/models/Ingredient.js';
+import connectDatabase from '../../src/config/database.js';
+import Ingredient from '../../src/models/Ingredient.js';
 
 dotenv.config();
 
@@ -26,24 +26,24 @@ const seed = async () => {
   }
 
   const rawData = JSON.parse(
-    readFileSync(join(__dirname, 'stockearly.ingredients.updated.json'), 'utf-8')
+    readFileSync(join(__dirname, 'stockearly.ingredients.json'), 'utf-8')
   );
 
-  const ingredients = rawData.map((item) => {
-    return {
-      sku: item.sku,
-      name: item.name,
-      stock: item.stock ?? 0,
-      stockUnit: item.stockUnit ?? 'g',
-      purchaseUnit: item.purchaseUnit?.trim() ?? 'unidad',
-      conversionFactor: item.conversionFactor ?? 1,
-      conversionUnit: item.conversionUnit ?? 'g',
-      reorderPoint: item.reorderPoint ?? 0,
-      category: item.category ?? 'otros',
-      allergens: item.allergens ?? [],
-      codeArticlePurchase: item.codeArticlePurchase ?? ''
-    };
-  });
+  const ingredients = rawData.map((item) => ({
+    sku: item.sku,
+    name: item.name,
+    description: item.description?.trim() ?? '',
+    categoryName: item.categoryName ?? '',
+    stock: item.stock ?? item.stockInitial ?? 0,
+    stockUnit: 'g',
+    stockUnitName: item.stockUnitName ?? 'gramo',
+    factorMermaNat: item.factorMermaNat ?? 0,
+    reorderPoint: item.reorderPoint ?? 0,
+    allergens: item.allergens ?? [],
+    codeArticlePurchase: item.codeArticlePurchase ?? '',
+    pesoUnitarioGramos: item.pesoUnitarioGramos ?? 0,
+    stockMerma: item.stockMerma ?? 0
+  }));
 
   await connectDatabase(mongoUri);
 

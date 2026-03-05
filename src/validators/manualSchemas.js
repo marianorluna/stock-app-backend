@@ -33,11 +33,22 @@ export const manualWastageSchema = Joi.object({
   timestamp: Joi.date().optional(),
   items: Joi.array()
     .items(
-      Joi.object({
-        ingredient: Joi.string().hex().length(24).required(),
-        quantityInGrams: Joi.number().positive().required(),
-        reason: Joi.string().trim().optional()
-      })
+      Joi.alternatives()
+        .try(
+          // Merma de ingrediente
+          Joi.object({
+            ingredient: Joi.string().hex().length(24).required(),
+            quantityInGrams: Joi.number().positive().required(),
+            reason: Joi.string().trim().optional()
+          }),
+          // Merma de bebida
+          Joi.object({
+            beverage: Joi.string().hex().length(24).required(),
+            quantityInUnits: Joi.number().positive().required(),
+            reason: Joi.string().trim().optional()
+          })
+        )
+        .required()
     )
     .min(1)
     .required()

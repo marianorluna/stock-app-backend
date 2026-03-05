@@ -1,5 +1,10 @@
+/**
+ * Sincronización de facturas JSON a la base de datos
+ */
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Ingredient from '../models/Ingredient.js';
+import Beverage from '../models/Beverage.js';
 import Purchase from '../models/Purchase.js';
 import stockService from './stockService.js';
 import logger from '../config/logger.js';
@@ -7,7 +12,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-
+import { getPrompt } from './promptService.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -24,165 +29,6 @@ if (process.env.GEMINI_API_KEY) {
 
 // Unidades estándar (SIMELA) que son válidas tal cual
 const STANDARD_UNITS = ['KG', 'G', 'G.', 'g', 'kg', 'L', 'L.', 'l', 'ML', 'ML.', 'ml', 'M', 'M.', 'm'];
-
-/**
- * Prompt para que Gemini interprete y normalice un item de factura
- */
-const ITEM_INTERPRETATION_PROMPT = `Eres un experto en interpretación de facturas de productos alimentarios. Tu tarea es analizar un item de factura y extraer información precisa y normalizada.
-
-Analiza el siguiente item de factura:
-- Código: {codigo_articulo}
-- Descripción: {descripcion_articulo}
-- Cantidad: {cantidad}
-- Unidad en factura: {unidad}
-- Precio: {precio}
-
-IMPORTANTE sobre unidades:
-- Si la unidad es estándar (KG, g, L, ml, etc.), la cantidad es correcta tal cual
-- Si la unidad es NO estándar (UNI, MAN, SAF, etc.), DEBES analizar la descripción para determinar:
-  * La unidad real del producto (peso/volumen unitario)
-  * La cantidad real en esa unidad (multiplicando cantidad × peso_unitario_extraído)
-
-Ejemplos:
-- "Arroz Jazmin 1 Kg" con unidad "UNI" y cantidad 2 → unidad real: "KG", cantidad_real: 2 (porque cada UNI es 1 Kg)
-- "Leche Entera 1 L" con unidad "UNI" y cantidad 3 → unidad real: "L", cantidad_real: 3 (porque cada UNI es 1 L)
-- "Pan Carasau 400 g" con unidad "UNI" y cantidad 1 → unidad real: "g", cantidad_real: 400 (porque cada UNI es 400g)
-- "Fresa Bandeja 500 g" con unidad "SAF" y cantidad 1 → unidad real: "g", cantidad_real: 500 (porque cada SAF es 500g)
-- "Huevos M Granja 12 uds" con unidad "UNI" y cantidad 4 → unidad real: "u", cantidad_real: 48 (porque cada UNI contiene 12 unidades)
-- "Granada Extra" con unidad "KG" y cantidad 0.32 → unidad real: "KG", cantidad_real: 0.32 (unidad estándar, usar tal cual)
-
-Devuelve SOLO un JSON válido con esta estructura:
-{
-  "codigo_articulo": "código original",
-  "nombre_normalizado": "nombre limpio y normalizado del producto",
-  "unidad_es_estandar": true/false,
-  "unidad_real": "KG|g|L|ml|u|MAN|SAF|etc (unidad real interpretada)",
-  "cantidad_real": número (cantidad en la unidad real, calculada correctamente),
-  "peso_neto_gramos": número (peso neto total en gramos, calculado desde cantidad_real y unidad_real),
-  "categoria": "bebida|cafe|condimentos|frutas|cereales|lacteos|otros|proteinas|vegetales",
-  "alergenos": ["array", "de", "alergenos", "si", "se", "pueden", "identificar"],
-  "purchase_unit": "unidad de compra normalizada (ej: 'KG', 'UNI', 'L', etc)",
-  "conversion_factor": número (factor para convertir 1 unidad de compra a gramos),
-  "conversion_unit": "g|ml|u",
-  "stock_unit": "g|ml|u (unidad de stock recomendada)"
-}
-
-Reglas:
-1. Si unidad es estándar (KG, g, L, ml, etc.): usar cantidad tal cual, unidad_real = unidad
-2. Si unidad es NO estándar (UNI, MAN, SAF, etc.): 
-   - Extraer peso/volumen unitario desde la descripción (ej: "1 Kg", "500 g", "1 L", "125 g", "12 uds")
-   - Calcular cantidad_real = cantidad × peso_unitario_extraído
-   - Determinar unidad_real desde la descripción
-3. Calcular peso_neto_gramos: convertir cantidad_real a gramos según unidad_real
-4. Para categorías, usa el contexto del producto
-5. Para alergenos, identifica solo si es obvio (lacteos, gluten, frutos secos, etc)`;
-
-/**
- * Prompt para matching inteligente con productos existentes
- */
-const MATCHING_PROMPT = `Eres un experto en matching de productos. Tienes un item de factura normalizado y una lista de productos existentes en la base de datos.
-
-Item de factura:
-{codigo_articulo}: {nombre_normalizado} (unidad: {unidad_real}, {peso_neto_gramos}g)
-
-Productos existentes:
-{productos_existentes}
-
-Tu tarea es determinar:
-1. ¿Existe un producto que coincida exactamente por código? (codeArticlePurchase = codigo_articulo)
-2. ¿Existe un producto que coincida por nombre similar? (usando similitud semántica)
-3. Si hay coincidencia, ¿cuál es el ID del producto?
-
-Devuelve SOLO un JSON válido:
-{
-  "coincidencia_por_codigo": {
-    "existe": true/false,
-    "ingredient_id": "id si existe",
-    "nombre": "nombre del producto encontrado"
-  },
-  "coincidencia_por_nombre": {
-    "existe": true/false,
-    "ingredient_id": "id si existe",
-    "nombre": "nombre del producto encontrado",
-    "similitud": "alta|media|baja"
-  },
-  "recomendacion": "usar_codigo|usar_nombre|crear_nuevo",
-  "ingredient_id_final": "id del producto a usar o null si crear nuevo"
-}`;
-
-/**
- * Prompt para procesamiento en batch de todos los items de una factura
- */
-const BATCH_PROCESSING_PROMPT = `Eres un experto en interpretación de facturas de productos alimentarios y matching con base de datos. Tu tarea es procesar TODOS los items de una factura de una vez.
-
-ITEMS DE LA FACTURA:
-{items_list}
-
-INGREDIENTES EXISTENTES EN LA BASE DE DATOS:
-{existing_ingredients_list}
-
-Para CADA item de la factura, debes:
-1. Interpretar y normalizar el item (unidades, cantidades, categorías)
-2. Buscar coincidencias con ingredientes existentes (por código o nombre)
-3. Determinar si crear nuevo ingrediente o usar uno existente
-
-IMPORTANTE sobre unidades:
-- Si la unidad es estándar (KG, g, L, ml, etc.), la cantidad es correcta tal cual
-- Si la unidad es NO estándar (UNI, MAN, SAF, etc.), DEBES analizar la descripción para determinar:
-  * La unidad real del producto (peso/volumen unitario)
-  * La cantidad real en esa unidad (multiplicando cantidad × peso_unitario_extraído)
-
-Ejemplos de interpretación de unidades:
-- "Arroz Jazmin 1 Kg" con unidad "UNI" y cantidad 2 → unidad real: "KG", cantidad_real: 2 (porque cada UNI es 1 Kg)
-- "Leche Entera 1 L" con unidad "UNI" y cantidad 3 → unidad real: "L", cantidad_real: 3 (porque cada UNI es 1 L)
-- "Pan Carasau 400 g" con unidad "UNI" y cantidad 1 → unidad real: "g", cantidad_real: 400 (porque cada UNI es 400g)
-- "Fresa Bandeja 500 g" con unidad "SAF" y cantidad 1 → unidad real: "g", cantidad_real: 500 (porque cada SAF es 500g)
-- "Huevos M Granja 12 uds" con unidad "UNI" y cantidad 4 → unidad real: "u", cantidad_real: 48 (porque cada UNI contiene 12 unidades)
-- "Granada Extra" con unidad "KG" y cantidad 0.32 → unidad real: "KG", cantidad_real: 0.32 (unidad estándar, usar tal cual)
-
-Devuelve SOLO un JSON válido con esta estructura:
-{
-  "items": [
-    {
-      "codigo_articulo": "código original",
-      "descripcion_original": "descripción original",
-      "nombre_normalizado": "nombre limpio y normalizado",
-      "unidad_es_estandar": true/false,
-      "unidad_real": "KG|g|L|ml|u|etc",
-      "cantidad_real": número,
-      "peso_neto_gramos": número,
-      "categoria": "bebida|cafe|condimentos|frutas|cereales|lacteos|otros|proteinas|vegetales",
-      "alergenos": ["array", "de", "alergenos"],
-      "purchase_unit": "unidad de compra",
-      "conversion_factor": número,
-      "conversion_unit": "g|ml|u",
-      "stock_unit": "g|ml|u",
-      "matching": {
-        "coincidencia_por_codigo": {
-          "existe": true/false,
-          "ingredient_id": "id si existe",
-          "nombre": "nombre del producto encontrado"
-        },
-        "coincidencia_por_nombre": {
-          "existe": true/false,
-          "ingredient_id": "id si existe",
-          "nombre": "nombre del producto encontrado",
-          "similitud": "alta|media|baja"
-        },
-        "recomendacion": "usar_codigo|usar_nombre|crear_nuevo",
-        "ingredient_id_final": "id del producto a usar o null si crear nuevo"
-      }
-    }
-  ]
-}
-
-Reglas:
-1. Procesa TODOS los items en una sola respuesta
-2. Para matching, prioriza coincidencia por código sobre coincidencia por nombre
-3. Si no hay coincidencia, ingredient_id_final debe ser null
-4. Calcula peso_neto_gramos correctamente para cada item
-5. Para categorías, usa el contexto del producto
-6. Para alergenos, identifica solo si es obvio (lacteos, gluten, frutos secos, etc)`;
 
 /**
  * Verifica si una unidad es estándar (SIMELA)
@@ -203,7 +49,9 @@ async function interpretInvoiceItem(item) {
 
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-        const prompt = ITEM_INTERPRETATION_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const itemPrompt = await getPrompt('item-interpretation.md');
+        const prompt = itemPrompt
             .replace('{codigo_articulo}', item.codigo_articulo || '')
             .replace('{descripcion_articulo}', item.descripcion_articulo || '')
             .replace('{cantidad}', item.cantidad?.toString() || '0')
@@ -285,7 +133,9 @@ async function findIntelligentMatch(interpretedItem, existingIngredients) {
             `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}`
         ).join('\n');
 
-        const prompt = MATCHING_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const matchingPrompt = await getPrompt('matching.md');
+        const prompt = matchingPrompt
             .replace('{codigo_articulo}', interpretedItem.codigo_articulo)
             .replace('{nombre_normalizado}', interpretedItem.nombre_normalizado)
             .replace('{unidad_real}', interpretedItem.unidad_real)
@@ -350,20 +200,27 @@ async function processInvoiceItemsBatch(invoiceItems, existingIngredients) {
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         // Preparar lista de items para el prompt
-        const itemsList = invoiceItems.map((item, index) => 
+        const itemsList = invoiceItems.map((item, index) =>
             `${index + 1}. Código: ${item.codigo_articulo || 'N/A'}, Descripción: ${item.descripcion_articulo || 'N/A'}, Cantidad: ${item.cantidad || 0}, Unidad: ${item.unidad || 'UNI'}, Precio: ${item.precio || 0}`
         ).join('\n');
 
-        // Preparar lista de ingredientes existentes
-        const ingredientsList = existingIngredients.length > 0
-            ? existingIngredients.map(ing =>
-                `- ID: ${ing._id}, Código: ${ing.codeArticlePurchase || 'N/A'}, Nombre: ${ing.name}, SKU: ${ing.sku}, Categoría: ${ing.category || 'otros'}`
-            ).join('\n')
-            : '(No hay ingredientes existentes en la base de datos)';
+        // Preparar lista de productos existentes (ingredientes y bebidas)
+        const productsList = existingIngredients.length > 0
+            ? existingIngredients.map(product => {
+                const type = product._type === 'beverage' ? 'BEBIDA' : 'INGREDIENTE';
+                const code = product.codeArticlePurchase || 'N/A';
+                const name = product.name || 'N/A';
+                const sku = product.sku || 'N/A';
+                const category = product.categoryName || (product._type === 'beverage' ? 'bebidas' : 'otros');
+                return `- ID: ${product._id}, Tipo: ${type}, Código: ${code}, Nombre: ${name}, SKU: ${sku}, Categoría: ${category}`;
+            }).join('\n')
+            : '(No hay productos existentes en la base de datos)';
 
-        const prompt = BATCH_PROCESSING_PROMPT
+        // Cargar prompt desde Cloud Storage
+        const batchPrompt = await getPrompt('batch-processing.md');
+        const prompt = batchPrompt
             .replace('{items_list}', itemsList)
-            .replace('{existing_ingredients_list}', ingredientsList);
+            .replace('{existing_ingredients_list}', productsList);
 
         logger.info(`🤖 Procesando ${invoiceItems.length} items en batch con Gemini`);
 
@@ -417,7 +274,11 @@ function getCategoryElement(categoria) {
         'otros': 'OT',
         'bebida': 'BE',
         'bebidas': 'BE',
-        'cafe': 'CF'
+        'cafe': 'CF',
+        'aceites': 'AC',
+        'frutos secos': 'FS',
+        'gases': 'GS',
+        'dulces': 'DL'
     };
 
     const normalizedCategory = categoria?.toLowerCase().trim() || 'otros';
@@ -540,6 +401,152 @@ async function generateSku(categoria, nombreProducto) {
 }
 
 /**
+ * Mapea la categoría de bebida al elemento de 2 letras según SKU_ELEMENTS.md
+ */
+function getBeverageCategoryElement(categoria) {
+    // Normalizar categoría
+    const normalizedCategory = categoria?.toLowerCase().trim() || 'bebidas';
+    
+    // Mapeo según SKU_ELEMENTS.md - sección Bebidas (B)
+    const categoryMap = {
+        'bebidas': 'BD',
+        'bebida': 'BD',
+        'copa de vino': 'CV',
+        'bebida premium': 'BP',
+        'bebidas premium': 'BP',
+        'premium': 'BP',
+        'botella': 'BT',
+        'botellas': 'BT'
+    };
+
+    return categoryMap[normalizedCategory] || 'BD'; // Por defecto 'BD' para bebidas
+}
+
+/**
+ * Busca el siguiente número disponible para una categoría de bebida
+ * Los números van en incrementos de 10: 0010, 0020, 0030, etc.
+ */
+async function getNextNumberForBeverageCategory(element) {
+    try {
+        // Buscar todos los SKUs que empiecen con B + elemento
+        const prefix = `B${element}`;
+        const existingBeverages = await Beverage.find({
+            sku: { $regex: `^${prefix}` }
+        }).select('sku').lean();
+
+        // Extraer números de los SKUs existentes
+        const numbers = existingBeverages
+            .map(bev => {
+                // El formato es B + Elemento(2) + Número(4) + Código(3)
+                // Extraer el número de las posiciones 3-6
+                const sku = bev.sku || '';
+                if (sku.length >= 7 && sku.startsWith(prefix)) {
+                    const numberPart = sku.substring(3, 7);
+                    const num = parseInt(numberPart, 10);
+                    return isNaN(num) ? 0 : num;
+                }
+                return 0;
+            })
+            .filter(num => num > 0);
+
+        if (numbers.length === 0) {
+            return 10; // Empezar con 0010
+        }
+
+        // Encontrar el siguiente número múltiplo de 10
+        const maxNumber = Math.max(...numbers);
+        const nextNumber = Math.ceil((maxNumber + 1) / 10) * 10;
+
+        // Asegurar que no esté en el rango reservado 0011-0019
+        if (nextNumber >= 11 && nextNumber <= 19) {
+            return 20;
+        }
+
+        return nextNumber;
+
+    } catch (error) {
+        logger.error(`Error buscando siguiente número para categoría de bebida ${element}:`, error);
+        return 10; // Fallback: empezar con 0010
+    }
+}
+
+/**
+ * Genera un SKU único para bebidas siguiendo las reglas de SKU_ELEMENTS.md
+ * Formato: [Tipo][Elemento][Número][Código] = 10 caracteres
+ * - Tipo: B (Beverage)
+ * - Elemento: 2 letras según categoría (BD, CV, BP, BT)
+ * - Número: 0010, 0020, 0030... (incrementos de 10)
+ * - Código: 3 letras del nombre del producto
+ */
+async function generateBeverageSku(categoria, nombreProducto) {
+    // Tipo: B para Beverage
+    const tipo = 'B';
+
+    // Elemento: 2 letras según categoría
+    const elemento = getBeverageCategoryElement(categoria);
+
+    // Número: siguiente disponible en incrementos de 10
+    const numero = await getNextNumberForBeverageCategory(elemento);
+    const numeroStr = String(numero).padStart(4, '0'); // 0010, 0020, etc.
+
+    // Código: 3 letras desde el nombre
+    const codigo = generateProductCode(nombreProducto);
+
+    // Combinar: B + Elemento + Número + Código = 10 caracteres
+    const sku = `${tipo}${elemento}${numeroStr}${codigo}`;
+
+    // Verificar que el SKU generado no exista (por si hay colisión)
+    const existing = await Beverage.findOne({ sku });
+    if (existing) {
+        // Si existe, usar el rango reservado 0011-0019 para colisiones
+        // Buscar el siguiente número disponible en ese rango
+        for (let i = 11; i <= 19; i++) {
+            const collisionSku = `${tipo}${elemento}${String(i).padStart(4, '0')}${codigo}`;
+            const collisionExists = await Beverage.findOne({ sku: collisionSku });
+            if (!collisionExists) {
+                logger.warn(`⚠️  SKU de bebida ${sku} ya existe, usando colisión: ${collisionSku}`);
+                return collisionSku;
+            }
+        }
+        // Si todos los números de colisión están ocupados, incrementar el número base
+        const nextBaseNumber = Math.ceil((numero + 1) / 10) * 10;
+        const nextSku = `${tipo}${elemento}${String(nextBaseNumber).padStart(4, '0')}${codigo}`;
+        logger.warn(`⚠️  SKU de bebida ${sku} y colisiones ocupadas, usando: ${nextSku}`);
+        return nextSku;
+    }
+
+    return sku;
+}
+
+/**
+ * Normaliza los datos de factura de camelCase a snake_case
+ * para compatibilidad con el formato esperado
+ */
+function normalizeInvoiceData(invoiceData) {
+    // Normalizar listaItems a lista_items
+    const listaItems = invoiceData.listaItems || invoiceData.lista_items || [];
+    
+    const normalizedItems = listaItems.map(item => ({
+        codigo_articulo: item.codigoArticulo || item.codigo_articulo || '',
+        descripcion_articulo: item.descripcionArticulo || item.descripcion_articulo || item.descripcionArtificacion || '',
+        cantidad: item.cantidadFactura || item.cantidad || 0,
+        unidad: item.unidadFactura || item.unidad || 'UNI',
+        precio: item.precioUnitario || item.precio || 0
+    }));
+
+    return {
+        ...invoiceData,
+        lista_items: normalizedItems,
+        proveedor: invoiceData.proveedor || '',
+        numero_factura: invoiceData.numeroFactura || invoiceData.numero_factura || '',
+        fecha: invoiceData.fecha || '',
+        total_bruto: invoiceData.totalBruto || invoiceData.total_bruto || 0,
+        total_factura: invoiceData.totalFactura || invoiceData.total_factura || 0,
+        impuestos: invoiceData.impuestos || []
+    };
+}
+
+/**
  * Sincroniza los productos de una factura con la base de datos usando Gemini
  */
 export async function syncInvoiceToDatabase(jsonPath) {
@@ -550,7 +557,10 @@ export async function syncInvoiceToDatabase(jsonPath) {
             throw new Error(`El archivo JSON no existe: ${jsonPath}`);
         }
 
-        const invoiceData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        const rawInvoiceData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+        
+        // Normalizar datos de camelCase a snake_case
+        const invoiceData = normalizeInvoiceData(rawInvoiceData);
 
         if (!invoiceData.lista_items || !Array.isArray(invoiceData.lista_items)) {
             throw new Error('El JSON de factura no tiene lista_items válida');
@@ -558,16 +568,25 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
         logger.info(`📦 Procesando ${invoiceData.lista_items.length} items con Gemini (batch)`);
 
-        // Obtener todos los ingredientes existentes para matching
-        const existingIngredients = await Ingredient.find({}).lean();
-        logger.debug(`📋 ${existingIngredients.length} ingredientes existentes cargados para matching`);
+        // Obtener todos los ingredientes y bebidas existentes para matching
+        const [existingIngredients, existingBeverages] = await Promise.all([
+            Ingredient.find({}).lean(),
+            Beverage.find({}).lean()
+        ]);
+        logger.debug(`📋 ${existingIngredients.length} ingredientes y ${existingBeverages.length} bebidas existentes cargados para matching`);
+
+        // Combinar ingredientes y bebidas para el matching (Gemini necesita ambos)
+        const allExistingProducts = [
+            ...existingIngredients.map(ing => ({ ...ing, _type: 'ingredient' })),
+            ...existingBeverages.map(bev => ({ ...bev, _type: 'beverage' }))
+        ];
 
         // Procesar TODOS los items en una sola llamada a Gemini
         let processedItems;
         try {
             processedItems = await processInvoiceItemsBatch(
                 invoiceData.lista_items,
-                existingIngredients
+                allExistingProducts
             );
         } catch (error) {
             logger.error(`❌ Error en procesamiento batch, fallando a procesamiento individual:`, error);
@@ -577,7 +596,9 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
         const purchaseItems = [];
         const newIngredients = [];
+        const newBeverages = [];
         const updatedIngredients = [];
+        const updatedBeverages = [];
         const errors = [];
 
         // Verificar si es modo preview
@@ -589,93 +610,186 @@ export async function syncInvoiceToDatabase(jsonPath) {
             const originalItem = invoiceData.lista_items[i];
 
             try {
-                // Buscar el ingrediente según el matching de Gemini
-                let ingredient = null;
-                if (processedItem.matching?.ingredient_id_final) {
-                    ingredient = existingIngredients.find(
-                        ing => ing._id.toString() === processedItem.matching.ingredient_id_final
-                    );
-                }
+                // Determinar si es bebida o ingrediente
+                const isBeverage = processedItem.categoria === 'bebida' || 
+                                   processedItem.categoria === 'bebidas' ||
+                                   (processedItem.peso_neto_gramos === 0 && processedItem.cantidad_real > 0);
 
-                if (ingredient) {
-                    // Ingrediente existe: actualizar stock
-                    logger.info(`✅ Ingrediente encontrado: ${ingredient.name}`);
+                if (isBeverage) {
+                    // ─── PROCESAR BEBIDA ─────────────────────────────────────────
+                    let beverage = null;
+                    if (processedItem.matching?.ingredient_id_final) {
+                        // Buscar en bebidas existentes
+                        beverage = existingBeverages.find(
+                            bev => bev._id.toString() === processedItem.matching.ingredient_id_final
+                        );
+                    }
 
-                    const quantityInGrams = processedItem.peso_neto_gramos || 0;
+                    if (beverage) {
+                        // Bebida existe: actualizar stock
+                        logger.info(`✅ Bebida encontrada: ${beverage.name}`);
 
-                    if (quantityInGrams > 0) {
-                        purchaseItems.push({
-                            ingredient: ingredient._id,
-                            quantityInGrams,
-                            unitPrice: parseFloat(originalItem.precio) || 0
-                        });
+                        const quantityInUnits = processedItem.cantidad_real || 0;
 
-                        updatedIngredients.push({
-                            codigo: processedItem.codigo_articulo,
-                            nombre: ingredient.name,
-                            cantidadAnterior: ingredient.stock,
-                            cantidadAgregada: quantityInGrams,
-                            unidad_interpretada: processedItem.unidad_real,
-                            cantidad_real: processedItem.cantidad_real
-                        });
+                        if (quantityInUnits > 0) {
+                            purchaseItems.push({
+                                beverage: beverage._id,
+                                quantityInUnits,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            updatedBeverages.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: beverage.name,
+                                cantidadAnterior: beverage.stock,
+                                cantidadAgregada: quantityInUnits,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        } else {
+                            logger.warn(`⚠️  Cantidad en unidades es 0, omitiendo bebida ${processedItem.codigo_articulo}`);
+                        }
                     } else {
-                        logger.warn(`⚠️  Peso en gramos es 0, omitiendo item ${processedItem.codigo_articulo}`);
+                        // Bebida no existe: crear nueva
+                        logger.info(`🆕 Creando nueva bebida: ${processedItem.nombre_normalizado}`);
+
+                        // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
+                        const categoria = processedItem.categoria || 'bebidas';
+                        const nombreProducto = processedItem.nombre_normalizado;
+                        const sku = await generateBeverageSku(categoria, nombreProducto);
+
+                        if (!isPreview) {
+                            // Crear nueva bebida (solo si no es preview)
+                            beverage = await Beverage.create({
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0,
+                                stockUnit: 'u',
+                                stockUnitName: 'unidad',
+                                reorderPoint: 0,
+                                allergens: processedItem.alergenos || [],
+                                codeArticlePurchase: processedItem.codigo_articulo
+                                // categoryName se calcula automáticamente desde el SKU
+                            });
+
+                            logger.info(`✅ Nueva bebida creada: ${beverage.name} (SKU: ${beverage.sku})`);
+                            existingBeverages.push(beverage);
+                        } else {
+                            // En modo preview, crear un objeto simulado
+                            beverage = {
+                                _id: `preview-${Date.now()}-${Math.random()}`,
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0
+                            };
+                            logger.info(`👁️  Preview: se crearía nueva bebida ${beverage.name} (SKU: ${beverage.sku})`);
+                        }
+
+                        const quantityInUnits = processedItem.cantidad_real || 0;
+
+                        if (quantityInUnits > 0) {
+                            purchaseItems.push({
+                                beverage: beverage._id,
+                                quantityInUnits,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            newBeverages.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: processedItem.nombre_normalizado,
+                                sku: beverage.sku,
+                                cantidad: quantityInUnits,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        }
                     }
                 } else {
-                    // Ingrediente no existe: crear nuevo
-                    logger.info(`🆕 Creando nuevo ingrediente: ${processedItem.nombre_normalizado}`);
-
-                    // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
-                    const categoria = processedItem.categoria || 'otros';
-                    const nombreProducto = processedItem.nombre_normalizado;
-                    const sku = await generateSku(categoria, nombreProducto);
-
-                    if (!isPreview) {
-                        // Crear nuevo ingrediente (solo si no es preview)
-                        ingredient = await Ingredient.create({
-                            name: processedItem.nombre_normalizado,
-                            sku: sku,
-                            stock: 0,
-                            stockUnit: processedItem.stock_unit || 'g',
-                            purchaseUnit: processedItem.purchase_unit || processedItem.unidad_real,
-                            conversionFactor: processedItem.conversion_factor || 1,
-                            conversionUnit: processedItem.conversion_unit || 'g',
-                            reorderPoint: 0,
-                            category: processedItem.categoria || 'otros',
-                            allergens: processedItem.alergenos || [],
-                            codeArticlePurchase: processedItem.codigo_articulo
-                        });
-
-                        logger.info(`✅ Nuevo ingrediente creado: ${ingredient.name} (SKU: ${ingredient.sku})`);
-                        existingIngredients.push(ingredient);
-                    } else {
-                        // En modo preview, crear un objeto simulado
-                        ingredient = {
-                            _id: `preview-${Date.now()}-${Math.random()}`,
-                            name: processedItem.nombre_normalizado,
-                            sku: sku,
-                            stock: 0
-                        };
-                        logger.info(`👁️  Preview: se crearía nuevo ingrediente ${ingredient.name} (SKU: ${ingredient.sku})`);
+                    // ─── PROCESAR INGREDIENTE ───────────────────────────────────
+                    let ingredient = null;
+                    if (processedItem.matching?.ingredient_id_final) {
+                        ingredient = existingIngredients.find(
+                            ing => ing._id.toString() === processedItem.matching.ingredient_id_final
+                        );
                     }
 
-                    const quantityInGrams = processedItem.peso_neto_gramos || 0;
+                    if (ingredient) {
+                        // Ingrediente existe: actualizar stock
+                        logger.info(`✅ Ingrediente encontrado: ${ingredient.name}`);
 
-                    if (quantityInGrams > 0) {
-                        purchaseItems.push({
-                            ingredient: ingredient._id,
-                            quantityInGrams,
-                            unitPrice: parseFloat(originalItem.precio) || 0
-                        });
+                        const quantityInGrams = processedItem.peso_neto_gramos || 0;
 
-                        newIngredients.push({
-                            codigo: processedItem.codigo_articulo,
-                            nombre: processedItem.nombre_normalizado,
-                            sku: ingredient.sku,
-                            cantidad: quantityInGrams,
-                            unidad_interpretada: processedItem.unidad_real,
-                            cantidad_real: processedItem.cantidad_real
-                        });
+                        if (quantityInGrams > 0) {
+                            purchaseItems.push({
+                                ingredient: ingredient._id,
+                                quantityInGrams,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            updatedIngredients.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: ingredient.name,
+                                cantidadAnterior: ingredient.stock,
+                                cantidadAgregada: quantityInGrams,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        } else {
+                            logger.warn(`⚠️  Peso en gramos es 0, omitiendo item ${processedItem.codigo_articulo}`);
+                        }
+                    } else {
+                        // Ingrediente no existe: crear nuevo
+                        logger.info(`🆕 Creando nuevo ingrediente: ${processedItem.nombre_normalizado}`);
+
+                        // Generar SKU siguiendo las reglas de SKU_ELEMENTS.md
+                        const categoria = processedItem.categoria || 'otros';
+                        const nombreProducto = processedItem.nombre_normalizado;
+                        const sku = await generateSku(categoria, nombreProducto);
+
+                        if (!isPreview) {
+                            // Crear nuevo ingrediente (solo si no es preview)
+                            ingredient = await Ingredient.create({
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0,
+                                stockUnit: 'g',
+                                reorderPoint: 0,
+                                allergens: processedItem.alergenos || [],
+                                codeArticlePurchase: processedItem.codigo_articulo
+                                // categoryName se calcula automáticamente desde el SKU
+                            });
+
+                            logger.info(`✅ Nuevo ingrediente creado: ${ingredient.name} (SKU: ${ingredient.sku})`);
+                            existingIngredients.push(ingredient);
+                        } else {
+                            // En modo preview, crear un objeto simulado
+                            ingredient = {
+                                _id: `preview-${Date.now()}-${Math.random()}`,
+                                name: processedItem.nombre_normalizado,
+                                sku: sku,
+                                stock: 0
+                            };
+                            logger.info(`👁️  Preview: se crearía nuevo ingrediente ${ingredient.name} (SKU: ${ingredient.sku})`);
+                        }
+
+                        const quantityInGrams = processedItem.peso_neto_gramos || 0;
+
+                        if (quantityInGrams > 0) {
+                            purchaseItems.push({
+                                ingredient: ingredient._id,
+                                quantityInGrams,
+                                unitPrice: parseFloat(originalItem.precio) || 0
+                            });
+
+                            newIngredients.push({
+                                codigo: processedItem.codigo_articulo,
+                                nombre: processedItem.nombre_normalizado,
+                                sku: ingredient.sku,
+                                cantidad: quantityInGrams,
+                                unidad_interpretada: processedItem.unidad_real,
+                                cantidad_real: processedItem.cantidad_real
+                            });
+                        }
                     }
                 }
 
@@ -720,8 +834,8 @@ export async function syncInvoiceToDatabase(jsonPath) {
 
             logger.info(`✅ Registro de compra creado: ${purchase._id}`);
 
-            // Actualizar stock
-            logger.info(`📊 Actualizando stock de ingredientes...`);
+            // Actualizar stock (ingredientes y bebidas)
+            logger.info(`📊 Actualizando stock de ingredientes y bebidas...`);
             await stockService.applyPurchaseToStock(purchase);
         } else {
             logger.info(`👁️  Modo preview: no se creará registro de compra ni se actualizará el stock`);
@@ -739,7 +853,9 @@ export async function syncInvoiceToDatabase(jsonPath) {
             purchaseId: purchase._id,
             totalItems: purchaseItems.length,
             nuevosIngredientes: newIngredients.length,
+            nuevasBebidas: newBeverages.length,
             ingredientesActualizados: updatedIngredients.length,
+            bebidasActualizadas: updatedBeverages.length,
             errores: errors.length
         });
 
@@ -750,11 +866,15 @@ export async function syncInvoiceToDatabase(jsonPath) {
             summary: {
                 totalItems: purchaseItems.length,
                 nuevosIngredientes: newIngredients.length,
+                nuevasBebidas: newBeverages.length,
                 ingredientesActualizados: updatedIngredients.length,
+                bebidasActualizadas: updatedBeverages.length,
                 errores: errors.length
             },
             nuevosIngredientes: newIngredients,
+            nuevasBebidas: newBeverages,
             ingredientesActualizados: updatedIngredients,
+            bebidasActualizadas: updatedBeverages,
             errors
         };
 

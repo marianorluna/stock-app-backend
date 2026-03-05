@@ -1,18 +1,51 @@
 import mongoose from 'mongoose';
 
+// Mapeo de elemento SKU (2 letras) a categoryName (con mayúscula inicial)
+// Basado en SKU_ELEMENTS.md - sección Ingredientes (I)
+const mapSkuElementToCategoryName = (skuElement) => {
+  if (!skuElement || skuElement.length !== 2) return null;
+
+  const elementMap = {
+    'LV': 'Lacteos',
+    'GR': 'Cereales',
+    'CO': 'Condimentos',
+    'VG': 'Vegetales',
+    'FR': 'Frutas',
+    'PR': 'Proteinas',
+    'GS': 'Gases',
+    'LI': 'Liquidos',
+    'CF': 'Cafe',
+    'AC': 'Aceites',
+    'FS': 'Frutos secos',
+    'DL': 'Dulces'
+  };
+
+  return elementMap[skuElement.toUpperCase()] || null;
+};
+
 const ingredientSchema = new mongoose.Schema(
   {
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
     name: {
       type: String,
       required: true,
       unique: true,
       trim: true
     },
-    sku: {
+    description: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true
+      trim: true,
+      default: ''
+    },
+    categoryName: {
+      type: String,
+      trim: true,
+      required: true
     },
     stock: {
       type: Number,
@@ -23,35 +56,23 @@ const ingredientSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ['u', 'g', 'ml'],
+      enum: ['g'],
       default: 'g'
     },
-    purchaseUnit: {
+    stockUnitName: {
       type: String,
-      required: true,
-      trim: true
+      trim: true,
+      default: 'gramo'
     },
-    conversionFactor: {
+    factorMermaNat: {
       type: Number,
       required: true,
-      default: 1
-    },
-    conversionUnit: {
-      type: String,
-      required: true,
-      trim: true,
-      enum: ['u', 'g', 'ml'],
-      default: 'g'
+      default: 0
     },
     reorderPoint: {
       type: Number,
       required: true,
       default: 0
-    },
-    category: {
-      type: String,
-      enum: ['bebida', 'cafe', 'condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'],
-      required: true
     },
     allergens: {
       type: [String],
@@ -61,6 +82,16 @@ const ingredientSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ''
+    },
+    pesoUnitarioGramos: {
+      type: Number,
+      required: true,
+      default: 0
+    },
+    stockMerma: {
+      type: Number,
+      required: true,
+      default: 0
     }
   },
   {
@@ -68,69 +99,64 @@ const ingredientSchema = new mongoose.Schema(
   }
 );
 
-// Virtual para compatibilidad con código existente que usa productUnit
-ingredientSchema.virtual('productUnit').get(function productUnit() {
-  return this.stockUnit;
-});
-
-// Virtual para compatibilidad con código existente que usa conversionFactorToGrams
-// El conversionFactorToGrams representa cuántas unidades de stockUnit equivalen a 1 unidad de purchaseUnit en gramos
-// Para simplificar, usamos conversionFactor directamente cuando conversionUnit es 'g'
-// Para otros casos, asumimos que conversionFactor ya representa la conversión correcta
-ingredientSchema.virtual('conversionFactorToGrams').get(function conversionFactorToGrams() {
-  // Si conversionUnit es 'g', el factor ya está en gramos
-  if (this.conversionUnit === 'g') {
-    return this.conversionFactor;
-  }
-  
-  // Si conversionUnit es 'u' o 'ml', el factor representa unidades/ml por unidad de compra
-  // Para mantener compatibilidad, devolvemos el factor directamente
-  // El código que lo use deberá considerar la unidad correcta
-  return this.conversionFactor;
-});
-
-ingredientSchema.virtual('stockDisplay').get(function stockDisplay() {
-  // Para categorías que tradicionalmente usaban 'ingredient', mostrar en gramos
-  const isBulkCategory = ['condimentos', 'frutas', 'cereales', 'lacteos', 'otros', 'proteinas', 'vegetales'].includes(this.category);
-  
-  if (isBulkCategory && this.stockUnit === 'g') {
-    return {
-      amount: this.stock,
-      unit: 'g',
-      reorderPoint: this.reorderPoint,
-      conversionFactorToGrams: this.conversionFactorToGrams
-    };
-  }
-
-  return {
-    amount: this.stock,
-    unit: this.stockUnit ?? 'u',
-    reorderPoint: this.reorderPoint,
-    conversionFactorToGrams: this.conversionFactorToGrams
-  };
-});
-
-// Transform para mantener compatibilidad con código existente
-const transformForCompatibility = (doc, ret) => {
-  // Agregar campos virtuales para compatibilidad
-  ret.productUnit = ret.stockUnit || ret.productUnit;
-  
-  // Calcular conversionFactorToGrams si no está disponible como virtual
-  if (!ret.conversionFactorToGrams && ret.conversionFactor !== undefined) {
-    if (ret.conversionUnit === 'g') {
-      ret.conversionFactorToGrams = ret.conversionFactor;
-    } else {
-      ret.conversionFactorToGrams = ret.conversionFactor;
+// Pre-validate hook: calcular categoryName desde SKU antes de validar
+ingredientSchema.pre('validate', function (next) {
+  if (!this.categoryName || this.isModified('sku')) {
+    if (this.sku && this.sku.length >= 3) {
+      const skuElement = this.sku.substring(1, 3);
+      const categoryName = mapSkuElementToCategoryName(skuElement);
+      if (categoryName) {
+        this.categoryName = categoryName;
+      }
     }
   }
-  
-  return ret;
-};
+  next();
+});
 
-ingredientSchema.set('toJSON', { virtuals: true, transform: transformForCompatibility });
-ingredientSchema.set('toObject', { virtuals: true, transform: transformForCompatibility });
+// Pre-save hook: calcular categoryName desde SKU y stockMerma antes de guardar
+ingredientSchema.pre('save', function (next) {
+  // Calcular categoryName desde SKU si es necesario
+  // Si categoryName ya existe pero no coincide con el SKU, recalcularlo
+  if (!this.categoryName || this.isModified('sku')) {
+    if (!this.sku || this.sku.length < 3) {
+      return next(new Error('SKU inválido: debe tener al menos 3 caracteres para extraer el elemento'));
+    }
+
+    const skuElement = this.sku.substring(1, 3);
+    const categoryName = mapSkuElementToCategoryName(skuElement);
+
+    if (!categoryName) {
+      return next(new Error(`Elemento SKU '${skuElement}' no reconocido. SKU: ${this.sku}`));
+    }
+
+    this.categoryName = categoryName;
+  } else {
+    // Si categoryName existe, validar que coincida con el SKU
+    if (this.sku && this.sku.length >= 3) {
+      const skuElement = this.sku.substring(1, 3);
+      const expectedCategoryName = mapSkuElementToCategoryName(skuElement);
+      if (expectedCategoryName && this.categoryName !== expectedCategoryName) {
+        // Si no coincide, usar el calculado desde el SKU (el SKU es la fuente de verdad)
+        this.categoryName = expectedCategoryName;
+      }
+    }
+  }
+
+  // Calcular stockMerma: si factorMermaNat es 0, stockMerma = stock; si no, stockMerma = stock - (stock * factorMermaNat)
+  if (this.isModified('stock') || this.isModified('factorMermaNat') || this.isNew) {
+    if (this.factorMermaNat === 0 || this.factorMermaNat == null) {
+      this.stockMerma = this.stock;
+    } else {
+      this.stockMerma = this.stock - (this.stock * this.factorMermaNat);
+    }
+  }
+
+  next();
+});
+
+ingredientSchema.set('toJSON', { virtuals: true });
+ingredientSchema.set('toObject', { virtuals: true });
 
 const Ingredient = mongoose.model('Ingredient', ingredientSchema);
 
 export default Ingredient;
-
