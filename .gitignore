@@ -1,6 +1,5 @@
 node_modules
 .env
-test.env
 .env.local
 .DS_Store
 .idea
@@ -11,3 +10,4 @@ temp/
 output/
 scripts/pdfs/
 prompts/
+test.env

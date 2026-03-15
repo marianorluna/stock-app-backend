@@ -1,47 +1,23 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import logger from '../config/logger.js';
 
-// Transporter reutilizable (se crea la primera vez que se necesita)
-let _transporter = null;
-
-const getTransporter = () => {
-    if (_transporter) return _transporter;
-
-    const { EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS } = process.env;
-
-    if (!EMAIL_HOST || !EMAIL_USER || !EMAIL_PASS) {
-        logger.warn('[emailService] Email no configurado. Define EMAIL_HOST, EMAIL_USER y EMAIL_PASS en el .env');
+const getResendClient = () => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+        logger.warn('[emailService] RESEND_API_KEY no configurada. Define RESEND_API_KEY en el .env');
         return null;
     }
-
-    const port = Number(EMAIL_PORT) || 465;
-
-    _transporter = nodemailer.createTransport({
-        host: EMAIL_HOST,
-        port,
-        // Puerto 465 = SSL directo (Webempresa). Puerto 587 = STARTTLS.
-        secure: port === 465,
-        auth: {
-            user: EMAIL_USER,
-            pass: EMAIL_PASS,
-        },
-        // Webempresa usa certificados auto-firmados en hosting compartido → desactivar verificación
-        tls: {
-            rejectUnauthorized: false,
-        },
-    });
-
-    logger.info(`[emailService] Transporter SMTP listo → ${EMAIL_HOST}:${port}`);
-    return _transporter;
+    return new Resend(apiKey);
 };
+
+const getFromAddress = () =>
+    process.env.EMAIL_FROM || process.env.EMAIL_USER || 'Stockearly <onboarding@resend.dev>';
 
 /**
  * Envía un email de alerta de stock bajo a los destinatarios configurados en BD.
  *
  * @param {Array<{ name, stock, stockMerma, stockUnit, reorderPoint, factorMermaNat }>} ingredients
- *   Lista de ingredientes que cruzaron el punto de reorden
  * @param {string[]} toEmails
- *   Array de emails destino (leídos desde Config.notificationEmails)
  */
 export const sendLowStockAlert = async (ingredients, toEmails) => {
     if (!toEmails || toEmails.length === 0) {
@@ -49,8 +25,8 @@ export const sendLowStockAlert = async (ingredients, toEmails) => {
         return;
     }
 
-    const transport = getTransporter();
-    if (!transport) return;
+    const resend = getResendClient();
+    if (!resend) return;
 
     // ── Construir filas de la tabla ────────────────────────────────────────────
     const rows = ingredients.map(ing => {
@@ -162,23 +138,29 @@ export const sendLowStockAlert = async (ingredients, toEmails) => {
 
     // ── Envío ─────────────────────────────────────────────────────────────────
     try {
-        const info = await transport.sendMail({
-            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-            to: toEmails.join(', '),
+        const { data, error } = await resend.emails.send({
+            from: getFromAddress(),
+            to: toEmails,
             subject,
             html,
         });
 
+        if (error) {
+            logger.error('[emailService] Error enviando email de stock bajo:', {
+                message: error.message,
+                name: error.name,
+            });
+            return;
+        }
+
         logger.info('[emailService] Email de stock bajo enviado', {
-            messageId: info.messageId,
+            id: data?.id,
             to: toEmails,
             ingredients: ingredients.map(i => i.name),
         });
     } catch (error) {
-        // No lanzamos el error para no interrumpir el flujo de stock
         logger.error('[emailService] Error enviando email de stock bajo:', {
             message: error.message,
-            code: error.code,
         });
     }
 };
@@ -187,9 +169,7 @@ export const sendLowStockAlert = async (ingredients, toEmails) => {
  * Envía un email de alerta de stock bajo de bebidas a los destinatarios configurados en BD.
  *
  * @param {Array<{ name, stock, stockUnit, reorderPoint }>} beverages
- *   Lista de bebidas que cruzaron el punto de reorden
  * @param {string[]} toEmails
- *   Array de emails destino (leídos desde Config.notificationEmails)
  */
 export const sendLowBeverageStockAlert = async (beverages, toEmails) => {
     if (!toEmails || toEmails.length === 0) {
@@ -197,8 +177,8 @@ export const sendLowBeverageStockAlert = async (beverages, toEmails) => {
         return;
     }
 
-    const transport = getTransporter();
-    if (!transport) return;
+    const resend = getResendClient();
+    if (!resend) return;
 
     // ── Construir filas de la tabla ────────────────────────────────────────────
     const rows = beverages.map(bev => {
@@ -309,23 +289,29 @@ export const sendLowBeverageStockAlert = async (beverages, toEmails) => {
 
     // ── Envío ─────────────────────────────────────────────────────────────────
     try {
-        const info = await transport.sendMail({
-            from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-            to: toEmails.join(', '),
+        const { data, error } = await resend.emails.send({
+            from: getFromAddress(),
+            to: toEmails,
             subject,
             html,
         });
 
+        if (error) {
+            logger.error('[emailService] Error enviando email de stock bajo de bebidas:', {
+                message: error.message,
+                name: error.name,
+            });
+            return;
+        }
+
         logger.info('[emailService] Email de stock bajo de bebidas enviado', {
-            messageId: info.messageId,
+            id: data?.id,
             to: toEmails,
             beverages: beverages.map(b => b.name),
         });
     } catch (error) {
-        // No lanzamos el error para no interrumpir el flujo de stock
         logger.error('[emailService] Error enviando email de stock bajo de bebidas:', {
             message: error.message,
-            code: error.code,
         });
     }
 };
